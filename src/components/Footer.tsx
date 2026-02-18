@@ -1,4 +1,4 @@
-import { Instagram, MessageCircle } from "lucide-react";
+import { Instagram, MessageCircle, Facebook, Youtube } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -9,23 +9,20 @@ const Footer = () => {
             Empatizando
           </a>
           <div className="flex items-center gap-4">
-            <a
-              href="https://instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Instagram"
-            >
+            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Instagram">
               <Instagram size={20} />
             </a>
-            <a
-              href="https://chat.whatsapp.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="WhatsApp"
-            >
+            <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="WhatsApp">
               <MessageCircle size={20} />
+            </a>
+            <a href="https://www.facebook.com/share/1KW9YBm4bC/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Facebook">
+              <Facebook size={20} />
+            </a>
+            <a href="https://youtube.com/@empatizando?si=UD7uOq0eUylYfdnP" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="YouTube">
+              <Youtube size={20} />
+            </a>
+            <a href="https://www.tiktok.com/@empatizando4?_r=1&_t=ZS-942DTIg0u07" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="TikTok">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.72a8.2 8.2 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.15z"/></svg>
             </a>
           </div>
         </div>

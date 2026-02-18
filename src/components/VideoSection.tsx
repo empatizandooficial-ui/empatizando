@@ -20,7 +20,7 @@ const VideoSection = () => {
         <div className="relative rounded-2xl overflow-hidden shadow-glow aspect-video bg-foreground/5">
           <iframe
             className="absolute inset-0 w-full h-full"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            src="https://www.youtube.com/embed/?listType=user_uploads&list=empatizando"
             title="Empatizando - Vídeo"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -28,7 +28,15 @@ const VideoSection = () => {
         </div>
 
         <p className="text-center text-muted-foreground text-sm mt-6">
-          Inscreva-se no canal para não perder nenhum conteúdo novo.
+          <a
+            href="https://youtube.com/@empatizando?si=UD7uOq0eUylYfdnP"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground transition-colors"
+          >
+            Inscreva-se no canal
+          </a>{" "}
+          para não perder nenhum conteúdo novo.
         </p>
       </div>
     </section>
