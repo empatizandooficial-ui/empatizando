@@ -29,7 +29,7 @@ const Header = () => {
     >
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <a href="#" className="flex items-center gap-2">
-          <img src={logo} alt="Empatizando logo" className="h-10 w-10 rounded-full object-contain" />
+          <img src={logo} alt="Empatizando logo" className="h-10 w-10 rounded-full object-cover" />
           <span className="font-heading text-2xl font-bold gradient-text">Empatizando</span>
         </a>
 
