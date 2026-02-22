@@ -1,4 +1,5 @@
 import { Dna, Heart, Orbit } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 
 const pillars = [
   {
@@ -22,10 +23,16 @@ const pillars = [
 ];
 
 const Pillars = () => {
+  const { ref, isVisible } = useScrollAnimation(0.1);
+
   return (
     <section id="pilares" className="py-24 px-6">
-      <div className="container mx-auto">
-        <div className="text-center mb-16">
+      <div className="container mx-auto" ref={ref}>
+        <div
+          className={`text-center mb-16 transition-all duration-700 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
           <p className="font-heading text-sm font-semibold uppercase tracking-widest gradient-text mb-3">
             Os Três Pilares
           </p>
@@ -39,8 +46,10 @@ const Pillars = () => {
           {pillars.map((pillar, i) => (
             <div
               key={pillar.title}
-              className="group relative rounded-2xl border border-border bg-card p-8 hover:shadow-glow transition-all duration-500 opacity-0 animate-fade-up"
-              style={{ animationDelay: `${i * 150}ms` }}
+              className={`group relative rounded-2xl border border-border bg-card p-8 hover:shadow-glow transition-all duration-700 ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+              }`}
+              style={{ transitionDelay: isVisible ? `${i * 150}ms` : "0ms" }}
             >
               <div className="gradient-bg w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <pillar.icon className="text-primary-foreground" size={26} />

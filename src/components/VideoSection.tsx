@@ -1,10 +1,16 @@
-import { Play } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 
 const VideoSection = () => {
+  const { ref, isVisible } = useScrollAnimation(0.1);
+
   return (
     <section id="videos" className="py-24 px-6 gradient-subtle-bg">
-      <div className="container mx-auto max-w-4xl">
-        <div className="text-center mb-12">
+      <div className="container mx-auto max-w-4xl" ref={ref}>
+        <div
+          className={`text-center mb-12 transition-all duration-700 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
           <p className="font-heading text-sm font-semibold uppercase tracking-widest gradient-text mb-3">
             Conteúdo em Vídeo
           </p>
@@ -17,7 +23,11 @@ const VideoSection = () => {
           </p>
         </div>
 
-        <div className="relative rounded-2xl overflow-hidden shadow-glow aspect-video bg-foreground/5">
+        <div
+          className={`relative rounded-2xl overflow-hidden shadow-glow aspect-video bg-foreground/5 transition-all duration-700 delay-200 ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
+        >
           <iframe
             className="absolute inset-0 w-full h-full"
             src="https://www.youtube.com/embed/?listType=user_uploads&list=empatizando"
@@ -27,7 +37,11 @@ const VideoSection = () => {
           />
         </div>
 
-        <p className="text-center text-muted-foreground text-sm mt-6">
+        <p
+          className={`text-center text-muted-foreground text-sm mt-6 transition-all duration-700 delay-300 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+        >
           <a
             href="https://youtube.com/@empatizando?si=UD7uOq0eUylYfdnP"
             target="_blank"
