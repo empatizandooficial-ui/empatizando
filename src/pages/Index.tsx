@@ -1,9 +1,11 @@
+import { lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import Pillars from "@/components/Pillars";
-import VideoSection from "@/components/VideoSection";
-import Community from "@/components/Community";
-import Footer from "@/components/Footer";
+
+const Pillars = lazy(() => import("@/components/Pillars"));
+const VideoSection = lazy(() => import("@/components/VideoSection"));
+const Community = lazy(() => import("@/components/Community"));
+const Footer = lazy(() => import("@/components/Footer"));
 
 const Index = () => {
   return (
@@ -11,11 +13,15 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
-        <Pillars />
-        <VideoSection />
-        <Community />
+        <Suspense fallback={null}>
+          <Pillars />
+          <VideoSection />
+          <Community />
+        </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };
