@@ -16,8 +16,8 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   
-  const isHomePage = location.pathname === "/";
-  const useLightText = isHomePage && !scrolled;
+  const isPortalPage = location.pathname.includes("portal");
+  const useLightText = !isPortalPage && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || !isHomePage
+        scrolled || isPortalPage
           ? "bg-background/90 backdrop-blur-md shadow-soft"
           : "bg-transparent"
       }`}
@@ -45,10 +45,10 @@ const Header = () => {
             <a
               key={link.href}
               href={link.href}
-              className={`font-heading text-sm font-medium transition-colors ${
+              className={`font-heading text-sm transition-colors ${
                 useLightText
-                  ? "text-primary-foreground/90 hover:text-primary-foreground drop-shadow-md"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-white font-semibold drop-shadow-lg hover:text-white/80"
+                  : "text-foreground font-medium hover:text-primary"
               }`}
             >
               {link.label}
