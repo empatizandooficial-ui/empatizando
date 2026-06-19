@@ -1,24 +1,24 @@
-import { Dna, Heart, Orbit } from "lucide-react";
+import { Dna, Brain, Orbit } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 
 const pillars = [
   {
     icon: Dna,
-    title: "Bio-Equilíbrio",
+    title: "Corpo (Bio-Equilíbrio)",
     description:
-      "Desintoxicação corporal, dieta por tipo sanguíneo e o corpo como antena biológica. Reconecte-se com a sabedoria do seu organismo.",
+      "A sua Antena Biológica. Protocolos de desintoxicação, remoção da névoa química (Brain Fog) e a dieta do tipo sanguíneo para otimizar o seu combustível celular.",
   },
   {
-    icon: Heart,
-    title: "Empatia na Prática",
+    icon: Brain,
+    title: "Mente (Empatia na Prática)",
     description:
-      "Inteligência emocional e conexão humana genuína. Transforme relações e desenvolva uma comunicação mais consciente.",
+      "Remoção do parasitismo mental e desenvolvimento da inteligência socioemocional. Cure a interface para recuperar o discernimento e a empatia genuína.",
   },
   {
     icon: Orbit,
-    title: "Mitologia Universal",
+    title: "Cosmos (Cosmologia Universal)",
     description:
-      'Explore o cosmos, o "Criador Caído" e nossas origens universais. Uma jornada do micro ao macro, do DNA às estrelas.',
+      "Origens cósmicas, engenharia sideral e os mistérios do 'Criador Caído'. Uma jornada do micro ao macro para compreender a trama cósmica sem dogmas.",
   },
 ];
 

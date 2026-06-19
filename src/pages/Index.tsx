@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 const Pillars = lazy(() => import("@/components/Pillars"));
 const VideoSection = lazy(() => import("@/components/VideoSection"));
 const Community = lazy(() => import("@/components/Community"));
+const Newsletter = lazy(() => import("@/components/Newsletter"));
 const Footer = lazy(() => import("@/components/Footer"));
 
 const Index = () => {
@@ -17,6 +18,7 @@ const Index = () => {
           <Pillars />
           <VideoSection />
           <Community />
+          <Newsletter />
         </Suspense>
       </main>
       <Suspense fallback={null}>

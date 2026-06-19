@@ -28,7 +28,7 @@ const Hero = () => {
           style={{ animationDelay: "200ms" }}
         >
           Descomplicando a jornada do DNA às estrelas através do Bio-Equilíbrio,
-          da Empatia e da Cosmologia Universal.
+          da Mente e da Cosmologia Universal.
         </p>
 
         <a
