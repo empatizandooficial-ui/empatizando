@@ -5,15 +5,45 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Calendar as CalendarIcon, Upload, Instagram, Video, Save } from "lucide-react";
+import { Calendar as CalendarIcon, Upload, Instagram, Video, Save, Sparkles, Wand2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminAutomation = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [postText, setPostText] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  const [baseContent, setBaseContent] = useState("");
+  const [instagramCaption, setInstagramCaption] = useState("");
+  const [tiktokCaption, setTiktokCaption] = useState("");
+  
+  const [activeTab, setActiveTab] = useState<"base" | "instagram" | "tiktok">("base");
+  
   const [scheduleDate, setScheduleDate] = useState("");
   const [platforms, setPlatforms] = useState({ instagram: true, tiktok: true });
+
+  const handleAIGeneration = async () => {
+    if (!baseContent) {
+      toast({ title: "Atenção", description: "Escreva o conteúdo base primeiro.", variant: "destructive" });
+      return;
+    }
+    
+    setIsGenerating(true);
+    
+    // Simulação da chamada ao Agente Thoth (IA)
+    setTimeout(() => {
+      setInstagramCaption(baseContent + "\n\n✨ Assista completo no portal!\n\n#Espiritualidade #Ciencia #Despertar #BioEquilibrio #Frequencia #Empatia #Cosmos");
+      setTiktokCaption(baseContent.substring(0, 100) + "... 🌌 Vem descobrir o segredo! Link na bio! #despertar #energia #matrix #frequencia");
+      
+      setIsGenerating(false);
+      setActiveTab("instagram");
+      
+      toast({
+        title: "Magia Concluída! 🧙‍♂️",
+        description: "O Agente Thoth gerou as legendas otimizadas para cada rede social.",
+      });
+    }, 2000);
+  };
 
   const handleSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +56,9 @@ const AdminAutomation = () => {
         title: "Post Agendado com Sucesso!",
         description: `Agendado para ${new Date(scheduleDate).toLocaleString()} nas plataformas selecionadas.`,
       });
-      setPostText("");
+      setBaseContent("");
+      setInstagramCaption("");
+      setTiktokCaption("");
       setScheduleDate("");
     }, 1500);
   };
@@ -61,17 +93,57 @@ const AdminAutomation = () => {
                   </div>
                 </div>
 
-                {/* Texto/Legenda */}
-                <div className="space-y-2">
-                  <Label htmlFor="caption" className="text-foreground font-semibold">Legenda da Publicação</Label>
-                  <Textarea 
-                    id="caption"
-                    placeholder="Escreva a mensagem magnética e adicione as hashtags..."
-                    className="min-h-[120px] bg-background/50 border-border resize-none"
-                    value={postText}
-                    onChange={(e) => setPostText(e.target.value)}
-                    required
-                  />
+                {/* Editor Inteligente com Abas */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-foreground font-semibold">Laboratório de Texto (Thoth AI)</Label>
+                    <Button 
+                      type="button" 
+                      onClick={handleAIGeneration}
+                      disabled={isGenerating || !baseContent}
+                      variant="outline" 
+                      className="border-accent text-accent hover:bg-accent hover:text-white transition-all h-8 px-3 text-xs"
+                    >
+                      {isGenerating ? "Processando..." : <><Sparkles className="w-3 h-3 mr-1" /> Gerar Variações</>}
+                    </Button>
+                  </div>
+
+                  <div className="flex border-b border-border/50">
+                    <button type="button" onClick={() => setActiveTab("base")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === "base" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                      Texto Base
+                    </button>
+                    <button type="button" onClick={() => setActiveTab("instagram")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1 ${activeTab === "instagram" ? "border-pink-500 text-pink-500" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                      <Instagram className="w-3 h-3" /> Instagram
+                    </button>
+                    <button type="button" onClick={() => setActiveTab("tiktok")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1 ${activeTab === "tiktok" ? "border-cyan-400 text-cyan-400" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                      <Video className="w-3 h-3" /> TikTok
+                    </button>
+                  </div>
+
+                  {activeTab === "base" && (
+                    <Textarea 
+                      placeholder="Escreva a ideia central do vídeo ou cole o roteiro bruto. A IA fará o resto..."
+                      className="min-h-[120px] bg-background/50 border-border resize-none"
+                      value={baseContent}
+                      onChange={(e) => setBaseContent(e.target.value)}
+                    />
+                  )}
+                  {activeTab === "instagram" && (
+                    <Textarea 
+                      placeholder="Legenda pronta para o Instagram (textão permitido, até 30 hashtags)..."
+                      className="min-h-[120px] bg-background/50 border-pink-500/30 focus-visible:ring-pink-500 resize-none"
+                      value={instagramCaption}
+                      onChange={(e) => setInstagramCaption(e.target.value)}
+                    />
+                  )}
+                  {activeTab === "tiktok" && (
+                    <Textarea 
+                      placeholder="Legenda rápida para o TikTok (curta, alto impacto, hashtags virais)..."
+                      className="min-h-[120px] bg-background/50 border-cyan-400/30 focus-visible:ring-cyan-400 resize-none"
+                      value={tiktokCaption}
+                      onChange={(e) => setTiktokCaption(e.target.value)}
+                    />
+                  )}
                 </div>
 
                 {/* Data e Hora */}
