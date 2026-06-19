@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const Index = lazy(() => import("./pages/Index"));
 const Portal = lazy(() => import("./pages/Portal"));
+const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/portal" element={<Portal />} />
+            <Route path="/admin/automation" element={<AdminAutomation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
