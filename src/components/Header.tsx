@@ -3,10 +3,11 @@ import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const navLinks = [
-  { label: "Pilares", href: "#pilares" },
-  { label: "Vídeos", href: "#videos" },
-  { label: "Comunidade", href: "#comunidade" },
-  { label: "Sobre", href: "#sobre" },
+  { label: "Pilares", href: "/#pilares" },
+  { label: "Portal", href: "/portal" },
+  { label: "Vídeos", href: "/#videos" },
+  { label: "Comunidade", href: "/#comunidade" },
+  { label: "Sobre", href: "/#sobre" },
 ];
 
 const Header = () => {
@@ -45,8 +46,8 @@ const Header = () => {
             </a>
           ))}
           <a
-            href="#pilares"
-            className="gradient-bg text-primary-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
+            href="/#pilares"
+            className="bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
           >
             Começar
           </a>
@@ -76,9 +77,9 @@ const Header = () => {
             </a>
           ))}
           <a
-            href="#pilares"
+            href="/#pilares"
             onClick={() => setMobileOpen(false)}
-            className="block mt-2 text-center gradient-bg text-primary-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full"
+            className="block mt-2 text-center bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full"
           >
             Começar
           </a>
