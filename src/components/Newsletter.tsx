@@ -54,7 +54,7 @@ const Newsletter = () => {
           <button
             type="submit"
             disabled={status === "loading" || status === "success"}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-all disabled:opacity-50"
           >
             {status === "loading" ? "Enviando..." : status === "success" ? "Conectado!" : "Sintonizar"}
             {status !== "success" && status !== "loading" && <Send size={18} />}

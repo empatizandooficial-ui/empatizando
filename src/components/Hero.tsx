@@ -33,7 +33,7 @@ const Hero = () => {
 
         <a
           href="#pilares"
-          className="inline-block gradient-bg text-primary-foreground font-heading font-semibold text-lg px-8 py-4 rounded-full hover:opacity-90 transition-opacity shadow-glow opacity-0 animate-fade-up"
+          className="inline-block bg-accent text-accent-foreground font-heading font-semibold text-lg px-8 py-4 rounded-full hover:opacity-90 transition-opacity shadow-glow opacity-0 animate-fade-up"
           style={{ animationDelay: "400ms" }}
         >
           Começar Jornada
