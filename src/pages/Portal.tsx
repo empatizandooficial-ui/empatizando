@@ -33,7 +33,7 @@ const contents = [
 
 const Portal = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background gradient-subtle-bg flex flex-col">
       <Header />
       <main className="flex-grow pt-32 pb-16">
         <div className="container mx-auto px-6">

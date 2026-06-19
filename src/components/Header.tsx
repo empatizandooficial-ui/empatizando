@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const navLinks = [
@@ -13,6 +14,10 @@ const navLinks = [
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  
+  const isHomePage = location.pathname === "/";
+  const useLightText = isHomePage && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -23,7 +28,7 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        scrolled || !isHomePage
           ? "bg-background/90 backdrop-blur-md shadow-soft"
           : "bg-transparent"
       }`}
@@ -31,7 +36,7 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <a href="#" className="flex items-center gap-2">
           <img src={logo} alt="Empatizando logo" className="h-10 w-10 rounded-full object-cover" />
-          <span className="font-heading text-2xl font-bold gradient-text">Empatizando</span>
+          <span className={`font-heading text-2xl font-bold ${useLightText ? 'text-primary-foreground drop-shadow-md' : 'gradient-text'}`}>Empatizando</span>
         </a>
 
         {/* Desktop nav */}
@@ -40,7 +45,11 @@ const Header = () => {
             <a
               key={link.href}
               href={link.href}
-              className="font-heading text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className={`font-heading text-sm font-medium transition-colors ${
+                useLightText
+                  ? "text-primary-foreground/90 hover:text-primary-foreground drop-shadow-md"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {link.label}
             </a>
@@ -55,7 +64,7 @@ const Header = () => {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-foreground"
+          className={`md:hidden ${useLightText ? 'text-primary-foreground' : 'text-foreground'}`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
