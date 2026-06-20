@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      knowledge_base: {
+        Row: {
+          content: string | null
+          created_at: string
+          embedding: string | null
+          id: string
+          metadata: Json | null
+          summary: string | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          summary?: string | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          summary?: string | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       leads_newsletter: {
         Row: {
           created_at: string
@@ -80,12 +134,55 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          description: string | null
+          id: string
+          is_secret: boolean | null
+          key_name: string
+          key_value: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          is_secret?: boolean | null
+          key_name: string
+          key_value?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          is_secret?: boolean | null
+          key_name?: string
+          key_value?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      match_documents: {
+        Args: {
+          match_count: number
+          match_threshold: number
+          p_user_id: string
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          id: string
+          metadata: Json
+          similarity: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
