@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { Settings, Key, BrainCircuit, Eye, EyeOff, Save, ShieldAlert } from "lucide-react";
@@ -22,12 +23,21 @@ const AdminSettings = () => {
   
   const [keys, setKeys] = useState({
     openai_api_key: "",
+    anthropic_api_key: "",
     gemini_api_key: "",
     groq_api_key: "",
   });
   
+  const [models, setModels] = useState({
+    openai_model: "gpt-5.5",
+    anthropic_model: "claude-fable-5",
+    gemini_model: "gemini-3.5-flash",
+    groq_model: "openai/gpt-oss-120b",
+  });
+
   const [showKeys, setShowKeys] = useState({
     openai_api_key: false,
+    anthropic_api_key: false,
     gemini_api_key: false,
     groq_api_key: false,
   });
@@ -53,6 +63,7 @@ const AdminSettings = () => {
 
       if (data) {
         const newKeys = { ...keys };
+        const newModels = { ...models };
         let foundPrompt = "";
         
         data.forEach((setting: SystemSetting) => {
@@ -60,10 +71,13 @@ const AdminSettings = () => {
             foundPrompt = setting.key_value || "";
           } else if (setting.key_name in newKeys) {
             newKeys[setting.key_name as keyof typeof keys] = setting.key_value || "";
+          } else if (setting.key_name in newModels) {
+            newModels[setting.key_name as keyof typeof models] = setting.key_value || "";
           }
         });
         
         setKeys(newKeys);
+        setModels(newModels);
         setSystemPrompt(foundPrompt);
       }
     } catch (error: unknown) {
@@ -93,6 +107,13 @@ const AdminSettings = () => {
     }));
   };
 
+  const handleModelChange = (modelName: keyof typeof models, value: string) => {
+    setModels(prev => ({
+      ...prev,
+      [modelName]: value
+    }));
+  };
+
   const saveSettings = async () => {
     setLoading(true);
     try {
@@ -105,7 +126,28 @@ const AdminSettings = () => {
           key_name: 'openai_api_key',
           key_value: keys.openai_api_key,
           is_secret: true,
-          description: "Chave de API da OpenAI (GPT-4)"
+          description: "Chave de API da OpenAI"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'openai_model',
+          key_value: models.openai_model,
+          is_secret: false,
+          description: "Modelo da OpenAI"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'anthropic_api_key',
+          key_value: keys.anthropic_api_key,
+          is_secret: true,
+          description: "Chave de API da Anthropic"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'anthropic_model',
+          key_value: models.anthropic_model,
+          is_secret: false,
+          description: "Modelo da Anthropic"
         },
         {
           user_id: userData.user.id,
@@ -116,10 +158,24 @@ const AdminSettings = () => {
         },
         {
           user_id: userData.user.id,
+          key_name: 'gemini_model',
+          key_value: models.gemini_model,
+          is_secret: false,
+          description: "Modelo do Google Gemini"
+        },
+        {
+          user_id: userData.user.id,
           key_name: 'groq_api_key',
           key_value: keys.groq_api_key,
           is_secret: true,
-          description: "Chave de API da Groq (Llama 3)"
+          description: "Chave de API da Groq"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'groq_model',
+          key_value: models.groq_model,
+          is_secret: false,
+          description: "Modelo da Groq"
         },
         {
           user_id: userData.user.id,
@@ -144,6 +200,7 @@ const AdminSettings = () => {
       // Esconde as chaves novamente após salvar
       setShowKeys({
         openai_api_key: false,
+        anthropic_api_key: false,
         gemini_api_key: false,
         groq_api_key: false,
       });
@@ -210,67 +267,160 @@ const AdminSettings = () => {
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* OpenAI */}
-                <div className="space-y-2">
-                  <Label className="text-foreground">OpenAI API Key</Label>
-                  <div className="relative">
-                    <Input 
-                      type={showKeys.openai_api_key ? "text" : "password"}
-                      value={keys.openai_api_key}
-                      onChange={(e) => handleKeyChange('openai_api_key', e.target.value)}
-                      placeholder="sk-proj-..."
-                      className="bg-background/50 border-border pr-10 font-mono text-sm"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => toggleKeyVisibility('openai_api_key')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showKeys.openai_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                <div className="space-y-4 p-4 border border-white/5 rounded-xl bg-white/5">
+                  <h3 className="text-lg font-heading font-semibold text-foreground">OpenAI</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground">API Key</Label>
+                      <div className="relative">
+                        <Input 
+                          type={showKeys.openai_api_key ? "text" : "password"}
+                          value={keys.openai_api_key}
+                          onChange={(e) => handleKeyChange('openai_api_key', e.target.value)}
+                          placeholder="sk-proj-..."
+                          className="bg-background/50 border-border pr-10 font-mono text-sm"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => toggleKeyVisibility('openai_api_key')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showKeys.openai_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-foreground">Modelo</Label>
+                      <Select value={models.openai_model} onValueChange={(val) => handleModelChange('openai_model', val)}>
+                        <SelectTrigger className="bg-background/50">
+                          <SelectValue placeholder="Selecione o modelo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
+                          <SelectItem value="gpt-5.5-pro">GPT-5.5 Pro</SelectItem>
+                          <SelectItem value="gpt-5.4-mini">GPT-5.4 Mini</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Anthropic */}
+                <div className="space-y-4 p-4 border border-white/5 rounded-xl bg-white/5">
+                  <h3 className="text-lg font-heading font-semibold text-foreground">Anthropic</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground">API Key</Label>
+                      <div className="relative">
+                        <Input 
+                          type={showKeys.anthropic_api_key ? "text" : "password"}
+                          value={keys.anthropic_api_key}
+                          onChange={(e) => handleKeyChange('anthropic_api_key', e.target.value)}
+                          placeholder="sk-ant-..."
+                          className="bg-background/50 border-border pr-10 font-mono text-sm"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => toggleKeyVisibility('anthropic_api_key')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showKeys.anthropic_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-foreground">Modelo</Label>
+                      <Select value={models.anthropic_model} onValueChange={(val) => handleModelChange('anthropic_model', val)}>
+                        <SelectTrigger className="bg-background/50">
+                          <SelectValue placeholder="Selecione o modelo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="claude-fable-5">Claude Fable 5 (Mythos Class)</SelectItem>
+                          <SelectItem value="claude-opus-4.8">Claude Opus 4.8</SelectItem>
+                          <SelectItem value="claude-sonnet-4.6">Claude Sonnet 4.6</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
                 {/* Gemini */}
-                <div className="space-y-2">
-                  <Label className="text-foreground">Google Gemini API Key</Label>
-                  <div className="relative">
-                    <Input 
-                      type={showKeys.gemini_api_key ? "text" : "password"}
-                      value={keys.gemini_api_key}
-                      onChange={(e) => handleKeyChange('gemini_api_key', e.target.value)}
-                      placeholder="AIzaSy..."
-                      className="bg-background/50 border-border pr-10 font-mono text-sm"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => toggleKeyVisibility('gemini_api_key')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showKeys.gemini_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                <div className="space-y-4 p-4 border border-white/5 rounded-xl bg-white/5">
+                  <h3 className="text-lg font-heading font-semibold text-foreground">Google Gemini</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground">API Key</Label>
+                      <div className="relative">
+                        <Input 
+                          type={showKeys.gemini_api_key ? "text" : "password"}
+                          value={keys.gemini_api_key}
+                          onChange={(e) => handleKeyChange('gemini_api_key', e.target.value)}
+                          placeholder="AIzaSy..."
+                          className="bg-background/50 border-border pr-10 font-mono text-sm"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => toggleKeyVisibility('gemini_api_key')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showKeys.gemini_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-foreground">Modelo</Label>
+                      <Select value={models.gemini_model} onValueChange={(val) => handleModelChange('gemini_model', val)}>
+                        <SelectTrigger className="bg-background/50">
+                          <SelectValue placeholder="Selecione o modelo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
+                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
+                          <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
                 {/* Groq */}
-                <div className="space-y-2">
-                  <Label className="text-foreground">Groq API Key (Llama 3)</Label>
-                  <div className="relative">
-                    <Input 
-                      type={showKeys.groq_api_key ? "text" : "password"}
-                      value={keys.groq_api_key}
-                      onChange={(e) => handleKeyChange('groq_api_key', e.target.value)}
-                      placeholder="gsk_..."
-                      className="bg-background/50 border-border pr-10 font-mono text-sm"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => toggleKeyVisibility('groq_api_key')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showKeys.groq_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                <div className="space-y-4 p-4 border border-white/5 rounded-xl bg-white/5">
+                  <h3 className="text-lg font-heading font-semibold text-foreground">Groq (LPU)</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground">API Key</Label>
+                      <div className="relative">
+                        <Input 
+                          type={showKeys.groq_api_key ? "text" : "password"}
+                          value={keys.groq_api_key}
+                          onChange={(e) => handleKeyChange('groq_api_key', e.target.value)}
+                          placeholder="gsk_..."
+                          className="bg-background/50 border-border pr-10 font-mono text-sm"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => toggleKeyVisibility('groq_api_key')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showKeys.groq_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-foreground">Modelo</Label>
+                      <Select value={models.groq_model} onValueChange={(val) => handleModelChange('groq_model', val)}>
+                        <SelectTrigger className="bg-background/50">
+                          <SelectValue placeholder="Selecione o modelo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="openai/gpt-oss-120b">GPT-OSS 120B Flagship</SelectItem>
+                          <SelectItem value="openai/gpt-oss-20b">GPT-OSS 20B Fast</SelectItem>
+                          <SelectItem value="groq/compound">Groq Compound</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
               </div>
