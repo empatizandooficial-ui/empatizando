@@ -382,12 +382,10 @@ const AdminSettings = () => {
                           <SelectValue placeholder="Selecione o modelo" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro (Flagship)</SelectItem>
                           <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
-                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
                           <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
-                          <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
-                          <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                          <SelectItem value="gemini-1.0-pro">Gemini 1.0 Pro</SelectItem>
+                          <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
