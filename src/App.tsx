@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 const Index = lazy(() => import("./pages/Index"));
 const Portal = lazy(() => import("./pages/Portal"));
 const AdminHub = lazy(() => import("./pages/AdminHub"));
+const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
 const AdminStudio = lazy(() => import("./pages/AdminStudio"));
 const Login = lazy(() => import("./pages/Login"));
@@ -30,6 +31,11 @@ const App = () => (
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminHub />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <ProtectedRoute>
+                <AdminSettings />
               </ProtectedRoute>
             } />
             <Route path="/admin/automation" element={

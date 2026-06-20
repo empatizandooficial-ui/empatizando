@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { Film, Zap, Lock } from "lucide-react";
+import { Film, Zap, Lock, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AdminHub = () => {
@@ -27,7 +27,7 @@ const AdminHub = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: "100ms" }}>
             
             {/* Card Estúdio */}
             <Link to="/admin/studio" className="group">
@@ -53,6 +53,20 @@ const AdminHub = () => {
                 <h2 className="text-3xl font-heading font-bold text-foreground mb-4">Painel de Automação</h2>
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   A Máquina de Distribuição. Faça o upload das mídias prontas, gere as legendas curtas otimizadas e coloque na Fila de Transmissão das redes sociais.
+                </p>
+              </div>
+            </Link>
+
+            {/* Card Laboratório Neural */}
+            <Link to="/admin/settings" className="group">
+              <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-purple-500/50 hover:bg-white/5 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-16 h-16 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 transition-transform">
+                  <Settings className="w-8 h-8 text-purple-400" />
+                </div>
+                <h2 className="text-3xl font-heading font-bold text-foreground mb-4">Laboratório Neural</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Controle Global da IA. Guarde as chaves de API com segurança e ajuste a Engenharia do Roteiro Subliminar (O Cérebro de Thoth) ao vivo.
                 </p>
               </div>
             </Link>
