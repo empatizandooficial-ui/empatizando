@@ -17,7 +17,8 @@ const Header = () => {
   const location = useLocation();
   
   const isPortalPage = location.pathname.includes("portal");
-  const useLightText = !isPortalPage && !scrolled;
+  const isHomePage = location.pathname === "/";
+  const useLightText = isHomePage && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
