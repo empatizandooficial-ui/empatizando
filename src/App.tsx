@@ -10,6 +10,7 @@ const Portal = lazy(() => import("./pages/Portal"));
 const AdminHub = lazy(() => import("./pages/AdminHub"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
+const AdminLibrarian = lazy(() => import("./pages/AdminLibrarian"));
 const AdminStudio = lazy(() => import("./pages/AdminStudio"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -41,6 +42,11 @@ const App = () => (
             <Route path="/admin/automation" element={
               <ProtectedRoute>
                 <AdminAutomation />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/librarian" element={
+              <ProtectedRoute>
+                <AdminLibrarian />
               </ProtectedRoute>
             } />
             <Route path="/admin/studio" element={

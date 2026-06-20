@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { Settings, Key, BrainCircuit, Eye, EyeOff, Save, ShieldAlert } from "lucide-react";
+import { Settings, Key, BrainCircuit, Eye, EyeOff, Save, ShieldAlert, Sparkles, Library } from "lucide-react";
+import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 
 interface SystemSetting {
   id?: string;
@@ -33,6 +34,11 @@ const AdminSettings = () => {
     anthropic_model: "claude-fable-5",
     gemini_model: "gemini-3.5-flash",
     groq_model: "openai/gpt-oss-120b",
+  });
+
+  const [routing, setRouting] = useState({
+    thoth_model: "gpt-5.5",
+    librarian_model: "gemini-3.5-flash",
   });
 
   const [showKeys, setShowKeys] = useState({
@@ -64,6 +70,7 @@ const AdminSettings = () => {
       if (data) {
         const newKeys = { ...keys };
         const newModels = { ...models };
+        const newRouting = { ...routing };
         let foundPrompt = "";
         
         data.forEach((setting: SystemSetting) => {
@@ -73,11 +80,14 @@ const AdminSettings = () => {
             newKeys[setting.key_name as keyof typeof keys] = setting.key_value || "";
           } else if (setting.key_name in newModels) {
             newModels[setting.key_name as keyof typeof models] = setting.key_value || "";
+          } else if (setting.key_name in newRouting) {
+            newRouting[setting.key_name as keyof typeof routing] = setting.key_value || "";
           }
         });
         
         setKeys(newKeys);
         setModels(newModels);
+        setRouting(newRouting);
         setSystemPrompt(foundPrompt);
       }
     } catch (error: unknown) {
@@ -111,6 +121,13 @@ const AdminSettings = () => {
     setModels(prev => ({
       ...prev,
       [modelName]: value
+    }));
+  };
+
+  const handleRoutingChange = (routeName: keyof typeof routing, value: string) => {
+    setRouting(prev => ({
+      ...prev,
+      [routeName]: value
     }));
   };
 
@@ -183,6 +200,20 @@ const AdminSettings = () => {
           key_value: systemPrompt,
           is_secret: false,
           description: "Engenharia de Roteiro Subliminar (O Cérebro de Thoth)"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'thoth_model',
+          key_value: routing.thoth_model,
+          is_secret: false,
+          description: "Modelo selecionado para o Agente Thoth"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'librarian_model',
+          key_value: routing.librarian_model,
+          is_secret: false,
+          description: "Modelo selecionado para o Agente Bibliotecário"
         }
       ];
 
@@ -237,6 +268,105 @@ const AdminSettings = () => {
               <h1 className="text-4xl font-heading font-bold text-foreground mb-2 flex items-center gap-3">
                 <Settings className="w-8 h-8 text-accent" /> Laboratório Neural
               </h1>
+              <p className="text-muted-foreground text-lg">
+                Gerencie as APIs de Inteligência Artificial e o Roteamento de Agentes.
+              </p>
+            </div>
+          </div>
+
+          <div className="glass-card p-8 rounded-3xl border border-white/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl -z-10" />
+
+              <div className="mb-12">
+                <h2 className="text-xl font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <BrainCircuit className="w-5 h-5 text-accent" />
+                  Roteamento de Agentes (Separação de Mentes)
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Thoth */}
+                  <div className="space-y-3 p-5 rounded-xl bg-accent/5 border border-accent/20">
+                    <div>
+                      <h3 className="font-heading font-semibold text-foreground flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-pink-500" />
+                        Mente Criativa (Thoth)
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Agente responsável por escrever os roteiros e legendas persuasivas.
+                      </p>
+                    </div>
+                    <Select value={routing.thoth_model} onValueChange={(val) => handleRoutingChange('thoth_model', val)}>
+                      <SelectTrigger className="bg-background/80 border-accent/30 focus:ring-accent">
+                        <SelectValue placeholder="Selecione o modelo do Thoth" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>OpenAI</SelectLabel>
+                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
+                          <SelectItem value="gpt-4o">GPT-4o (Omni)</SelectItem>
+                          <SelectItem value="gpt-4o-mini">GPT-4o Mini</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>Anthropic</SelectLabel>
+                          <SelectItem value="claude-fable-5">Claude Fable 5</SelectItem>
+                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</SelectItem>
+                          <SelectItem value="claude-opus-4.8">Claude Opus 4.8</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>Google Gemini</SelectLabel>
+                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
+                          <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>Groq</SelectLabel>
+                          <SelectItem value="openai/gpt-oss-120b">GPT-OSS 120B Flagship</SelectItem>
+                          <SelectItem value="llama-3.1-70b-versatile">Llama 3.1 70B</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Bibliotecário */}
+                  <div className="space-y-3 p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+                    <div>
+                      <h3 className="font-heading font-semibold text-foreground flex items-center gap-2">
+                        <Library className="w-4 h-4 text-cyan-500" />
+                        Mente Analítica (Bibliotecário)
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Agente responsável por ler grandes arquivos, PDFs e buscar contexto exato.
+                      </p>
+                    </div>
+                    <Select value={routing.librarian_model} onValueChange={(val) => handleRoutingChange('librarian_model', val)}>
+                      <SelectTrigger className="bg-background/80 border-cyan-500/30 focus:ring-cyan-500">
+                        <SelectValue placeholder="Selecione o modelo do Bibliotecário" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Google Gemini (Recomendado para Contexto Longo)</SelectLabel>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
+                          <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>Anthropic</SelectLabel>
+                          <SelectItem value="claude-fable-5">Claude Fable 5</SelectItem>
+                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>OpenAI</SelectLabel>
+                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
+                          <SelectItem value="gpt-4o">GPT-4o (Omni)</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <h2 className="text-xl font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Key className="w-5 h-5 text-accent" />
+                  Cofre de Chaves e Modelos Padrão
+                </h2>
               <p className="text-muted-foreground text-lg">
                 Gerencie as APIs de Inteligência Artificial e a Engenharia do Roteiro.
               </p>

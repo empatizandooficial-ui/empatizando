@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { Film, Zap, Lock, Settings } from "lucide-react";
+import { Film, Zap, Lock, Settings, Library } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AdminHub = () => {
@@ -27,8 +27,22 @@ const AdminHub = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto animate-fade-in" style={{ animationDelay: "100ms" }}>
             
+            {/* Card Bibliotecário */}
+            <Link to="/admin/librarian" className="group">
+              <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-cyan-500/50 hover:bg-white/5 relative overflow-hidden">
+                <div className="absolute -right-12 -top-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
+                <div className="mb-6 inline-flex p-4 rounded-2xl bg-cyan-500/10 text-cyan-500 group-hover:scale-110 transition-transform">
+                  <Library className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-heading font-bold text-foreground mb-3">O Bibliotecário</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Agente de Pesquisa e Contexto. Faça upload de livros e artigos para formar a base de conhecimento.
+                </p>
+              </div>
+            </Link>
+
             {/* Card Estúdio */}
             <Link to="/admin/studio" className="group">
               <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-accent/50 hover:bg-white/5 relative overflow-hidden">
