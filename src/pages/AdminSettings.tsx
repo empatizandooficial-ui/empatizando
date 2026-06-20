@@ -301,7 +301,7 @@ const AdminSettings = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>OpenAI</SelectLabel>
-                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
+                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship ⭐ (Recomendado)</SelectItem>
                           <SelectItem value="gpt-5.5-pro">GPT-5.5 Pro</SelectItem>
                           <SelectItem value="gpt-5.4-mini">GPT-5.4 Mini</SelectItem>
                           <SelectItem value="gpt-4o">GPT-4o (Omni)</SelectItem>
@@ -310,17 +310,17 @@ const AdminSettings = () => {
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>Anthropic</SelectLabel>
-                          <SelectItem value="claude-fable-5">Claude Fable 5</SelectItem>
+                          <SelectItem value="claude-fable-5">Claude Fable 5 ⭐ (Recomendado)</SelectItem>
                           <SelectItem value="claude-opus-4.8">Claude Opus 4.8</SelectItem>
                           <SelectItem value="claude-sonnet-4.6">Claude Sonnet 4.6</SelectItem>
                           <SelectItem value="claude-3-5-opus-20240229">Claude 3.5 Opus</SelectItem>
-                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</SelectItem>
+                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet ⭐ (Bom p/ Leitura)</SelectItem>
                           <SelectItem value="claude-3-haiku-20240307">Claude 3 Haiku</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>Google Gemini</SelectLabel>
                           <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
-                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
                           <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
                           <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectGroup>
@@ -357,22 +357,22 @@ const AdminSettings = () => {
                         <SelectGroup>
                           <SelectLabel>Google Gemini</SelectLabel>
                           <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
-                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
                           <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
                           <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>Anthropic</SelectLabel>
-                          <SelectItem value="claude-fable-5">Claude Fable 5</SelectItem>
+                          <SelectItem value="claude-fable-5">Claude Fable 5 ⭐ (Recomendado)</SelectItem>
                           <SelectItem value="claude-opus-4.8">Claude Opus 4.8</SelectItem>
                           <SelectItem value="claude-sonnet-4.6">Claude Sonnet 4.6</SelectItem>
                           <SelectItem value="claude-3-5-opus-20240229">Claude 3.5 Opus</SelectItem>
-                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</SelectItem>
+                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet ⭐ (Bom p/ Leitura)</SelectItem>
                           <SelectItem value="claude-3-haiku-20240307">Claude 3 Haiku</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>OpenAI</SelectLabel>
-                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
+                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship ⭐ (Recomendado)</SelectItem>
                           <SelectItem value="gpt-5.5-pro">GPT-5.5 Pro</SelectItem>
                           <SelectItem value="gpt-5.4-mini">GPT-5.4 Mini</SelectItem>
                           <SelectItem value="gpt-4o">GPT-4o (Omni)</SelectItem>
@@ -461,7 +461,7 @@ const AdminSettings = () => {
                           <SelectValue placeholder="Selecione o modelo" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
+                          <SelectItem value="gpt-5.5">GPT-5.5 Flagship ⭐ (Recomendado)</SelectItem>
                           <SelectItem value="gpt-5.5-pro">GPT-5.5 Pro</SelectItem>
                           <SelectItem value="gpt-5.4-mini">GPT-5.4 Mini</SelectItem>
                           <SelectItem value="gpt-4o">GPT-4o (Omni)</SelectItem>
@@ -507,7 +507,7 @@ const AdminSettings = () => {
                           <SelectItem value="claude-opus-4.8">Claude Opus 4.8</SelectItem>
                           <SelectItem value="claude-sonnet-4.6">Claude Sonnet 4.6</SelectItem>
                           <SelectItem value="claude-3-5-opus-20240229">Claude 3.5 Opus</SelectItem>
-                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</SelectItem>
+                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet ⭐ (Bom p/ Leitura)</SelectItem>
                           <SelectItem value="claude-3-haiku-20240307">Claude 3 Haiku</SelectItem>
                         </SelectContent>
                       </Select>
@@ -546,7 +546,7 @@ const AdminSettings = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro (Flagship)</SelectItem>
-                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
                           <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
                           <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectContent>
