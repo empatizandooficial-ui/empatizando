@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     // Check initial session
@@ -30,8 +31,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-
-  const location = useLocation();
 
   if (!authenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;

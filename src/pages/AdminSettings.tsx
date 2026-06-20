@@ -36,6 +36,7 @@ const AdminSettings = () => {
 
   useEffect(() => {
     fetchSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSettings = async () => {
@@ -65,11 +66,12 @@ const AdminSettings = () => {
         setKeys(newKeys);
         setSystemPrompt(foundPrompt);
       }
-    } catch (error: any) {
-      console.error('Error fetching settings:', error);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error('Error fetching settings:', err);
       toast({
         title: "Erro ao carregar",
-        description: error.message,
+        description: err.message,
         variant: "destructive",
       });
     } finally {
@@ -146,11 +148,12 @@ const AdminSettings = () => {
         groq_api_key: false,
       });
 
-    } catch (error: any) {
-      console.error('Error saving settings:', error);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error('Error saving settings:', err);
       toast({
         title: "Erro ao salvar",
-        description: error.message,
+        description: err.message,
         variant: "destructive",
       });
     } finally {
