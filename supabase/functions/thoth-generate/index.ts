@@ -12,6 +12,30 @@ serve(async (req) => {
   }
 
   try {
+    // --- Authentication ---
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    )
+
+    const token = authHeader.replace('Bearer ', '')
+    const { data: userData, error: authError } = await supabaseClient.auth.getUser(token)
+    if (authError || !userData?.user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const { prompt, platforms } = await req.json()
 
     // 1. Aqui entra a lógica de buscar chaves do Thoth e Bibliotecário no system_settings
@@ -19,11 +43,11 @@ serve(async (req) => {
     // 3. O Thoth gera o roteiro usando a API selecionada (OpenAI, Anthropic, etc) com base no contexto do Bibliotecário
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        instagram: "Gerado pelo Thoth (Mock)", 
+      JSON.stringify({
+        success: true,
+        instagram: "Gerado pelo Thoth (Mock)",
         tiktok: "Gerado pelo Thoth (Mock)",
-        youtube: "Gerado pelo Thoth (Mock)" 
+        youtube: "Gerado pelo Thoth (Mock)"
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
