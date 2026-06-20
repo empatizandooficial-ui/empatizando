@@ -301,6 +301,9 @@ const AdminSettings = () => {
                           <SelectItem value="gpt-5.5">GPT-5.5 Flagship</SelectItem>
                           <SelectItem value="gpt-5.5-pro">GPT-5.5 Pro</SelectItem>
                           <SelectItem value="gpt-5.4-mini">GPT-5.4 Mini</SelectItem>
+                          <SelectItem value="gpt-4o">GPT-4o (Omni)</SelectItem>
+                          <SelectItem value="gpt-4o-mini">GPT-4o Mini</SelectItem>
+                          <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -340,6 +343,9 @@ const AdminSettings = () => {
                           <SelectItem value="claude-fable-5">Claude Fable 5 (Mythos Class)</SelectItem>
                           <SelectItem value="claude-opus-4.8">Claude Opus 4.8</SelectItem>
                           <SelectItem value="claude-sonnet-4.6">Claude Sonnet 4.6</SelectItem>
+                          <SelectItem value="claude-3-5-opus-20240229">Claude 3.5 Opus</SelectItem>
+                          <SelectItem value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</SelectItem>
+                          <SelectItem value="claude-3-haiku-20240307">Claude 3 Haiku</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -379,6 +385,9 @@ const AdminSettings = () => {
                           <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash</SelectItem>
                           <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
                           <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                          <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
+                          <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
+                          <SelectItem value="gemini-1.0-pro">Gemini 1.0 Pro</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -418,6 +427,10 @@ const AdminSettings = () => {
                           <SelectItem value="openai/gpt-oss-120b">GPT-OSS 120B Flagship</SelectItem>
                           <SelectItem value="openai/gpt-oss-20b">GPT-OSS 20B Fast</SelectItem>
                           <SelectItem value="groq/compound">Groq Compound</SelectItem>
+                          <SelectItem value="llama-3.1-70b-versatile">Llama 3.1 70B Versatile</SelectItem>
+                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B Instant</SelectItem>
+                          <SelectItem value="mixtral-8x7b-32768">Mixtral 8x7B</SelectItem>
+                          <SelectItem value="gemma2-9b-it">Gemma 2 9B</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
