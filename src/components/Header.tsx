@@ -3,24 +3,31 @@ import { Menu, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
-const navLinks = [
+const publicNavLinks = [
   { label: "Pilares", href: "/#pilares" },
   { label: "Portal", href: "/portal" },
   { label: "Vídeos", href: "/#videos" },
   { label: "Comunidade", href: "/#comunidade" },
   { label: "Sobre", href: "/#sobre" },
+];
+
+const adminNavLinks = [
+  { label: "Hub Central", href: "/admin" },
   { label: "Estúdio", href: "/admin/studio" },
   { label: "Automação", href: "/admin/automation" },
 ];
 
-const Header = () => {
+const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   
   const isPortalPage = location.pathname.includes("portal");
+  const isAdminPage = location.pathname.startsWith("/admin");
   const isHomePage = location.pathname === "/";
-  const useLightText = isHomePage && !scrolled;
+  const useLightText = isHomePage && !scrolled && !darkTextOnTop;
+  
+  const currentNavLinks = isAdminPage ? adminNavLinks : publicNavLinks;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -44,7 +51,7 @@ const Header = () => {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {currentNavLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -78,7 +85,7 @@ const Header = () => {
       {/* Mobile nav */}
       {mobileOpen && (
         <nav className="md:hidden bg-background/95 backdrop-blur-md border-t border-border px-6 py-4 animate-fade-in">
-          {navLinks.map((link) => (
+          {currentNavLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}

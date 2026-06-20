@@ -15,7 +15,7 @@ const Login = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  const from = location.state?.from?.pathname || "/admin/automation";
+  const from = location.state?.from?.pathname || "/admin";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
