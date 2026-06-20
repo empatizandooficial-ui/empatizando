@@ -35,7 +35,8 @@ const Login = () => {
         variant: "destructive",
       });
     } else {
-      navigate(from, { replace: true });
+      // Sempre redireciona para o hub principal, ignorando de onde o usuário veio
+      navigate("/admin", { replace: true });
     }
   };
 
