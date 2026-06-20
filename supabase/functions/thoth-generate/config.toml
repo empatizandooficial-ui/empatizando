@@ -1,0 +1,2 @@
+[functions.thoth-generate]
+verify_jwt = true
