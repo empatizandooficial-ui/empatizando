@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 const Index = lazy(() => import("./pages/Index"));
 const Portal = lazy(() => import("./pages/Portal"));
 const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
+const AdminStudio = lazy(() => import("./pages/AdminStudio"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -28,6 +29,11 @@ const App = () => (
             <Route path="/admin/automation" element={
               <ProtectedRoute>
                 <AdminAutomation />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/studio" element={
+              <ProtectedRoute>
+                <AdminStudio />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

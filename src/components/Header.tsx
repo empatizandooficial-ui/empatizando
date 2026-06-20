@@ -9,6 +9,8 @@ const navLinks = [
   { label: "Vídeos", href: "/#videos" },
   { label: "Comunidade", href: "/#comunidade" },
   { label: "Sobre", href: "/#sobre" },
+  { label: "Estúdio", href: "/admin/studio" },
+  { label: "Automação", href: "/admin/automation" },
 ];
 
 const Header = () => {
