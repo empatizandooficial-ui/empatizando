@@ -4,29 +4,46 @@ import { Compass, Search, Loader2, Link2, FileText, Database } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminHermes = () => {
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [hasResults, setHasResults] = useState(false);
+  const [resultsData, setResultsData] = useState<{ answer?: string, results?: any[] }>({});
   const { toast } = useToast();
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
     setIsSearching(true);
     setHasResults(false);
 
-    // Mock research process
-    setTimeout(() => {
-      setIsSearching(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('hermes-osint', {
+        body: { query }
+      });
+
+      if (error) throw error;
+      
+      setResultsData({ answer: data.answer, results: data.results });
       setHasResults(true);
+      
       toast({
         title: "Varredura Concluída",
-        description: "Golden Data capturado e enviado para a triagem do Bibliotecário.",
+        description: "Golden Data capturado com sucesso da rede.",
       });
-    }, 3000);
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        title: "Erro no Rastreador",
+        description: err.message || "Falha ao consultar as fontes.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -89,16 +106,21 @@ const AdminHermes = () => {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 text-sm text-muted-foreground">
                   <div className="mt-1"><FileText className="w-4 h-4 text-emerald-400" /></div>
-                  <p><strong className="text-foreground">Artigo Científico:</strong> Ressonância e a Água (PDF - 12MB)</p>
+                  <div>
+                    <strong className="text-foreground">Resumo AI:</strong>
+                    <p className="mt-1">{resultsData.answer || "Processando contexto..."}</p>
+                  </div>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <div className="mt-1"><Link2 className="w-4 h-4 text-emerald-400" /></div>
-                  <p><strong className="text-foreground">Fonte Primária:</strong> Biblioteca de Escritos Herméticos (URL Extraída)</p>
-                </li>
-                <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <div className="mt-1"><FileText className="w-4 h-4 text-emerald-400" /></div>
-                  <p><strong className="text-foreground">Resumo AI:</strong> Compilação de 15 páginas extraídas sobre frequências hertzianas.</p>
-                </li>
+                
+                {resultsData.results && resultsData.results.map((res: any, idx: number) => (
+                  <li key={idx} className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <div className="mt-1"><Link2 className="w-4 h-4 text-emerald-400" /></div>
+                    <div>
+                      <strong className="text-foreground">{res.title}</strong>
+                      <p className="mt-1 text-xs truncate max-w-[200px] md:max-w-[300px]">{res.url}</p>
+                    </div>
+                  </li>
+                ))}
               </ul>
               <Button variant="outline" className="w-full mt-6 border-emerald-500/20 hover:bg-emerald-500/10 text-emerald-400">
                 Enviar Tudo para Akash (Bibliotecário)
@@ -111,11 +133,10 @@ const AdminHermes = () => {
                 <h3 className="font-heading font-semibold text-lg">Log de Operações</h3>
               </div>
               <div className="font-mono text-xs text-muted-foreground space-y-2 bg-black/40 p-4 rounded-xl">
-                <p className="text-emerald-400">{'>'} Inicializando rotina OSINT...</p>
-                <p>{'>'} Varrendo arXiv e PubMed por '{query}'</p>
-                <p>{'>'} 43 resultados encontrados.</p>
-                <p>{'>'} Filtrando documentos de baixa relevância...</p>
+                <p className="text-emerald-400">{'>'} Inicializando rotina OSINT via API Edge...</p>
+                <p>{'>'} Varrendo a web por '{query}'</p>
                 <p>{'>'} Extraindo textos e metadados...</p>
+                {resultsData.results && <p>{`> ${resultsData.results.length} fontes primárias capturadas.`}</p>}
                 <p className="text-emerald-400">{'>'} Pacote Golden Data montado com sucesso.</p>
               </div>
             </div>
