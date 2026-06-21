@@ -59,7 +59,7 @@ const AdminHermes = () => {
                 placeholder="Insira o tema oculto (ex: Frequências Solfeggio, Geometria Sagrada)..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="pl-10 h-12 bg-white/5 border-white/10 focus:border-emerald-500/50 text-white placeholder:text-muted-foreground/50"
+                className="pl-10 h-12 bg-white/5 border-white/10 focus:border-emerald-500/50 text-foreground placeholder:text-muted-foreground/50"
               />
             </div>
             <Button 
