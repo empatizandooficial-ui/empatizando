@@ -4,7 +4,7 @@ import { Compass, Search, Loader2, Link2, FileText, Database } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 const AdminHermes = () => {
   const [query, setQuery] = useState("");
