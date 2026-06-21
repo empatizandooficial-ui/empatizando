@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Library, Upload, Search, BookOpen, Trash2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface KnowledgeItem {
   id: string;
@@ -18,21 +19,33 @@ const AdminLibrarian = () => {
   const [content, setContent] = useState("");
   const [sourceName, setSourceName] = useState("");
 
-  // Dados simulados para visualização antes da integração com o BD vetorial
-  const [knowledgeBase, setKnowledgeBase] = useState<KnowledgeItem[]>([
-    {
-      id: "1",
-      excerpt: "A frequência de 432Hz é conhecida por suas propriedades curativas e alinhamento com a natureza...",
-      source: "Manual de Frequências.txt",
-      date: new Date().toLocaleDateString()
-    },
-    {
-      id: "2",
-      excerpt: "O arquétipo do Mago representa a transformação, a alquimia interior e a manifestação da realidade desejada...",
-      source: "Estudo de Arquétipos (Input Manual)",
-      date: new Date().toLocaleDateString()
+  const [knowledgeBase, setKnowledgeBase] = useState<KnowledgeItem[]>([]);
+
+  useEffect(() => {
+    fetchKnowledgeBase();
+  }, []);
+
+  const fetchKnowledgeBase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('knowledge_base')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        setKnowledgeBase(data.map(item => ({
+          id: item.id,
+          excerpt: item.content.substring(0, 100) + "...",
+          source: item.metadata?.source || "Input Manual",
+          date: new Date(item.created_at).toLocaleDateString()
+        })));
+      }
+    } catch (error: any) {
+      console.error("Erro ao buscar base de conhecimento:", error);
     }
-  ]);
+  };
 
   const handleIngest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,23 +55,45 @@ const AdminLibrarian = () => {
     }
 
     setLoading(true);
-    // Aqui faremos a chamada para a Edge Function de Ingestão no futuro
-    setTimeout(() => {
-      const newItem: KnowledgeItem = {
-        id: Math.random().toString(36).substr(2, 9),
-        excerpt: content.substring(0, 100) + "...",
-        source: sourceName || "Input Manual",
-        date: new Date().toLocaleDateString()
-      };
-      setKnowledgeBase([newItem, ...knowledgeBase]);
+    try {
+      // Chamada real para a Edge Function de Ingestão
+      const { data, error } = await supabase.functions.invoke('librarian-ingest', {
+        body: { content, source: sourceName }
+      });
+
+      if (error) throw error;
+
       setContent("");
       setSourceName("");
-      setLoading(false);
+      
       toast({
         title: "Conhecimento Absorvido! 📚",
-        description: "O Bibliotecário processou o texto e guardou no banco vetorial.",
+        description: data.message || "O Bibliotecário processou o texto e guardou no banco vetorial.",
       });
-    }, 1500);
+
+      // Atualiza a lista
+      fetchKnowledgeBase();
+    } catch (err: any) {
+      console.error("Erro na ingestão:", err);
+      toast({ 
+        title: "Erro na Ingestão", 
+        description: err.message || "Verifique se sua chave da OpenAI está configurada.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase.from('knowledge_base').delete().eq('id', id);
+      if (error) throw error;
+      toast({ title: "Removido", description: "Conhecimento apagado da memória." });
+      fetchKnowledgeBase();
+    } catch (err: any) {
+      toast({ title: "Erro ao excluir", description: err.message, variant: "destructive" });
+    }
   };
 
   return (
@@ -132,24 +167,31 @@ const AdminLibrarian = () => {
               </div>
 
               <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-grow">
-                {knowledgeBase.map((item) => (
-                  <div key={item.id} className="p-4 rounded-xl bg-white/5 border border-white/10 group hover:border-cyan-500/30 transition-all">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded-md">
-                        {item.source}
-                      </span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-muted-foreground">{item.date}</span>
-                        <button className="text-muted-foreground hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                {knowledgeBase.length === 0 ? (
+                  <p className="text-muted-foreground text-sm text-center py-10">O acervo está vazio. O Bibliotecário precisa de leitura.</p>
+                ) : (
+                  knowledgeBase.map((item) => (
+                    <div key={item.id} className="p-4 rounded-xl bg-white/5 border border-white/10 group hover:border-cyan-500/30 transition-all">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded-md">
+                          {item.source}
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs text-muted-foreground">{item.date}</span>
+                          <button 
+                            onClick={() => handleDelete(item.id)}
+                            className="text-muted-foreground hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
+                      <p className="text-sm text-foreground/80 leading-relaxed">
+                        "{item.excerpt}"
+                      </p>
                     </div>
-                    <p className="text-sm text-foreground/80 leading-relaxed">
-                      "{item.excerpt}"
-                    </p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>

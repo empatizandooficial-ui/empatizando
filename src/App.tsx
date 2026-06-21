@@ -12,6 +12,7 @@ const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
 const AdminLibrarian = lazy(() => import("./pages/AdminLibrarian"));
 const AdminStudio = lazy(() => import("./pages/AdminStudio"));
+const AdminHermes = lazy(() => import("./pages/AdminHermes"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -52,6 +53,11 @@ const App = () => (
             <Route path="/admin/studio" element={
               <ProtectedRoute>
                 <AdminStudio />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/hermes" element={
+              <ProtectedRoute>
+                <AdminHermes />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

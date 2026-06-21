@@ -7,19 +7,21 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Library, Upload, Mic, Film, BookOpen, BrainCircuit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 const AdminStudio = () => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [theme, setTheme] = useState("");
-  const [script, setScript] = useState("");
-  const [prompts, setPrompts] = useState("");
+  const [scriptInstagram, setScriptInstagram] = useState("");
+  const [scriptTiktok, setScriptTiktok] = useState("");
+  const [scriptYoutube, setScriptYoutube] = useState("");
   
   const [knowledgeTitle, setKnowledgeTitle] = useState("");
   const [knowledgeType, setKnowledgeType] = useState("book");
   const [knowledgeContent, setKnowledgeContent] = useState("");
 
-  const handleGenerateDocumentary = () => {
+  const handleGenerateDocumentary = async () => {
     if (!theme) {
       toast({ title: "Atenção", description: "Digite o tema do documentário primeiro.", variant: "destructive" });
       return;
@@ -27,47 +29,57 @@ const AdminStudio = () => {
     
     setIsGenerating(true);
     
-    // Simulação do Thoth AI gerando o roteiro com gatilhos subliminares e imagens épicas
-    setTimeout(() => {
-      setScript(
-        `[Trilha sonora: Drones graves 432Hz]\n` +
-        `[Pausa dramática de 2 segundos]\n` +
-        `"Você sempre sentiu que havia algo errado com a história que nos contaram..."\n\n` +
-        `[Tom misterioso e grave]\n` +
-        `"Muito antes do barro e do sopro divino, seres de escamas e ouro desceram nos vales da antiga Suméria. Eles não vieram criar. Eles vieram extrair."\n\n` +
-        `[Acelerar o ritmo]\n` +
-        `"Bem-vindo à verdade sobre os Anunnakis e o Criador Caído."`
-      );
-      
-      setPrompts(
-        `Cena 1 (0:00): Cinematic wide shot of the cosmos shifting, dark deep space with subtle golden nebulae, ultra realistic, 8k, Unreal Engine 5.\n\n` +
-        `Cena 2 (0:05): A towering Anunnaki figure made of shadow and gold standing in the ancient Sumerian desert, glowing amber eyes, mysterious, dramatic lighting, volumetric fog, photorealistic.\n\n` +
-        `Cena 3 (0:15): Ancient cuneiform tablets glowing with blue ethereal energy inside a dark temple, macro photography, depth of field.`
-      );
-      
-      setIsGenerating(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('thoth-generate', {
+        body: { prompt: theme, platforms: ['instagram', 'tiktok', 'youtube'] }
+      });
+
+      if (error) throw error;
+
+      setScriptInstagram(data.instagram || "Sem retorno");
+      setScriptTiktok(data.tiktok || "Sem retorno");
+      setScriptYoutube(data.youtube || "Sem retorno");
       
       toast({
         title: "Roteiro Épico Criado! 🎬",
-        description: "Thoth AI aplicou a Jornada do Herói e separou os prompts visuais.",
+        description: `Thoth AI utilizou ${data.used_context_chunks || 0} fragmentos de memória do Bibliotecário.`,
       });
-    }, 2500);
+    } catch (err: any) {
+      console.error("Erro ao gerar:", err);
+      toast({ 
+        title: "Erro na Geração", 
+        description: err.message || "Erro desconhecido. Verifique as configurações.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const handleSaveKnowledge = (e: React.FormEvent) => {
+  const handleSaveKnowledge = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!knowledgeTitle || !knowledgeContent) {
       toast({ title: "Erro", description: "Preencha o título e o conteúdo do acervo.", variant: "destructive" });
       return;
     }
     
-    toast({
-      title: "Salvo no Acervo!",
-      description: "O Subagente Bibliotecário vai processar esse conteúdo para gerar novos insights.",
-    });
-    
-    setKnowledgeTitle("");
-    setKnowledgeContent("");
+    try {
+      const { data, error } = await supabase.functions.invoke('librarian-ingest', {
+        body: { content: knowledgeContent, source: knowledgeTitle }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Salvo no Acervo!",
+        description: data.message || "O Subagente Bibliotecário processou esse conteúdo para gerar novos insights.",
+      });
+      
+      setKnowledgeTitle("");
+      setKnowledgeContent("");
+    } catch (err: any) {
+      toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
+    }
   };
 
   return (
@@ -91,7 +103,7 @@ const AdminStudio = () => {
                 <Sparkles className="w-4 h-4" /> Fábrica de Documentários
               </TabsTrigger>
               <TabsTrigger value="knowledge" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
-                <Library className="w-4 h-4" /> Acervo de Dados
+                <Library className="w-4 h-4" /> Atalho Bibliotecário
               </TabsTrigger>
             </TabsList>
 
@@ -106,7 +118,7 @@ const AdminStudio = () => {
                       <BrainCircuit className="w-5 h-5 text-accent" /> Mente Mestra (Thoth AI)
                     </Label>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Descreva a ideia central do vídeo, o conceito sumério ou a hierarquia que deseja explorar. A IA aplicará copywriting magnético e arquétipos visuais.
+                      Descreva a ideia central do vídeo, o conceito sumério ou a hierarquia que deseja explorar. A IA aplicará copywriting magnético buscando contexto no Bibliotecário.
                     </p>
                     <Textarea 
                       placeholder="Ex: Quero um vídeo sobre Enki e a alteração genética do Homo Sapiens..."
@@ -122,13 +134,13 @@ const AdminStudio = () => {
                     className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
                   >
                     {isGenerating ? "Canalizando Conhecimento..." : (
-                      <><Sparkles className="w-4 h-4 mr-2" /> Gerar Roteiro e Prompts</>
+                      <><Sparkles className="w-4 h-4 mr-2" /> Gerar Roteiros Múltiplos</>
                     )}
                   </Button>
 
                   <div className="pt-6 border-t border-border/50 space-y-4">
                     <h3 className="font-semibold text-foreground flex items-center gap-2">
-                      <Mic className="w-4 h-4" /> Integrações (Áudio e Vídeo)
+                      <Mic className="w-4 h-4" /> Integrações Futuras (Áudio e Vídeo)
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       No momento, você pode copiar o roteiro gerado e jogar nos serviços de IA abaixo. Quando desejar centralizar os custos, ativaremos as APIs aqui mesmo.
@@ -146,35 +158,49 @@ const AdminStudio = () => {
 
                 {/* Lado Direito: Output */}
                 <div className="space-y-6">
-                  {script && (
-                    <div className="glass-card p-6 rounded-2xl border border-accent/30 bg-accent/5">
-                      <h3 className="font-heading font-semibold text-lg mb-4 text-accent flex items-center gap-2">
-                        <Mic className="w-5 h-5" /> Roteiro (Narração Magnética)
-                      </h3>
-                      <div className="bg-background/80 p-4 rounded-xl border border-border">
-                        <pre className="whitespace-pre-wrap font-sans text-sm text-foreground/90 leading-relaxed">
-                          {script}
-                        </pre>
-                      </div>
-                    </div>
-                  )}
+                  {(scriptInstagram || scriptTiktok || scriptYoutube) ? (
+                    <>
+                      {scriptInstagram && (
+                        <div className="glass-card p-6 rounded-2xl border border-pink-500/30 bg-pink-500/5">
+                          <h3 className="font-heading font-semibold text-lg mb-4 text-pink-500 flex items-center gap-2">
+                            <Sparkles className="w-5 h-5" /> Roteiro Instagram (Reels)
+                          </h3>
+                          <div className="bg-background/80 p-4 rounded-xl border border-border">
+                            <pre className="whitespace-pre-wrap font-sans text-sm text-foreground/90 leading-relaxed">
+                              {scriptInstagram}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {scriptTiktok && (
+                        <div className="glass-card p-6 rounded-2xl border border-cyan-500/30 bg-cyan-500/5">
+                          <h3 className="font-heading font-semibold text-lg mb-4 text-cyan-400 flex items-center gap-2">
+                            <Film className="w-5 h-5" /> Roteiro TikTok
+                          </h3>
+                          <div className="bg-background/80 p-4 rounded-xl border border-border">
+                            <pre className="whitespace-pre-wrap font-sans text-sm text-foreground/90 leading-relaxed">
+                              {scriptTiktok}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
 
-                  {prompts && (
-                    <div className="glass-card p-6 rounded-2xl border border-cyan-500/30 bg-cyan-500/5">
-                      <h3 className="font-heading font-semibold text-lg mb-4 text-cyan-400 flex items-center gap-2">
-                        <Sparkles className="w-5 h-5" /> Prompts (Bíblia Visual)
-                      </h3>
-                      <div className="bg-background/80 p-4 rounded-xl border border-border">
-                        <p className="text-xs text-muted-foreground mb-3">Copie e cole os prompts no Leonardo.AI, Midjourney ou DALL-E 3.</p>
-                        <pre className="whitespace-pre-wrap font-sans text-sm text-foreground/90 leading-relaxed">
-                          {prompts}
-                        </pre>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {!script && !prompts && (
-                    <div className="h-full flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-2xl opacity-50">
+                      {scriptYoutube && (
+                        <div className="glass-card p-6 rounded-2xl border border-red-500/30 bg-red-500/5">
+                          <h3 className="font-heading font-semibold text-lg mb-4 text-red-400 flex items-center gap-2">
+                            <Film className="w-5 h-5" /> Roteiro YouTube
+                          </h3>
+                          <div className="bg-background/80 p-4 rounded-xl border border-border">
+                            <pre className="whitespace-pre-wrap font-sans text-sm text-foreground/90 leading-relaxed">
+                              {scriptYoutube}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-2xl opacity-50 min-h-[300px]">
                       <BrainCircuit className="w-12 h-12 mb-4" />
                       <p>Aguardando ideia central para roteirizar o documentário...</p>
                     </div>
@@ -199,47 +225,42 @@ const AdminStudio = () => {
                 <form onSubmit={handleSaveKnowledge} className="space-y-4">
                   <div className="grid grid-cols-3 gap-4">
                     <div className="col-span-2 space-y-2">
-                      <Label>Título / Referência</Label>
+                      <Label>Título / Fonte</Label>
                       <Input 
-                        placeholder="Ex: Tábua de Esmeralda, Livro de Enki..."
-                        className="bg-background/50"
+                        placeholder="Ex: Tábua de Esmeralda" 
                         value={knowledgeTitle}
                         onChange={(e) => setKnowledgeTitle(e.target.value)}
+                        className="bg-background/50"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Tipo de Material</Label>
+                      <Label>Tipo</Label>
                       <select 
-                        className="flex h-10 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         value={knowledgeType}
                         onChange={(e) => setKnowledgeType(e.target.value)}
+                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       >
-                        <option value="book">Livro / Tábua</option>
-                        <option value="video">Vídeo (YouTube)</option>
-                        <option value="article">Artigo Científico</option>
-                        <option value="other">Outro</option>
+                        <option value="book">Livro / Artigo</option>
+                        <option value="video">Transcrição</option>
+                        <option value="custom">Conhecimento Oculto</option>
                       </select>
                     </div>
                   </div>
-
                   <div className="space-y-2">
-                    <Label>Conteúdo Bruto ou Link</Label>
+                    <Label>Conteúdo Bruto</Label>
                     <Textarea 
-                      placeholder="Cole o texto do livro, transcrição ou o link do vídeo aqui..."
+                      placeholder="Cole aqui o texto..."
                       className="min-h-[200px] bg-background/50 resize-none"
                       value={knowledgeContent}
                       onChange={(e) => setKnowledgeContent(e.target.value)}
                     />
                   </div>
-
-                  <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                    <Library className="w-4 h-4 mr-2" />
-                    Enviar para o Bibliotecário
+                  <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
+                    <Library className="w-4 h-4 mr-2" /> Ingerir no Acervo
                   </Button>
                 </form>
               </div>
             </TabsContent>
-
           </Tabs>
         </div>
       </main>

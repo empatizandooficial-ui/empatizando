@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { Film, Zap, Lock, Settings, Library } from "lucide-react";
+import { Film, Zap, Lock, Settings, Library, Compass } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AdminHub = () => {
@@ -27,8 +27,22 @@ const AdminHub = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto animate-fade-in" style={{ animationDelay: "100ms" }}>
             
+            {/* Card Laboratório OSINT */}
+            <Link to="/admin/hermes" className="group">
+              <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-emerald-500/50 hover:bg-white/5 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                  <Compass className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h2 className="text-2xl font-heading font-bold text-foreground mb-3">Laboratório OSINT</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  A Casa de Hermes. Rastreador web profundo para buscar fontes primárias e varrer a internet atrás da sabedoria oculta.
+                </p>
+              </div>
+            </Link>
+
             {/* Card Bibliotecário */}
             <Link to="/admin/librarian" className="group">
               <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-cyan-500/50 hover:bg-white/5 relative overflow-hidden">
@@ -38,7 +52,7 @@ const AdminHub = () => {
                 </div>
                 <h2 className="text-2xl font-heading font-bold text-foreground mb-3">O Bibliotecário</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Agente de Pesquisa e Contexto. Faça upload de livros e artigos para formar a base de conhecimento.
+                  Agente de Pesquisa e Contexto. A mente de Akash para estruturar a base de dados vetorial.
                 </p>
               </div>
             </Link>
@@ -50,37 +64,37 @@ const AdminHub = () => {
                 <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center mb-6 border border-accent/20 group-hover:scale-110 transition-transform">
                   <Film className="w-8 h-8 text-accent" />
                 </div>
-                <h2 className="text-3xl font-heading font-bold text-foreground mb-4">Estúdio de Criação</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  A Fábrica de Documentários. Utilize o Thoth AI para criar roteiros magnéticos, gerar prompts visuais épicos e alimentar o Acervo de Dados.
+                <h2 className="text-2xl font-heading font-bold text-foreground mb-3">Estúdio de Criação</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  A Fábrica de Documentários. Utilize o Thoth AI para criar roteiros magnéticos e épicos.
                 </p>
               </div>
             </Link>
 
             {/* Card Automação */}
-            <Link to="/admin/automation" className="group">
+            <Link to="/admin/automation" className="group lg:col-start-1 lg:col-span-1">
               <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-cyan-500/50 hover:bg-white/5 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:scale-110 transition-transform">
                   <Zap className="w-8 h-8 text-cyan-400" />
                 </div>
-                <h2 className="text-3xl font-heading font-bold text-foreground mb-4">Painel de Automação</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  A Máquina de Distribuição. Faça o upload das mídias prontas, gere as legendas curtas otimizadas e coloque na Fila de Transmissão das redes sociais.
+                <h2 className="text-2xl font-heading font-bold text-foreground mb-3">Painel de Automação</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  A Máquina de Distribuição. Faça o upload das mídias prontas e coloque na Fila de Transmissão.
                 </p>
               </div>
             </Link>
 
             {/* Card Laboratório Neural */}
-            <Link to="/admin/settings" className="group">
+            <Link to="/admin/settings" className="group lg:col-start-2 lg:col-span-1">
               <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-purple-500/50 hover:bg-white/5 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="w-16 h-16 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 transition-transform">
                   <Settings className="w-8 h-8 text-purple-400" />
                 </div>
-                <h2 className="text-3xl font-heading font-bold text-foreground mb-4">Laboratório Neural</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  Controle Global da IA. Guarde as chaves de API com segurança e ajuste a Engenharia do Roteiro Subliminar (O Cérebro de Thoth) ao vivo.
+                <h2 className="text-2xl font-heading font-bold text-foreground mb-3">Laboratório Neural</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Controle Global da IA. Guarde chaves e ajuste as engrenagens de Thoth ao vivo.
                 </p>
               </div>
             </Link>
