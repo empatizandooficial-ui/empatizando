@@ -27,6 +27,7 @@ const AdminSettings = () => {
     anthropic_api_key: "",
     gemini_api_key: "",
     groq_api_key: "",
+    tavily_api_key: "",
   });
   
   const [models, setModels] = useState({
@@ -46,6 +47,7 @@ const AdminSettings = () => {
     anthropic_api_key: false,
     gemini_api_key: false,
     groq_api_key: false,
+    tavily_api_key: false,
   });
 
   const [systemPrompt, setSystemPrompt] = useState("");
@@ -196,6 +198,13 @@ const AdminSettings = () => {
         },
         {
           user_id: userData.user.id,
+          key_name: 'tavily_api_key',
+          key_value: keys.tavily_api_key,
+          is_secret: true,
+          description: "Chave de API do Tavily (OSINT/Hermes)"
+        },
+        {
+          user_id: userData.user.id,
           key_name: 'thoth_system_prompt',
           key_value: systemPrompt,
           is_secret: false,
@@ -234,6 +243,7 @@ const AdminSettings = () => {
         anthropic_api_key: false,
         gemini_api_key: false,
         groq_api_key: false,
+        tavily_api_key: false,
       });
 
     } catch (error: unknown) {
@@ -594,6 +604,37 @@ const AdminSettings = () => {
                           <SelectItem value="gemma2-9b-it">Gemma 2 9B</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tavily */}
+                <div className="space-y-4 p-4 border border-emerald-500/10 rounded-xl bg-emerald-500/5">
+                  <h3 className="text-lg font-heading font-semibold text-emerald-400">Tavily Search API (Hermes OSINT)</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground">API Key</Label>
+                      <div className="relative">
+                        <Input 
+                          type={showKeys.tavily_api_key ? "text" : "password"}
+                          value={keys.tavily_api_key}
+                          onChange={(e) => handleKeyChange('tavily_api_key', e.target.value)}
+                          placeholder="tvly-..."
+                          className="bg-background/50 border-emerald-500/20 focus:border-emerald-500/50 pr-10 font-mono text-sm"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => toggleKeyVisibility('tavily_api_key')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showKeys.tavily_api_key ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2 flex flex-col justify-center">
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Esta chave será enviada diretamente para a Edge Function de OSINT e usada pelas aranhas web do Hermes para obter contexto inteligente.
+                      </p>
                     </div>
                   </div>
                 </div>
