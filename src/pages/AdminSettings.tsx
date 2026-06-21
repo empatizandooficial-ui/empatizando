@@ -339,8 +339,8 @@ const AdminSettings = () => {
                           <SelectItem value="openai/gpt-oss-120b">GPT-OSS 120B Flagship</SelectItem>
                           <SelectItem value="openai/gpt-oss-20b">GPT-OSS 20B Fast</SelectItem>
                           <SelectItem value="groq/compound">Groq Compound</SelectItem>
-                          <SelectItem value="llama-3.1-70b-versatile">Llama 3.1 70B</SelectItem>
-                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B</SelectItem>
+                          <SelectItem value="llama-3.3-70b-versatile">Llama 3.3 70B ⭐ (Flagship)</SelectItem>
+                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B ⭐ (Rápido)</SelectItem>
                           <SelectItem value="mixtral-8x7b-32768">Mixtral 8x7B</SelectItem>
                           <SelectItem value="gemma2-9b-it">Gemma 2 9B</SelectItem>
                         </SelectGroup>
@@ -394,8 +394,8 @@ const AdminSettings = () => {
                           <SelectItem value="openai/gpt-oss-120b">GPT-OSS 120B Flagship</SelectItem>
                           <SelectItem value="openai/gpt-oss-20b">GPT-OSS 20B Fast</SelectItem>
                           <SelectItem value="groq/compound">Groq Compound</SelectItem>
-                          <SelectItem value="llama-3.1-70b-versatile">Llama 3.1 70B</SelectItem>
-                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B</SelectItem>
+                          <SelectItem value="llama-3.3-70b-versatile">Llama 3.3 70B ⭐ (Flagship)</SelectItem>
+                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B ⭐ (Rápido)</SelectItem>
                           <SelectItem value="mixtral-8x7b-32768">Mixtral 8x7B</SelectItem>
                           <SelectItem value="gemma2-9b-it">Gemma 2 9B</SelectItem>
                         </SelectGroup>
@@ -598,8 +598,8 @@ const AdminSettings = () => {
                           <SelectItem value="openai/gpt-oss-120b">GPT-OSS 120B Flagship</SelectItem>
                           <SelectItem value="openai/gpt-oss-20b">GPT-OSS 20B Fast</SelectItem>
                           <SelectItem value="groq/compound">Groq Compound</SelectItem>
-                          <SelectItem value="llama-3.1-70b-versatile">Llama 3.1 70B Versatile</SelectItem>
-                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B Instant</SelectItem>
+                          <SelectItem value="llama-3.3-70b-versatile">Llama 3.3 70B ⭐ (Flagship)</SelectItem>
+                          <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B ⭐ (Rápido)</SelectItem>
                           <SelectItem value="mixtral-8x7b-32768">Mixtral 8x7B</SelectItem>
                           <SelectItem value="gemma2-9b-it">Gemma 2 9B</SelectItem>
                         </SelectContent>
