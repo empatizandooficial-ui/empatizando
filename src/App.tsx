@@ -14,6 +14,8 @@ const AdminLibrarian = lazy(() => import("./pages/AdminLibrarian"));
 const AdminStudio = lazy(() => import("./pages/AdminStudio"));
 const AdminHermes = lazy(() => import("./pages/AdminHermes"));
 const AdminAgents = lazy(() => import("./pages/AdminAgents"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminCRM = lazy(() => import("./pages/AdminCRM"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Anamnese = lazy(() => import("./pages/Anamnese"));
@@ -21,6 +23,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { CookieConsent } from "./components/CookieConsent";
+import { AdminLayout } from "./components/AdminLayout";
 
 const queryClient = new QueryClient();
 
@@ -41,37 +44,65 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={
               <ProtectedRoute>
-                <AdminHub />
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/crm" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminCRM />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/settings" element={
               <ProtectedRoute>
-                <AdminSettings />
+                <AdminLayout>
+                  <AdminSettings />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/automation" element={
               <ProtectedRoute>
-                <AdminAutomation />
+                <AdminLayout>
+                  <AdminAutomation />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/librarian" element={
               <ProtectedRoute>
-                <AdminLibrarian />
+                <AdminLayout>
+                  <AdminLibrarian />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/studio" element={
               <ProtectedRoute>
-                <AdminStudio />
+                <AdminLayout>
+                  <AdminStudio />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/hermes" element={
               <ProtectedRoute>
-                <AdminHermes />
+                <AdminLayout>
+                  <AdminHermes />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/agents" element={
               <ProtectedRoute>
-                <AdminAgents />
+                <AdminLayout>
+                  <AdminAgents />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
