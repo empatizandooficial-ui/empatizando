@@ -4,6 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { CookieConsent } from "./components/CookieConsent";
+import { AdminLayout } from "./components/AdminLayout";
 
 const Index = lazy(() => import("./pages/Index"));
 const Portal = lazy(() => import("./pages/Portal"));
@@ -21,9 +24,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Anamnese = lazy(() => import("./pages/Anamnese"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import { CookieConsent } from "./components/CookieConsent";
-import { AdminLayout } from "./components/AdminLayout";
 
 const queryClient = new QueryClient();
 
