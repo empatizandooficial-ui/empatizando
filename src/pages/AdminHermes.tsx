@@ -47,14 +47,12 @@ const AdminHermes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      <Header darkTextOnTop={false} />
-      
+    <div className="space-y-6 animate-fade-in text-stone-800">
       {/* Background Effects */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] -z-10" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -z-10" />
 
-      <main className="flex-grow flex flex-col pt-24 pb-16 px-6 max-w-5xl mx-auto w-full">
+      <div className="max-w-5xl mx-auto w-full">
         <div className="mb-10 animate-fade-in">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/20">
@@ -143,6 +141,7 @@ const AdminHermes = () => {
           </div>
         )}
       </div>
+    </div>
   );
 };
 

@@ -223,8 +223,8 @@ export default function AdminAgents() {
               <p>Selecione um agente no menu lateral para editar suas coordenadas.</p>
             </div>
           )}
+          </div>
         </div>
-      </main>
-    </div>
-  );
-}
+      </div>
+    );
+  }
