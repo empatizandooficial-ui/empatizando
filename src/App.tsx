@@ -13,8 +13,10 @@ const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
 const AdminLibrarian = lazy(() => import("./pages/AdminLibrarian"));
 const AdminStudio = lazy(() => import("./pages/AdminStudio"));
 const AdminHermes = lazy(() => import("./pages/AdminHermes"));
+const AdminAgents = lazy(() => import("./pages/AdminAgents"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Anamnese = lazy(() => import("./pages/Anamnese"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -33,6 +35,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/portal" element={<Portal />} />
+            <Route path="/anamnese" element={<Anamnese />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/login" element={<Login />} />
@@ -64,6 +67,11 @@ const App = () => (
             <Route path="/admin/hermes" element={
               <ProtectedRoute>
                 <AdminHermes />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/agents" element={
+              <ProtectedRoute>
+                <AdminAgents />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
