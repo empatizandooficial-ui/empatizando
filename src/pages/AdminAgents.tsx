@@ -37,9 +37,23 @@ export default function AdminAgents() {
         .order("name");
 
       if (error) throw error;
-      setAgents(data || []);
-      if (data && data.length > 0 && !selectedAgentId) {
-        handleSelectAgent(data[0]);
+      
+      if (!data || data.length === 0) {
+        // Auto-seed
+        const defaultAgents = [
+          { name: "Lumina", system_prompt: "Você é a Lumina, a IA compassiva de triagem inicial.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7 },
+          { name: "Sálvia", system_prompt: "Você é a Sálvia, a terapeuta experiente e acolhedora.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7 },
+          { name: "Thoth", system_prompt: "Você é Thoth, a mente orquestradora do sistema.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.5 }
+        ];
+        
+        await supabase.from("agent_configurations").insert(defaultAgents);
+        
+        const { data: newData } = await supabase.from("agent_configurations").select("*").order("name");
+        setAgents(newData || []);
+        if (newData && newData.length > 0) handleSelectAgent(newData[0]);
+      } else {
+        setAgents(data);
+        if (!selectedAgentId) handleSelectAgent(data[0]);
       }
     } catch (error: any) {
       toast({ title: "Erro ao carregar", description: error.message, variant: "destructive" });
@@ -89,23 +103,14 @@ export default function AdminAgents() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-stone-800">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <BrainCircuit className="w-8 h-8 text-indigo-600" />
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-            Painel de Agentes IA
-          </h1>
-        </div>
-        <Link to="/portal">
-          <Button variant="outline" className="gap-2">
-            <LayoutDashboard className="w-4 h-4" /> Voltar ao Portal
-          </Button>
-        </Link>
-      </header>
+    <div className="space-y-6 animate-fade-in text-stone-800">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-heading font-bold text-stone-800">
+          Painel de Agentes IA
+        </h1>
+      </div>
 
-      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         
         {/* Sidebar - Lista de Agentes */}
         <div className="md:col-span-1 bg-white border border-stone-200 rounded-3xl p-4 shadow-sm h-fit">

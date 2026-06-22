@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -268,10 +267,7 @@ const AdminSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header darkTextOnTop />
-      
-      <main className="flex-grow pt-32 pb-16 px-6">
+    <div className="space-y-6 animate-fade-in">
         <div className="max-w-4xl mx-auto">
           <div className="mb-10 flex items-center justify-between">
             <div>
@@ -661,8 +657,7 @@ const AdminSettings = () => {
 
           </div>
         </div>
-      </main>
-    </div>
+      </div>
   );
 };
 

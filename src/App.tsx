@@ -19,6 +19,7 @@ const AdminHermes = lazy(() => import("./pages/AdminHermes"));
 const AdminAgents = lazy(() => import("./pages/AdminAgents"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminCRM = lazy(() => import("./pages/AdminCRM"));
+const AdminProfessionals = lazy(() => import("./pages/AdminProfessionals"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Anamnese = lazy(() => import("./pages/Anamnese"));
@@ -60,6 +61,13 @@ const App = () => (
               <ProtectedRoute>
                 <AdminLayout>
                   <AdminCRM />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/professionals" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminProfessionals />
                 </AdminLayout>
               </ProtectedRoute>
             } />

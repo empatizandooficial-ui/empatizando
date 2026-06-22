@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Header from "@/components/Header";
+
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -83,10 +83,7 @@ const AdminStudio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header darkTextOnTop />
-      
-      <main className="flex-grow pt-32 pb-16 px-6">
+    <div className="space-y-6 animate-fade-in">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-heading font-bold text-foreground mb-2 flex items-center gap-3">
@@ -263,8 +260,7 @@ const AdminStudio = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </main>
-    </div>
+      </div>
   );
 };
 

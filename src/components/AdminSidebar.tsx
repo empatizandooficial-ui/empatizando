@@ -1,4 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Users, 
@@ -8,25 +9,71 @@ import {
   Zap, 
   Library, 
   Compass,
-  LogOut
+  LogOut,
+  HeartPulse
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+
+const DEFAULT_MENU = [
+  { id: "dashboard", name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
+  { id: "crm", name: "CRM Leads", path: "/admin/crm", icon: Users },
+  { id: "agents", name: "Painel de Agentes", path: "/admin/agents", icon: BrainCircuit },
+  { id: "professionals", name: "Especialistas", path: "/admin/professionals", icon: HeartPulse },
+  { id: "settings", name: "Laboratório Neural", path: "/admin/settings", icon: Settings },
+  { id: "hermes", name: "Laboratório OSINT", path: "/admin/hermes", icon: Compass },
+  { id: "librarian", name: "O Bibliotecário", path: "/admin/librarian", icon: Library },
+  { id: "studio", name: "Estúdio de Criação", path: "/admin/studio", icon: Film },
+  { id: "automation", name: "Automação", path: "/admin/automation", icon: Zap },
+];
 
 export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const menuItems = [
-    { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
-    { name: "CRM Leads", path: "/admin/crm", icon: Users },
-    { name: "Painel de Agentes", path: "/admin/agents", icon: BrainCircuit },
-    { name: "Laboratório Neural", path: "/admin/settings", icon: Settings },
-    { name: "Laboratório OSINT", path: "/admin/hermes", icon: Compass },
-    { name: "O Bibliotecário", path: "/admin/librarian", icon: Library },
-    { name: "Estúdio de Criação", path: "/admin/studio", icon: Film },
-    { name: "Automação", path: "/admin/automation", icon: Zap },
-  ];
+  const [menuItems, setMenuItems] = useState(() => {
+    const saved = localStorage.getItem("admin-sidebar-order");
+    if (saved) {
+      try {
+        const savedOrder = JSON.parse(saved);
+        // Map saved order to actual items, appending any new items at the end
+        const orderedItems = savedOrder
+          .map((id: string) => DEFAULT_MENU.find(i => i.id === id))
+          .filter(Boolean);
+        const newItems = DEFAULT_MENU.filter(i => !savedOrder.includes(i.id));
+        return [...orderedItems, ...newItems];
+      } catch (e) {
+        return DEFAULT_MENU;
+      }
+    }
+    return DEFAULT_MENU;
+  });
+
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedId || draggedId === targetId) return;
+
+    const oldIndex = menuItems.findIndex(i => i.id === draggedId);
+    const newIndex = menuItems.findIndex(i => i.id === targetId);
+
+    const updatedMenu = [...menuItems];
+    const [movedItem] = updatedMenu.splice(oldIndex, 1);
+    updatedMenu.splice(newIndex, 0, movedItem);
+
+    setMenuItems(updatedMenu);
+    localStorage.setItem("admin-sidebar-order", JSON.stringify(updatedMenu.map(i => i.id)));
+    setDraggedId(null);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -52,18 +99,26 @@ export function AdminSidebar() {
           const isActive = location.pathname.startsWith(item.path);
 
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20 shadow-inner"
-                  : "hover:bg-stone-800 hover:text-white border border-transparent"
-              }`}
+            <div
+              key={item.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, item.id)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, item.id)}
+              className="cursor-grab active:cursor-grabbing"
             >
-              <Icon className={`w-5 h-5 ${isActive ? "text-indigo-400" : "text-stone-500"}`} />
-              {item.name}
-            </Link>
+              <Link
+                to={item.path}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 pointer-events-none ${
+                  isActive
+                    ? "bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20 shadow-inner"
+                    : "hover:bg-stone-800 hover:text-stone-100 border border-transparent"
+                } ${draggedId === item.id ? "opacity-50" : "opacity-100"}`}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? "text-indigo-400" : "text-stone-500"}`} />
+                {item.name}
+              </Link>
+            </div>
           );
         })}
       </div>
