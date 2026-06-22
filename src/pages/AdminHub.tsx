@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { Film, Zap, Lock, Settings, Library, Compass } from "lucide-react";
+import { Film, Zap, Lock, Settings, Library, Compass, BrainCircuit } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AdminHub = () => {
@@ -86,7 +86,7 @@ const AdminHub = () => {
             </Link>
 
             {/* Card Laboratório Neural */}
-            <Link to="/admin/settings" className="group lg:col-start-2 lg:col-span-1">
+            <Link to="/admin/settings" className="group">
               <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-purple-500/50 hover:bg-white/5 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="w-16 h-16 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 transition-transform">
@@ -94,7 +94,21 @@ const AdminHub = () => {
                 </div>
                 <h2 className="text-2xl font-heading font-bold text-foreground mb-3">Laboratório Neural</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Controle Global da IA. Guarde chaves e ajuste as engrenagens de Thoth ao vivo.
+                  Controle Global da IA. Guarde chaves e ajuste as engrenagens ao vivo.
+                </p>
+              </div>
+            </Link>
+
+            {/* Card Painel de Agentes */}
+            <Link to="/admin/agents" className="group lg:col-start-3 lg:col-span-1">
+              <div className="glass-card h-full p-10 rounded-3xl border border-white/10 transition-all duration-300 hover:border-indigo-500/50 hover:bg-white/5 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center mb-6 border border-indigo-500/20 group-hover:scale-110 transition-transform">
+                  <BrainCircuit className="w-8 h-8 text-indigo-400" />
+                </div>
+                <h2 className="text-2xl font-heading font-bold text-foreground mb-3">Painel de Agentes</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Gerencie as coordenadas, modelos e personalidades de Sálvia, Lumina e cia.
                 </p>
               </div>
             </Link>
