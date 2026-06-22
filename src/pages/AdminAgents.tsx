@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -44,12 +44,16 @@ export default function AdminAgents() {
         const userId = userData?.user?.id;
 
         const defaultAgents = [
-          { name: "Lumina", system_prompt: "Você é a Lumina, a IA compassiva de triagem inicial.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7, user_id: userId },
-          { name: "Sálvia", system_prompt: "Você é a Sálvia, a terapeuta experiente e acolhedora.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7, user_id: userId },
-          { name: "Thoth", system_prompt: "Você é Thoth, a mente orquestradora do sistema.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.5, user_id: userId }
+          { id: crypto.randomUUID(), name: "Lumina", system_prompt: "Você é a Lumina, a IA compassiva de triagem inicial.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7, user_id: userId },
+          { id: crypto.randomUUID(), name: "Sálvia", system_prompt: "Você é a Sálvia, a terapeuta experiente e acolhedora.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7, user_id: userId },
+          { id: crypto.randomUUID(), name: "Thoth", system_prompt: "Você é Thoth, a mente orquestradora do sistema.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.5, user_id: userId }
         ];
         
-        await supabase.from("agent_configurations").insert(defaultAgents);
+        const { error: insertError } = await supabase.from("agent_configurations").insert(defaultAgents);
+        if (insertError) {
+          console.error("Erro ao auto-popular agentes:", insertError);
+          toast({ title: "Erro ao criar agentes base", description: insertError.message, variant: "destructive" });
+        }
         
         const { data: newData } = await supabase.from("agent_configurations").select("*").order("name");
         setAgents(newData || []);
