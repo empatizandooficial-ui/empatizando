@@ -51,18 +51,25 @@ export function AdminSidebar() {
 
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragHandleId, setDragHandleId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedId(id);
     e.dataTransfer.effectAllowed = "move";
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, id: string) => {
     e.preventDefault();
+    setDragOverId(id);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverId(null);
   };
 
   const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
+    setDragOverId(null);
     if (!draggedId || draggedId === targetId) return;
 
     const oldIndex = menuItems.findIndex(i => i.id === draggedId);
@@ -105,9 +112,10 @@ export function AdminSidebar() {
               key={item.id}
               draggable={dragHandleId === item.id}
               onDragStart={(e) => handleDragStart(e, item.id)}
-              onDragOver={handleDragOver}
+              onDragOver={(e) => handleDragOver(e, item.id)}
+              onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, item.id)}
-              className={`flex items-center group/item ${draggedId === item.id ? "opacity-50" : "opacity-100"}`}
+              className={`flex items-center group/item transition-all ${draggedId === item.id ? "opacity-50" : "opacity-100"} ${dragOverId === item.id && draggedId !== item.id ? "border-t-2 border-indigo-500 pt-1 -mt-1 rounded-t-sm" : ""}`}
             >
               <div 
                 className="px-1 text-stone-700 hover:text-stone-400 cursor-grab active:cursor-grabbing flex-shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity"

@@ -40,10 +40,13 @@ export default function AdminAgents() {
       
       if (!data || data.length === 0) {
         // Auto-seed
+        const { data: userData } = await supabase.auth.getUser();
+        const userId = userData?.user?.id;
+
         const defaultAgents = [
-          { name: "Lumina", system_prompt: "Você é a Lumina, a IA compassiva de triagem inicial.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7 },
-          { name: "Sálvia", system_prompt: "Você é a Sálvia, a terapeuta experiente e acolhedora.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7 },
-          { name: "Thoth", system_prompt: "Você é Thoth, a mente orquestradora do sistema.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.5 }
+          { name: "Lumina", system_prompt: "Você é a Lumina, a IA compassiva de triagem inicial.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7, user_id: userId },
+          { name: "Sálvia", system_prompt: "Você é a Sálvia, a terapeuta experiente e acolhedora.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.7, user_id: userId },
+          { name: "Thoth", system_prompt: "Você é Thoth, a mente orquestradora do sistema.", model_provider: "openai", model_name: "gpt-4o", temperature: 0.5, user_id: userId }
         ];
         
         await supabase.from("agent_configurations").insert(defaultAgents);
