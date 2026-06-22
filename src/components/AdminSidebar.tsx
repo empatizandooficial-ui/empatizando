@@ -109,7 +109,8 @@ export function AdminSidebar() {
             >
               <Link
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 pointer-events-none ${
+                draggable={false}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                   isActive
                     ? "bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20 shadow-inner"
                     : "hover:bg-stone-800 hover:text-stone-100 border border-transparent"
