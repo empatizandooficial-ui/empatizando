@@ -8,6 +8,8 @@ const Community = lazy(() => import("@/components/Community"));
 const Newsletter = lazy(() => import("@/components/Newsletter"));
 const Footer = lazy(() => import("@/components/Footer"));
 
+import { FloatingChat } from "@/components/FloatingChat";
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -21,6 +23,7 @@ const Index = () => {
           <Newsletter />
         </Suspense>
       </main>
+      <FloatingChat />
       <Suspense fallback={null}>
         <Footer />
       </Suspense>

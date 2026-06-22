@@ -33,6 +33,10 @@ const Footer = () => {
             informativo. Não substitui orientação médica, nutricional ou
             psicológica profissional. Consulte sempre um profissional qualificado.
           </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-4">
+            <a href="/privacy-policy" className="text-muted-foreground hover:text-foreground text-xs transition-colors">Política de Privacidade</a>
+            <a href="/terms-of-use" className="text-muted-foreground hover:text-foreground text-xs transition-colors">Termos de Uso</a>
+          </div>
           <p className="text-muted-foreground text-xs text-center">
             © {new Date().getFullYear()} Empatizando. Todos os direitos
             reservados.
