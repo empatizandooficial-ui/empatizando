@@ -10,7 +10,8 @@ import {
   Library, 
   Compass,
   LogOut,
-  HeartPulse
+  HeartPulse,
+  GripVertical
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -49,6 +50,7 @@ export function AdminSidebar() {
   });
 
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragHandleId, setDragHandleId] = useState<string | null>(null);
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedId(id);
@@ -101,20 +103,27 @@ export function AdminSidebar() {
           return (
             <div
               key={item.id}
-              draggable
+              draggable={dragHandleId === item.id}
               onDragStart={(e) => handleDragStart(e, item.id)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, item.id)}
-              className="cursor-grab active:cursor-grabbing"
+              className={`flex items-center group/item ${draggedId === item.id ? "opacity-50" : "opacity-100"}`}
             >
+              <div 
+                className="px-1 text-stone-700 hover:text-stone-400 cursor-grab active:cursor-grabbing flex-shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                onMouseEnter={() => setDragHandleId(item.id)}
+                onMouseLeave={() => setDragHandleId(null)}
+              >
+                <GripVertical className="w-4 h-4" />
+              </div>
               <Link
                 to={item.path}
                 draggable={false}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                className={`flex-1 flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                   isActive
                     ? "bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20 shadow-inner"
                     : "hover:bg-stone-800 hover:text-stone-100 border border-transparent"
-                } ${draggedId === item.id ? "opacity-50" : "opacity-100"}`}
+                }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? "text-indigo-400" : "text-stone-500"}`} />
                 {item.name}
