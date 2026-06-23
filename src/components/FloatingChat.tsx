@@ -48,15 +48,22 @@ export const FloatingChat = () => {
       )}
 
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="relative group text-primary flex items-center justify-center transition-transform hover:scale-110 focus:outline-none"
-        >
-          <div className="absolute inset-0 flex items-center justify-center animate-heartbeat pointer-events-none">
-             <Heart size={72} className="fill-primary/40 blur-md" />
+        <div className="relative flex items-center gap-3">
+          {/* Speech Bubble */}
+          <div className="bg-white text-teal-700 px-4 py-2 rounded-2xl rounded-br-sm shadow-xl border border-teal-100 text-sm font-medium animate-bounce shadow-teal-500/10 cursor-pointer" onClick={() => setIsOpen(true)}>
+            Posso te ajudar?
           </div>
-          <Heart size={64} fill="currentColor" strokeWidth={1} className="relative z-10 animate-heartbeat text-primary drop-shadow-[0_10px_20px_rgba(0,180,180,0.5)]" />
-        </button>
+          
+          <button
+            onClick={() => setIsOpen(true)}
+            className="relative group text-primary flex items-center justify-center transition-transform hover:scale-110 focus:outline-none"
+          >
+            <div className="absolute inset-0 flex items-center justify-center animate-heartbeat pointer-events-none">
+               <Heart size={72} className="fill-primary/40 blur-md" />
+            </div>
+            <Heart size={64} fill="currentColor" strokeWidth={1} className="relative z-10 animate-heartbeat text-primary drop-shadow-[0_10px_20px_rgba(0,180,180,0.5)]" />
+          </button>
+        </div>
       )}
     </div>
   );
