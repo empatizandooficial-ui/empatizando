@@ -9,6 +9,7 @@ const publicNavLinks = [
   { label: "Vídeos", href: "/#videos" },
   { label: "Comunidade", href: "/#comunidade" },
   { label: "Sobre", href: "/#sobre" },
+  { label: "Para Especialistas", href: "/especialista" },
 ];
 
 const adminNavLinks = [
