@@ -21,6 +21,12 @@ const adminNavLinks = [
   { label: "Automação", href: "/admin/automation" },
 ];
 
+const storeNavLinks = [
+  { label: "Voltar ao Portal", href: "/" },
+  { label: "Minha Conta", href: "/login-cliente" },
+  { label: "Parceiro B2B", href: "/afiliados/cadastro" },
+];
+
 const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,10 +35,11 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   
   const isPortalPage = location.pathname.includes("portal");
   const isAdminPage = location.pathname.startsWith("/admin");
+  const isStorePage = location.pathname.startsWith("/loja");
   const isHomePage = location.pathname === "/";
   const useLightText = isHomePage && !scrolled && !darkTextOnTop;
   
-  const currentNavLinks = isAdminPage ? adminNavLinks : publicNavLinks;
+  const currentNavLinks = isAdminPage ? adminNavLinks : (isStorePage ? storeNavLinks : publicNavLinks);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -55,7 +62,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
         </a>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden xl:flex items-center gap-4 xl:gap-6">
           {currentNavLinks.map((link) => (
             <a
               key={link.href}
@@ -99,7 +106,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
         </nav>
 
         {/* Mobile toggle & Cart */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 xl:hidden">
           <button
             onClick={() => setIsCartOpen(true)}
             className={`relative p-2 rounded-full transition-colors ${
@@ -126,7 +133,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="md:hidden bg-background/95 backdrop-blur-md border-t border-border px-6 py-4 animate-fade-in">
+        <nav className="xl:hidden bg-background/95 backdrop-blur-md border-t border-border px-6 py-4 animate-fade-in">
           {currentNavLinks.map((link) => (
             <a
               key={link.href}
