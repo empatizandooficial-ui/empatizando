@@ -1,4 +1,5 @@
 import heroBg from "@/assets/hero-bg.jpg";
+import { ShoppingBag } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -31,13 +32,21 @@ const Hero = () => {
           da Mente e da Cosmologia Universal.
         </p>
 
-        <a
-          href="#pilares"
-          className="inline-block bg-accent text-accent-foreground font-heading font-semibold text-lg px-8 py-4 rounded-full hover:opacity-90 transition-opacity shadow-glow opacity-0 animate-fade-up"
-          style={{ animationDelay: "400ms" }}
-        >
-          Começar Jornada
-        </a>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 animate-fade-up" style={{ animationDelay: "400ms" }}>
+          <a
+            href="#pilares"
+            className="inline-block bg-accent text-accent-foreground font-heading font-semibold text-lg px-8 py-4 rounded-full hover:opacity-90 transition-opacity shadow-glow w-full sm:w-auto"
+          >
+            Começar Jornada
+          </a>
+          <a
+            href="/loja"
+            className="inline-flex items-center gap-2 bg-white/10 text-white font-heading font-semibold text-lg px-8 py-4 rounded-full hover:bg-white/20 transition-all backdrop-blur-sm border border-white/20 w-full sm:w-auto justify-center"
+          >
+            <ShoppingBag className="w-5 h-5" />
+            Loja Empatizando
+          </a>
+        </div>
       </div>
 
       {/* Bottom fade */}
