@@ -146,8 +146,8 @@ const App = () => (
           </Routes>
         </Suspense>
       </BrowserRouter>
+      </TooltipProvider>
     </CartProvider>
-    </TooltipProvider>
   </QueryClientProvider>
 );
 
