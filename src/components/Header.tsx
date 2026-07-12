@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Menu, X, ShoppingBag } from "lucide-react";
+import { useLocation, Link } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 import logo from "@/assets/logo.png";
 
 const publicNavLinks = [
@@ -22,6 +23,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { cartCount, setIsCartOpen } = useCart();
   
   const isPortalPage = location.pathname.includes("portal");
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -66,6 +68,27 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
             </a>
           ))}
           <a
+            href="/loja"
+            className="flex items-center gap-1 font-heading text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+          >
+            <ShoppingBag size={16} /> Loja
+          </a>
+          
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className={`relative p-2 rounded-full transition-colors ${
+              useLightText ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
+            }`}
+          >
+            <ShoppingBag size={20} />
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-destructive rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </button>
+
+          <a
             href="/#pilares"
             className="bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
           >
@@ -73,14 +96,30 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
           </a>
         </nav>
 
-        {/* Mobile toggle */}
-        <button
-          className={`md:hidden ${useLightText ? 'text-primary-foreground' : 'text-foreground'}`}
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile toggle & Cart */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className={`relative p-2 rounded-full transition-colors ${
+              useLightText ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
+            }`}
+          >
+            <ShoppingBag size={20} />
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-destructive rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </button>
+          
+          <button
+            className={`p-2 ${useLightText ? 'text-primary-foreground' : 'text-foreground'}`}
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile nav */}
@@ -96,6 +135,13 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
               {link.label}
             </a>
           ))}
+          <a
+            href="/loja"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 py-3 font-heading text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+          >
+            <ShoppingBag size={18} /> Acessar a Loja
+          </a>
           <a
             href="/#pilares"
             onClick={() => setMobileOpen(false)}

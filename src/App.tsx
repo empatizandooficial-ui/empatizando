@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { CookieConsent } from "./components/CookieConsent";
 import { AdminLayout } from "./components/AdminLayout";
+import { CartProvider } from "./contexts/CartContext";
+import { CartDrawer } from "./components/CartDrawer";
 
 const Index = lazy(() => import("./pages/Index"));
 const Portal = lazy(() => import("./pages/Portal"));
@@ -20,6 +22,7 @@ const AdminAgents = lazy(() => import("./pages/AdminAgents"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminCRM = lazy(() => import("./pages/AdminCRM"));
 const AdminProfessionals = lazy(() => import("./pages/AdminProfessionals"));
+const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Anamnese = lazy(() => import("./pages/Anamnese"));
@@ -34,10 +37,12 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
+    <CartProvider>
+      <TooltipProvider>
+        <Toaster />
       <Sonner />
       <CookieConsent />
+      <CartDrawer />
       <BrowserRouter>
         <Suspense fallback={<div className="min-h-screen bg-background" />}>
           <Routes>
@@ -130,10 +135,18 @@ const App = () => (
                 </AdminLayout>
               </ProtectedRoute>
             } />
+            <Route path="/admin/products" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminProducts />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
+    </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

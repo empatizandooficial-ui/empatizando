@@ -41,7 +41,7 @@ const Hero = () => {
           </a>
           <a
             href="/loja"
-            className="inline-flex items-center gap-2 bg-white/10 text-white font-heading font-semibold text-lg px-8 py-4 rounded-full hover:bg-white/20 transition-all backdrop-blur-sm border border-white/20 w-full sm:w-auto justify-center"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-heading font-semibold text-lg px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-xl w-full sm:w-auto justify-center"
           >
             <ShoppingBag className="w-5 h-5" />
             Loja Empatizando
