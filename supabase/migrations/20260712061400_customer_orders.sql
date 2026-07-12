@@ -23,11 +23,19 @@ CREATE TABLE IF NOT EXISTS public.addresses (
 );
 
 -- Table: orders
-CREATE TABLE IF NOT EXISTS public.orders (
+DROP TABLE IF EXISTS public.order_items CASCADE;
+DROP TABLE IF EXISTS public.orders CASCADE;
+
+CREATE TABLE public.orders (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    affiliate_id UUID REFERENCES public.affiliates(id) ON DELETE SET NULL,
+    customer_name TEXT,
+    customer_email TEXT,
+    customer_phone TEXT,
     status order_status DEFAULT 'pending',
     total_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    commission_amount DECIMAL(10, 2) DEFAULT 0.00,
     shipping_address_id UUID REFERENCES public.addresses(id) ON DELETE SET NULL,
     payment_method VARCHAR(50),
     payment_id VARCHAR(255),
