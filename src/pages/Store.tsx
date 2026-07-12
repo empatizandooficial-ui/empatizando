@@ -41,17 +41,7 @@ export default function Store() {
         if (error) throw error;
         
         if (!data || data.length === 0) {
-           // Fallback to initial product if DB is empty for demo/setup purposes
-           setProducts([
-             {
-               id: '1',
-               title: 'Adesivo Recém Habilitada(o)',
-               description: 'Aviso visual para o vidro vigia. Impressão de alta qualidade e durabilidade.',
-               price: 89.90,
-               image_url: '',
-               features: ['Não atrapalha a visão do motorista (Perfurado)', 'Gera empatia e evita buzinas desnecessárias']
-             }
-           ]);
+           setProducts([]);
         } else {
            setProducts(data);
         }
