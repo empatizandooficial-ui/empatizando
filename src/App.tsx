@@ -33,6 +33,7 @@ const SpecialistPortal = lazy(() => import("./pages/SpecialistPortal"));
 const Store = lazy(() => import("./pages/Store"));
 const AffiliateSignup = lazy(() => import("./pages/AffiliateSignup"));
 const AffiliatePortal = lazy(() => import("./pages/AffiliatePortal"));
+const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/login-cliente" element={<CustomerLogin />} />
             <Route path="/loja" element={<Store />} />
             <Route path="/afiliados/cadastro" element={<AffiliateSignup />} />
             <Route path="/afiliados/portal" element={

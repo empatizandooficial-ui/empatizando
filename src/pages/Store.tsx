@@ -5,6 +5,8 @@ import { ShoppingCart, Car, ShieldCheck, Heart, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/components/ui/use-toast";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 interface Product {
   id: string;
@@ -79,7 +81,9 @@ export default function Store() {
   }, [toast]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-900 flex flex-col">
+      <Header />
+      <div className="flex-grow bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative background blur elements */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[120px] pointer-events-none" />
@@ -168,6 +172,7 @@ export default function Store() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
