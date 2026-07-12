@@ -27,7 +27,9 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 const ForSpecialists = lazy(() => import("./pages/ForSpecialists"));
 const SpecialistPortal = lazy(() => import("./pages/SpecialistPortal"));
-
+const Store = lazy(() => import("./pages/Store"));
+const AffiliateSignup = lazy(() => import("./pages/AffiliateSignup"));
+const AffiliatePortal = lazy(() => import("./pages/AffiliatePortal"));
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -45,6 +47,13 @@ const App = () => (
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/loja" element={<Store />} />
+            <Route path="/afiliados/cadastro" element={<AffiliateSignup />} />
+            <Route path="/afiliados/portal" element={
+              <ProtectedRoute>
+                <AffiliatePortal />
+              </ProtectedRoute>
+            } />
             <Route path="/especialista" element={<ForSpecialists />} />
             <Route path="/portal-especialista" element={
               <ProtectedRoute>
