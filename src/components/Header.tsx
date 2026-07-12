@@ -37,7 +37,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   const isAdminPage = location.pathname.startsWith("/admin");
   const isStorePage = location.pathname.startsWith("/loja");
   const isHomePage = location.pathname === "/";
-  const useLightText = isHomePage && !scrolled && !darkTextOnTop;
+  const useLightText = (isHomePage || isStorePage) && !scrolled && !darkTextOnTop;
   
   const currentNavLinks = isAdminPage ? adminNavLinks : (isStorePage ? storeNavLinks : publicNavLinks);
 

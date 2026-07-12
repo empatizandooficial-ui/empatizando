@@ -1,62 +1,64 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const asaasToken = Deno.env.get('ASAAS_WEBHOOK_TOKEN')
-const supabaseUrl = Deno.env.get('SUPABASE_URL')
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-
 serve(async (req) => {
-  // 1. Verify Asaas Webhook Token (Basic Security)
-  const asaasHeaderToken = req.headers.get('asaas-access-token')
-  if (asaasToken && asaasHeaderToken !== asaasToken) {
-    return new Response('Unauthorized', { status: 401 })
-  }
-
   try {
-    const payload = await req.json()
-    const { event, payment } = payload
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
-    // 2. We only care about payments that are confirmed/received
-    if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
-      
-      const supabase = createClient(supabaseUrl!, supabaseServiceKey!)
-      
-      // The asaas_payment_id in our DB should match payment.id
-      const paymentId = payment.id
+    // 1. Pegar o Token Webhook configurado no Laboratório Neural
+    const { data: settingsData } = await supabaseClient
+      .from('system_settings')
+      .select('key_value')
+      .eq('key_name', 'asaas_webhook_token')
+      .limit(1)
+      .single()
 
-      // 3. Update the order status to 'paid'
-      const { data: order, error: updateError } = await supabase
-        .from('orders')
-        .update({ status: 'paid' })
-        .eq('asaas_payment_id', paymentId)
-        .select()
-        .single()
-
-      if (updateError) {
-        console.error('Error updating order:', updateError)
-        return new Response('Error updating order', { status: 500 })
+    const asaasWebhookToken = settingsData?.key_value
+    
+    // 2. Validar o Header Asaas-Access-Token se tivermos token configurado
+    if (asaasWebhookToken) {
+      const headerToken = req.headers.get('asaas-access-token')
+      if (headerToken !== asaasWebhookToken) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
       }
-
-      // 4. Trigger the commission RPC
-      if (order && order.id) {
-        const { error: rpcError } = await supabase.rpc('process_affiliate_commission', {
-          order_id: order.id
-        })
-        
-        if (rpcError) {
-          console.error('Error processing commission:', rpcError)
-          // We don't fail the webhook, but we log the error
-        }
-      }
-
-      return new Response('Webhook processed successfully', { status: 200 })
     }
 
-    // Ignore other events
-    return new Response('Event ignored', { status: 200 })
+    const payload = await req.json()
+    
+    // 3. Processar Evento de Pagamento Recebido
+    if (payload.event === 'PAYMENT_RECEIVED' || payload.event === 'PAYMENT_CONFIRMED') {
+      const payment = payload.payment
+      const orderId = payment.externalReference
 
-  } catch (error) {
-    console.error('Webhook error:', error)
-    return new Response('Bad Request', { status: 400 })
+      if (orderId) {
+        // Atualizar o status do pedido para paid
+        const { error } = await supabaseClient
+          .from('orders')
+          .update({ status: 'paid' })
+          .eq('id', orderId)
+          
+        if (error) {
+          console.error("Erro ao atualizar pedido:", error)
+          throw error
+        }
+        
+        // Aqui o gatilho (trigger) do banco de dados disparará a comissão do afiliado
+      }
+    }
+
+    return new Response(JSON.stringify({ received: true }), { 
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+  } catch (error: any) {
+    console.error("Erro no webhook:", error.message)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
   }
 })

@@ -34,6 +34,7 @@ const Store = lazy(() => import("./pages/Store"));
 const AffiliateSignup = lazy(() => import("./pages/AffiliateSignup"));
 const AffiliatePortal = lazy(() => import("./pages/AffiliatePortal"));
 const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
+const Checkout = lazy(() => import("./pages/Checkout"));
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/login-cliente" element={<CustomerLogin />} />
             <Route path="/loja" element={<Store />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/afiliados/cadastro" element={<AffiliateSignup />} />
             <Route path="/afiliados/portal" element={
               <ProtectedRoute>
