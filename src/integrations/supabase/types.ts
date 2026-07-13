@@ -566,6 +566,13 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "product_categories_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       product_tags: {
@@ -587,6 +594,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
             referencedColumns: ["id"]
           },
           {
@@ -635,6 +649,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
             referencedColumns: ["id"]
           },
         ]
@@ -884,7 +905,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      products_public: {
+        Row: {
+          base_price: number | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          images: string[] | null
+          is_active: boolean | null
+          slug: string | null
+          title: string | null
+        }
+        Insert: {
+          base_price?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          is_active?: boolean | null
+          slug?: string | null
+          title?: string | null
+        }
+        Update: {
+          base_price?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          is_active?: boolean | null
+          slug?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
