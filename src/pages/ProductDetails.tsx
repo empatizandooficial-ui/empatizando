@@ -42,11 +42,11 @@ export default function ProductDetails() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      // Fetch main product
+      // Fetch main product (por slug ou por ID, para suportar produtos sem slug)
       const { data, error } = await (supabase as any)
         .from('products_public')
         .select('*')
-        .eq('slug', slug)
+        .or(`slug.eq.${slug},id.eq.${slug}`)
         .single();
         
       if (error) throw error;
