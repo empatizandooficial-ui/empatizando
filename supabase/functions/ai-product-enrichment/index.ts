@@ -30,27 +30,12 @@ Deno.serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
-
-    // Validate user - bypass para debug
-    // const token = authHeader.replace('Bearer ', '')
-    // const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
-    
-    // if (userError || !user) {
-    //   return new Response(JSON.stringify({ 
-    //      error: 'Invalid user token',
-    //      details: `${userError?.message || 'User not found'}. Header received: ${authHeader ? authHeader.substring(0, 20) + '...' : 'none'}`
-    //   }), {
-    //     status: 401,
-    //     headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    //   })
-    // }
 
     // Get system settings for the user
     const { data: settings, error: settingsError } = await supabaseClient
-      .from('admin_settings')
+      .from('system_settings')
       .select('key_name, key_value')
       .in('key_name', ['gemini_api_key', 'gemini_model'])
 
