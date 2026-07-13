@@ -107,13 +107,13 @@ export default function Store() {
                     <img 
                       src={product.images[0]} 
                       alt={product.title}
-                      className="object-cover w-full h-full absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                      className="object-contain w-full h-full p-4 absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 bg-white" 
                     />
                   ) : product.image_url ? (
                     <img 
                       src={product.image_url} 
                       alt={product.title}
-                      className="object-cover w-full h-full absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                      className="object-contain w-full h-full p-4 absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 bg-white" 
                     />
                   ) : (
                     <Car className="w-24 h-24 text-white/10 group-hover:text-white/20 transition-colors duration-500 absolute" />

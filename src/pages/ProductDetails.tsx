@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { 
   ShoppingCart, ShieldCheck, Heart, Loader2, ChevronRight, 
-  Star, Truck, RotateCcw, Lock, ThumbsUp, Check 
+  Star, Truck, RotateCcw, Lock, ThumbsUp, Check, ZoomIn 
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -132,20 +133,36 @@ export default function ProductDetails() {
             <div className="grid md:grid-cols-2 gap-0">
               
               {/* Product Gallery */}
-              <div className="p-8 bg-slate-50/50">
-                <div className="aspect-square rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm mb-4 relative">
-                  {activeImage ? (
+              <div className="p-8 bg-slate-50/50 flex flex-col justify-center">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <div className="aspect-square rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm mb-4 relative cursor-zoom-in group flex items-center justify-center">
+                      {activeImage ? (
+                        <>
+                          <img 
+                            src={activeImage} 
+                            alt={product.title} 
+                            className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+                            <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-300">
+                          Sem Imagem
+                        </div>
+                      )}
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl w-11/12 p-1 bg-transparent border-none shadow-none flex justify-center items-center">
                     <img 
                       src={activeImage} 
                       alt={product.title} 
-                      className="w-full h-full object-cover"
+                      className="max-w-full max-h-[85vh] object-contain rounded-md"
                     />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-300">
-                      Sem Imagem
-                    </div>
-                  )}
-                </div>
+                  </DialogContent>
+                </Dialog>
                 
                 {productImages.length > 1 && (
                   <div className="grid grid-cols-5 gap-3">
@@ -153,9 +170,9 @@ export default function ProductDetails() {
                       <button 
                         key={idx}
                         onClick={() => setActiveImage(img)}
-                        className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeImage === img ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-slate-200 hover:border-indigo-300'}`}
+                        className={`aspect-square rounded-xl overflow-hidden border-2 bg-white flex items-center justify-center transition-all ${activeImage === img ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-slate-200 hover:border-indigo-300'}`}
                       >
-                        <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                        <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-contain p-1" />
                       </button>
                     ))}
                   </div>
@@ -364,7 +381,7 @@ export default function ProductDetails() {
                       <img 
                         src={(related.images && related.images.length > 0) ? related.images[0] : (related.image_url || "")} 
                         alt={related.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
                       />
                     </div>
                     <div className="p-5">
