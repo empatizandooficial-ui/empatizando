@@ -12,7 +12,8 @@ import {
   LogOut,
   HeartPulse,
   GripVertical,
-  ShoppingBag
+  ShoppingBag,
+  Tag
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,6 +27,7 @@ const DEFAULT_MENU = [
   { id: "librarian", name: "O Bibliotecário", path: "/admin/librarian", icon: Library },
   { id: "studio", name: "Estúdio de Criação", path: "/admin/studio", icon: Film },
   { id: "products", name: "Produtos (Loja)", path: "/admin/products", icon: ShoppingBag },
+  { id: "categories", name: "Categorias", path: "/admin/categories", icon: Tag },
   { id: "automation", name: "Automação", path: "/admin/automation", icon: Zap },
 ];
 

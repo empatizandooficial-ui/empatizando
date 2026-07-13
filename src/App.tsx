@@ -23,6 +23,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminCRM = lazy(() => import("./pages/AdminCRM"));
 const AdminProfessionals = lazy(() => import("./pages/AdminProfessionals"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
+const AdminCategories = lazy(() => import("./pages/AdminCategories"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Anamnese = lazy(() => import("./pages/Anamnese"));
@@ -143,6 +144,13 @@ const App = () => (
               <ProtectedRoute>
                 <AdminLayout>
                   <AdminProducts />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/categories" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminCategories />
                 </AdminLayout>
               </ProtectedRoute>
             } />

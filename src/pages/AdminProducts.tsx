@@ -240,19 +240,7 @@ export default function AdminProducts() {
     }
   };
 
-  const handleCreateCategory = async () => {
-    const name = window.prompt("Nome da nova categoria:");
-    if (!name) return;
-    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
-    try {
-      const { error } = await supabase.from("categories").insert([{ name, slug }]);
-      if (error) throw error;
-      toast({ title: "Categoria criada!" });
-      fetchCategories();
-    } catch (error: any) {
-      toast({ title: "Erro ao criar", description: error.message, variant: "destructive" });
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -428,9 +416,6 @@ export default function AdminProducts() {
                 <TabsContent value="categories" className="space-y-4 mt-0">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-sm text-muted-foreground">Selecione as categorias onde este produto será exibido.</p>
-                    <Button type="button" onClick={handleCreateCategory} variant="outline" size="sm" className="gap-2">
-                      <Plus size={14} /> Nova Categoria
-                    </Button>
                   </div>
                   
                   {categories.length === 0 ? (
