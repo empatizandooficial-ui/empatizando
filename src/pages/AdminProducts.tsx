@@ -18,6 +18,38 @@ export default function AdminProducts() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("geral");
   const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!e.target.files || e.target.files.length === 0) {
+        return;
+      }
+      const file = e.target.files[0];
+      setUploading(true);
+      
+      const fileName = `${crypto.randomUUID()}-${file.name}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(fileName);
+
+      setFormData({ ...formData, image_url: publicUrl });
+      toast({ title: "Imagem enviada com sucesso!" });
+    } catch (error: any) {
+      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     id: "",
@@ -208,8 +240,24 @@ export default function AdminProducts() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">URL da Imagem Principal</label>
-                    <Input value={formData.image_url} onChange={(e) => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
+                    <label className="text-sm font-medium">Imagem Principal</label>
+                    <Input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                    />
+                    {uploading && <p className="text-sm text-muted-foreground">Enviando imagem...</p>}
+                    {formData.image_url && (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground mb-1">Preview:</p>
+                        <img 
+                          src={formData.image_url} 
+                          alt="Preview" 
+                          className="w-32 h-32 object-cover rounded-md border"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2 pt-2">
                     <Switch checked={formData.is_active} onCheckedChange={(c) => setFormData({...formData, is_active: c})} />
