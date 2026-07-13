@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShoppingCart, Car, ShieldCheck, Heart, Loader2 } from "lucide-react";
+import { ShoppingCart, Car, ShieldCheck, Heart, Loader2, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/components/ui/use-toast";
 import Header from "@/components/Header";
@@ -16,7 +17,9 @@ interface Product {
   base_price?: number;
   images?: string[];
   image_url?: string;
-  features?: string[];
+  images?: string[];
+  image_url?: string;
+  slug: string;
 }
 
 export default function Store() {
@@ -61,7 +64,7 @@ export default function Store() {
             description: 'Aviso visual para o vidro vigia. Impressão de alta qualidade e durabilidade.',
             price: 89.90,
             images: [],
-            features: ['Não atrapalha a visão do motorista (Perfurado)', 'Gera empatia e evita buzinas desnecessárias']
+            slug: 'adesivo-recem-habilitada',
           }
         ]);
       } finally {
@@ -99,7 +102,7 @@ export default function Store() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {products.map((product) => (
               <Card key={product.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/10 transition-all duration-500 group overflow-hidden flex flex-col rounded-3xl">
-                <div className="relative aspect-video overflow-hidden bg-slate-900/50 flex items-center justify-center">
+                <Link to={`/loja/produto/${product.slug}`} className="block relative aspect-square overflow-hidden bg-slate-900/50 flex items-center justify-center">
                   {product.images && product.images.length > 0 ? (
                     <img 
                       src={product.images[0]} 
@@ -115,39 +118,29 @@ export default function Store() {
                   ) : (
                     <Car className="w-24 h-24 text-white/10 group-hover:text-white/20 transition-colors duration-500 absolute" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent pointer-events-none" />
-                  
-                  <div className="absolute bottom-4 left-6 right-6 flex justify-between items-end">
-                    <span className="text-3xl font-black text-white drop-shadow-md">
-                      R$ {(product.price || product.base_price || 0).toFixed(2).replace('.', ',')}
-                    </span>
-                  </div>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent pointer-events-none" />
+                </Link>
 
-                <CardHeader className="space-y-2 pb-4 pt-6">
-                  <CardTitle className="text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors duration-300">
-                    {product.title}
-                  </CardTitle>
-                  <CardDescription className="text-slate-400 text-sm leading-relaxed">
-                    {product.description}
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="flex-grow space-y-4">
-                  {product.features && product.features.length > 0 && (
-                    <div className="space-y-3 pt-2">
-                      {product.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-3 text-sm text-slate-300">
-                          {idx % 2 === 0 ? (
-                            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                          ) : (
-                            <Heart className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-                          )}
-                          <span className="leading-snug">{feature}</span>
-                        </div>
-                      ))}
+                <CardContent className="p-6 flex-grow flex flex-col">
+                  <div className="flex items-center gap-1 text-amber-400 mb-3">
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                  </div>
+                  
+                  <Link to={`/loja/produto/${product.slug}`} className="block mb-2 group-hover:text-indigo-300 transition-colors">
+                    <CardTitle className="text-xl font-bold text-white leading-tight line-clamp-2">
+                      {product.title}
+                    </CardTitle>
+                  </Link>
+
+                  <div className="mt-auto pt-4">
+                    <div className="text-3xl font-black text-white drop-shadow-md mb-6">
+                      R$ {(product.price || product.base_price || 0).toFixed(2).replace('.', ',')}
                     </div>
-                  )}
+                  </div>
                 </CardContent>
                 
                 <CardFooter className="pt-4 pb-6 px-6">
@@ -162,7 +155,7 @@ export default function Store() {
                     })}
                   >
                     <ShoppingCart className="w-5 h-5" />
-                    Adicionar ao Carrinho
+                    Comprar
                   </Button>
                 </CardFooter>
               </Card>

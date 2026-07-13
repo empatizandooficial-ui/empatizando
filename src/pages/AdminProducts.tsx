@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus, Edit2, Trash2, Check, X, Sparkles, Box, Tag, Layers, RefreshCw } from "lucide-react";
+import { Plus, Edit2, Trash2, Check, X, Sparkles, Box, Tag, Layers, RefreshCw, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -130,6 +130,17 @@ export default function AdminProducts() {
       newImages.splice(index, 1);
       return { ...prev, images: newImages };
     });
+  };
+
+  const handleMakePrimaryImage = (index: number) => {
+    if (index === 0) return;
+    setFormData(prev => {
+      const newImages = [...prev.images];
+      const selected = newImages.splice(index, 1)[0];
+      newImages.unshift(selected); // Put it at the beginning
+      return { ...prev, images: newImages };
+    });
+    toast({ title: "Imagem principal atualizada!" });
   };
 
 
@@ -323,19 +334,37 @@ export default function AdminProducts() {
                         <p className="text-xs text-muted-foreground mb-1">Previews:</p>
                         <div className="flex flex-wrap gap-2">
                           {formData.images.map((img, idx) => (
-                            <div key={idx} className="relative group w-24 h-24">
+                            <div key={idx} className={`relative group w-24 h-24 rounded-md border-2 ${idx === 0 ? 'border-indigo-500' : 'border-transparent'}`}>
                               <img 
                                 src={img} 
                                 alt={`Preview ${idx}`} 
-                                className="w-full h-full object-cover rounded-md border"
+                                className="w-full h-full object-cover rounded-sm"
                               />
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveImage(idx)}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <Trash2 size={12} />
-                              </button>
+                              {idx === 0 && (
+                                <div className="absolute -top-2 -left-2 bg-indigo-500 text-white rounded-full p-1 shadow-md">
+                                  <Star size={12} className="fill-current" />
+                                </div>
+                              )}
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-sm flex flex-col justify-center items-center gap-2">
+                                {idx !== 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMakePrimaryImage(idx)}
+                                    className="bg-white text-indigo-600 rounded-full p-1.5 hover:bg-indigo-50 transition-colors"
+                                    title="Definir como principal"
+                                  >
+                                    <Star size={14} />
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveImage(idx)}
+                                  className="bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors"
+                                  title="Remover imagem"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>
