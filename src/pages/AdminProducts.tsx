@@ -19,6 +19,40 @@ export default function AdminProducts() {
   const [activeTab, setActiveTab] = useState("geral");
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
+
+  const handleAIEnhancement = async () => {
+    if (!formData.title) {
+      toast({ title: "Atenção", description: "O nome do produto é obrigatório para usar a IA.", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      setIsEnhancing(true);
+      const { data, error } = await supabase.functions.invoke("ai-product-enrichment", {
+        body: { title: formData.title, description: formData.description },
+      });
+
+      if (error) throw error;
+      
+      const { seo_title, seo_description, enriched_description, tags } = data;
+      
+      setFormData(prev => ({
+        ...prev,
+        description: enriched_description || prev.description,
+        seo_title: seo_title || prev.seo_title,
+        seo_description: seo_description || prev.seo_description,
+        tags_json: tags ? JSON.stringify(tags) : prev.tags_json,
+        is_ai_optimized: true
+      }));
+      
+      toast({ title: "Sucesso!", description: "Dados aprimorados com inteligência artificial." });
+    } catch (error: any) {
+      toast({ title: "Erro na IA", description: error.message, variant: "destructive" });
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -240,7 +274,20 @@ export default function AdminProducts() {
                 <TabsContent value="geral" className="space-y-4 mt-0">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Nome do Produto</label>
+                      <div className="flex justify-between items-center">
+                        <label className="text-sm font-medium">Nome do Produto</label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2"
+                          onClick={handleAIEnhancement}
+                          disabled={isEnhancing}
+                        >
+                          <Sparkles size={12} className="mr-1" />
+                          {isEnhancing ? "Gerando Mágica..." : "✨ Aprimorar com IA"}
+                        </Button>
+                      </div>
                       <Input value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} placeholder="Ex: Camiseta Básica" />
                     </div>
                     <div className="space-y-2">
