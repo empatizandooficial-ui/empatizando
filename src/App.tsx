@@ -71,84 +71,84 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminDashboard />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/dashboard" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminDashboard />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/crm" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminCRM />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/professionals" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminProfessionals />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/settings" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminSettings />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/automation" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminAutomation />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/librarian" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminLibrarian />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/studio" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminStudio />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/hermes" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminHermes />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/agents" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminAgents />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/products" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminProducts />
                 </AdminLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/categories" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminCategories />
                 </AdminLayout>
