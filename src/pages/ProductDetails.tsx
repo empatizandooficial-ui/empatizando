@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { 
   ShoppingCart, ShieldCheck, Heart, Loader2, ChevronRight, 
-  Star, Truck, RotateCcw, Lock, ThumbsUp 
+  Star, Truck, RotateCcw, Lock, ThumbsUp, Check 
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

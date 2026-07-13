@@ -101,7 +101,7 @@ export default function Store() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {products.map((product) => (
-              <Card key={product.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/10 transition-all duration-500 group overflow-hidden flex flex-col rounded-3xl max-w-sm w-full mx-auto">
+              <Card key={product.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/10 transition-all duration-500 group overflow-hidden flex flex-col rounded-3xl max-w-[280px] w-full mx-auto">
                 <Link to={`/loja/produto/${product.slug || product.id}`} className="block relative aspect-[4/3] overflow-hidden bg-slate-900/50 flex items-center justify-center">
                   {product.images && product.images.length > 0 ? (
                     <img 
