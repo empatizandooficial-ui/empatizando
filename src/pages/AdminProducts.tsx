@@ -21,6 +21,21 @@ export default function AdminProducts() {
   const [uploading, setUploading] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
 
+  const [formData, setFormData] = useState({
+    id: "",
+    title: "",
+    description: "",
+    base_price: "",
+    cost_price: "",
+    slug: "",
+    images: [] as string[],
+    is_active: true,
+    seo_title: "",
+    seo_description: "",
+    tags_json: "[]",
+    is_ai_optimized: false,
+  });
+
   const handleAIEnhancement = async () => {
     if (!formData.title) {
       toast({ title: "Atenção", description: "O nome do produto é obrigatório para usar a IA.", variant: "destructive" });
@@ -117,20 +132,7 @@ export default function AdminProducts() {
     });
   };
 
-  const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    description: "",
-    base_price: "",
-    cost_price: "",
-    slug: "",
-    images: [] as string[],
-    is_active: true,
-    seo_title: "",
-    seo_description: "",
-    tags_json: "[]",
-    is_ai_optimized: false,
-  });
+
 
   const [variants, setVariants] = useState<any[]>([]);
 

@@ -30,7 +30,8 @@ Deno.serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
     )
 
     // Get system settings for the user
@@ -92,7 +93,7 @@ Crie conteúdos otimizados para e-commerce. Retorne ESTRITAMENTE um JSON no segu
           parts: [{ text: prompt }]
         }],
         generationConfig: {
-          response_mime_type: "application/json"
+          responseMimeType: "application/json"
         }
       })
     })

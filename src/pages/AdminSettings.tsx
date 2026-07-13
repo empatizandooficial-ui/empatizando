@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { Settings, Key, BrainCircuit, Eye, EyeOff, Save, ShieldAlert, Sparkles, Library } from "lucide-react";
-import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 
 interface SystemSetting {
   id?: string;
@@ -245,7 +244,7 @@ const AdminSettings = () => {
 
       const { error } = await supabase
         .from('system_settings')
-        .upsert(updates, { onConflict: 'key_name' });
+        .upsert(updates, { onConflict: 'user_id, key_name' });
 
       if (error) throw error;
 
