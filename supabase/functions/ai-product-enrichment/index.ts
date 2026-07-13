@@ -50,9 +50,8 @@ Deno.serve(async (req) => {
 
     // Get system settings for the user
     const { data: settings, error: settingsError } = await supabaseClient
-      .from('system_settings')
+      .from('admin_settings')
       .select('key_name, key_value')
-      .eq('user_id', user.id)
       .in('key_name', ['gemini_api_key', 'gemini_model'])
 
     if (settingsError) {
