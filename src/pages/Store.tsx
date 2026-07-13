@@ -13,7 +13,8 @@ interface Product {
   title: string;
   description: string;
   price: number;
-  image_url: string;
+  images?: string[];
+  image_url?: string;
   features?: string[];
 }
 
@@ -58,7 +59,7 @@ export default function Store() {
             title: 'Adesivo Recém Habilitada(o)',
             description: 'Aviso visual para o vidro vigia. Impressão de alta qualidade e durabilidade.',
             price: 89.90,
-            image_url: '',
+            images: [],
             features: ['Não atrapalha a visão do motorista (Perfurado)', 'Gera empatia e evita buzinas desnecessárias']
           }
         ]);
@@ -98,7 +99,13 @@ export default function Store() {
             {products.map((product) => (
               <Card key={product.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/10 transition-all duration-500 group overflow-hidden flex flex-col rounded-3xl">
                 <div className="relative aspect-video overflow-hidden bg-slate-900/50 flex items-center justify-center">
-                  {product.image_url ? (
+                  {product.images && product.images.length > 0 ? (
+                    <img 
+                      src={product.images[0]} 
+                      alt={product.title}
+                      className="object-cover w-full h-full absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                    />
+                  ) : product.image_url ? (
                     <img 
                       src={product.image_url} 
                       alt={product.title}
@@ -150,7 +157,7 @@ export default function Store() {
                       id: product.id,
                       title: product.title,
                       price: product.price,
-                      image_url: product.image_url || ""
+                      image_url: (product.images && product.images.length > 0) ? product.images[0] : (product.image_url || "")
                     })}
                   >
                     <ShoppingCart className="w-5 h-5" />

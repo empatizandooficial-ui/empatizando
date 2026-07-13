@@ -25,30 +25,53 @@ export default function AdminProducts() {
       if (!e.target.files || e.target.files.length === 0) {
         return;
       }
-      const file = e.target.files[0];
-      setUploading(true);
       
-      const fileName = `${crypto.randomUUID()}-${file.name}`;
+      const files = Array.from(e.target.files);
+      const remainingSlots = 8 - formData.images.length;
+      const filesToUpload = files.slice(0, remainingSlots);
       
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, file);
-
-      if (uploadError) {
-        throw uploadError;
+      if (filesToUpload.length === 0) {
+        toast({ title: "Limite atingido", description: "Você só pode enviar até 8 imagens.", variant: "destructive" });
+        return;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(fileName);
+      setUploading(true);
+      
+      const newImageUrls: string[] = [];
 
-      setFormData({ ...formData, image_url: publicUrl });
-      toast({ title: "Imagem enviada com sucesso!" });
+      for (const file of filesToUpload) {
+        const fileName = `${crypto.randomUUID()}-${file.name}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, file);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
+          
+        newImageUrls.push(publicUrl);
+      }
+
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...newImageUrls] }));
+      toast({ title: `${newImageUrls.length} imagem(ns) enviada(s) com sucesso!` });
     } catch (error: any) {
       toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData(prev => {
+      const newImages = [...prev.images];
+      newImages.splice(index, 1);
+      return { ...prev, images: newImages };
+    });
   };
 
   const [formData, setFormData] = useState({
@@ -58,7 +81,7 @@ export default function AdminProducts() {
     base_price: "",
     cost_price: "",
     slug: "",
-    image_url: "",
+    images: [] as string[],
     is_active: true,
     seo_title: "",
     seo_description: "",
@@ -107,7 +130,7 @@ export default function AdminProducts() {
         price: formData.base_price ? parseFloat(formData.base_price) : 0, // Fallback for old queries
         cost_price: formData.cost_price ? parseFloat(formData.cost_price) : 0,
         slug: formData.slug,
-        image_url: formData.image_url,
+        images: formData.images,
         is_active: formData.is_active,
         seo_title: formData.seo_title,
         seo_description: formData.seo_description,
@@ -139,7 +162,7 @@ export default function AdminProducts() {
       base_price: product.base_price ? product.base_price.toString() : (product.price ? product.price.toString() : ""),
       cost_price: product.cost_price ? product.cost_price.toString() : "",
       slug: product.slug,
-      image_url: product.image_url || "",
+      images: Array.isArray(product.images) ? product.images : (product.image_url ? [product.image_url] : []),
       is_active: product.is_active,
       seo_title: product.seo_title || "",
       seo_description: product.seo_description || "",
@@ -153,7 +176,7 @@ export default function AdminProducts() {
 
   const openNew = () => {
     setFormData({ 
-      id: "", title: "", description: "", base_price: "", cost_price: "", slug: "", image_url: "", is_active: true,
+      id: "", title: "", description: "", base_price: "", cost_price: "", slug: "", images: [], is_active: true,
       seo_title: "", seo_description: "", tags_json: "[]", is_ai_optimized: false
     });
     setVariants([]);
@@ -240,22 +263,36 @@ export default function AdminProducts() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Imagem Principal</label>
+                    <label className="text-sm font-medium">Imagens do Produto (Máx. 8)</label>
                     <Input 
                       type="file" 
                       accept="image/*"
+                      multiple
                       onChange={handleImageUpload}
-                      disabled={uploading}
+                      disabled={uploading || formData.images.length >= 8}
                     />
                     {uploading && <p className="text-sm text-muted-foreground">Enviando imagem...</p>}
-                    {formData.image_url && (
+                    {formData.images && formData.images.length > 0 && (
                       <div className="mt-2">
-                        <p className="text-xs text-muted-foreground mb-1">Preview:</p>
-                        <img 
-                          src={formData.image_url} 
-                          alt="Preview" 
-                          className="w-32 h-32 object-cover rounded-md border"
-                        />
+                        <p className="text-xs text-muted-foreground mb-1">Previews:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {formData.images.map((img, idx) => (
+                            <div key={idx} className="relative group w-24 h-24">
+                              <img 
+                                src={img} 
+                                alt={`Preview ${idx}`} 
+                                className="w-full h-full object-cover rounded-md border"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(idx)}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -391,7 +428,9 @@ export default function AdminProducts() {
                     <tr key={product.id} className="hover:bg-muted/20 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          {product.image_url ? (
+                          {product.images && product.images.length > 0 ? (
+                            <img src={product.images[0]} alt={product.title} className="w-12 h-12 rounded-lg object-cover border bg-background" />
+                          ) : product.image_url ? (
                             <img src={product.image_url} alt={product.title} className="w-12 h-12 rounded-lg object-cover border bg-background" />
                           ) : (
                             <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-xs text-muted-foreground border">Img</div>
