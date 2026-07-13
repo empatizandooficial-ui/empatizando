@@ -154,7 +154,7 @@ export default function AdminCRM() {
                     className="text-sm border border-stone-200 rounded-md px-3 py-1.5 bg-white"
                     value={selectedSession.status}
                     onChange={async (e) => {
-                      const newStatus = e.target.value;
+                      const newStatus = e.target.value as "Novo" | "Em Acompanhamento" | "Crítico" | "Encaminhado" | "Inativo";
                       await supabase.from('chat_sessions').update({ status: newStatus }).eq('id', selectedSession.id);
                       setSelectedSession({...selectedSession, status: newStatus});
                     }}

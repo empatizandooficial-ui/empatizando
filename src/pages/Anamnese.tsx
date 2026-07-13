@@ -48,7 +48,7 @@ export default function Anamnese() {
       }
 
       // No Supabase, salvaremos os dados. Para body_pain_areas e mind_tags, os vetores serão mapeados ou transformados em texto.
-      const { error } = await supabase.from("anamnesis_records").insert({
+      const { error } = await (supabase as any).from("anamnesis_records").insert({
         user_id: userData.user.id,
         age: parseInt(formData.age) || null,
         profession: formData.profession,
