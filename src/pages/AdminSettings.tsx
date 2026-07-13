@@ -34,13 +34,13 @@ const AdminSettings = () => {
   const [models, setModels] = useState({
     openai_model: "gpt-5.5",
     anthropic_model: "claude-fable-5",
-    gemini_model: "gemini-1.5-flash",
+    gemini_model: "gemini-3.5-flash",
     groq_model: "openai/gpt-oss-120b",
   });
 
   const [routing, setRouting] = useState({
     thoth_model: "gpt-5.5",
-    librarian_model: "gemini-1.5-flash",
+    librarian_model: "gemini-3.5-flash",
   });
 
   const [showKeys, setShowKeys] = useState({
@@ -345,10 +345,10 @@ const AdminSettings = () => {
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>Google Gemini</SelectLabel>
-                          <SelectItem value="gemini-1.5-pro">Gemini 3.5 Pro</SelectItem>
-                          <SelectItem value="gemini-1.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
-                          <SelectItem value="gemini-1.5-pro">Gemini 3.1 Pro</SelectItem>
-                          <SelectItem value="gemini-1.5-flash">Gemini 3.1 Flash-Lite</SelectItem>
+                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
+                          <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                          <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>Groq</SelectLabel>
@@ -382,10 +382,10 @@ const AdminSettings = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Google Gemini</SelectLabel>
-                          <SelectItem value="gemini-1.5-pro">Gemini 3.5 Pro</SelectItem>
-                          <SelectItem value="gemini-1.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
-                          <SelectItem value="gemini-1.5-pro">Gemini 3.1 Pro</SelectItem>
-                          <SelectItem value="gemini-1.5-flash">Gemini 3.1 Flash-Lite</SelectItem>
+                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro</SelectItem>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
+                          <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                          <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
                           <SelectLabel>Anthropic</SelectLabel>
@@ -571,8 +571,10 @@ const AdminSettings = () => {
                           <SelectValue placeholder="Selecione o modelo" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro (Mais Inteligente)</SelectItem>
-                          <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash ✨ (Mais Rápido/Barato)</SelectItem>
+                          <SelectItem value="gemini-3.5-pro">Gemini 3.5 Pro (Flagship)</SelectItem>
+                          <SelectItem value="gemini-3.5-flash">Gemini 3.5 Flash ⭐ (1M Tokens)</SelectItem>
+                          <SelectItem value="gemini-3.1-pro">Gemini 3.1 Pro</SelectItem>
+                          <SelectItem value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
