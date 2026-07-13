@@ -38,13 +38,13 @@ export default function Store() {
 
     const fetchProducts = async () => {
       try {
-        const { data, error } = await supabase.from('products_public' as any).select('*');
+        const { data, error } = await (supabase as any).from('products_public').select('*');
         if (error) throw error;
         
         if (!data || data.length === 0) {
            setProducts([]);
         } else {
-           setProducts(data);
+           setProducts(data as Product[]);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
