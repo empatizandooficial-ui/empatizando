@@ -33,7 +33,16 @@ export default function AdminProducts() {
         body: { title: formData.title, description: formData.description },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro da Edge Function:", error);
+        let msg = error.message;
+        try {
+          // A Supabase JS coloca a resposta no context quando não é 2xx
+          const body = await error.context?.json();
+          if (body?.error) msg = body.error + (body.details ? ` - ${body.details}` : '');
+        } catch(e) {}
+        throw new Error(msg || "Erro ao conectar com a IA");
+      }
       
       const { seo_title, seo_description, enriched_description, tags } = data;
       
