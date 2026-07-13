@@ -45,25 +45,7 @@ serve(async (req) => {
       )
     }
 
-    // Pega o token do header de Authorization que o cliente React envia
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error("Nenhum token de autorização fornecido")
-    }
-
-    // Inicializa o cliente Supabase com o token do usuário para respeitar o RLS
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    })
-
-    // Confirma quem é o usuário logado
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
-    if (userError || !user) {
-      throw new Error("Usuário não autenticado")
-    }
+    const user = userData.user
 
     // Busca a chave da OpenAI no banco de dados do usuário
     const { data: settingsData, error: settingsError } = await supabaseClient

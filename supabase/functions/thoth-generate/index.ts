@@ -42,22 +42,7 @@ serve(async (req) => {
       throw new Error("O prompt não pode estar vazio")
     }
 
-    // 1. Obter JWT e instanciar cliente Supabase
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error("Nenhum token de autorização fornecido")
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    })
-
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
-    if (userError || !user) {
-      throw new Error("Usuário não autenticado")
-    }
+    const user = userData.user
 
     // 2. Buscar configurações do usuário
     const { data: settingsData, error: settingsError } = await supabaseClient
