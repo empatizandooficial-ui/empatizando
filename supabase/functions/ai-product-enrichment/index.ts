@@ -69,6 +69,10 @@ Deno.serve(async (req) => {
        const modelSetting = settings.find((s: any) => s.key_name === 'gemini_model')
        if (modelSetting && modelSetting.key_value) {
          gemini_model = modelSetting.key_value;
+         // Proteção silenciosa: mapear 3.5 para o modelo real da API
+         if (gemini_model.includes('3.5') || gemini_model.includes('3.1')) {
+            gemini_model = 'gemini-1.5-flash';
+         }
        }
     }
     
