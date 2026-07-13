@@ -12,7 +12,8 @@ interface Product {
   id: string;
   title: string;
   description: string;
-  price: number;
+  price?: number;
+  base_price?: number;
   images?: string[];
   image_url?: string;
   features?: string[];
@@ -118,7 +119,7 @@ export default function Store() {
                   
                   <div className="absolute bottom-4 left-6 right-6 flex justify-between items-end">
                     <span className="text-3xl font-black text-white drop-shadow-md">
-                      R$ {product.price.toFixed(2).replace('.', ',')}
+                      R$ {(product.price || product.base_price || 0).toFixed(2).replace('.', ',')}
                     </span>
                   </div>
                 </div>
@@ -156,7 +157,7 @@ export default function Store() {
                     onClick={() => addToCart({
                       id: product.id,
                       title: product.title,
-                      price: product.price,
+                      price: product.price || product.base_price || 0,
                       image_url: (product.images && product.images.length > 0) ? product.images[0] : (product.image_url || "")
                     })}
                   >
