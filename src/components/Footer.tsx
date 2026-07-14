@@ -32,12 +32,14 @@ const Footer = () => {
         <TrustBadges />
 
         <div className="border-t border-border pt-6 mt-6">
+          {/* Aviso médico oculto temporariamente:
           <p className="text-muted-foreground text-xs text-center leading-relaxed max-w-2xl mx-auto mb-4">
             ⚠️ Aviso: O conteúdo apresentado neste site tem caráter educacional e
             informativo. Não substitui orientação médica, nutricional ou
             psicológica profissional. Consulte sempre um profissional qualificado.
           </p>
-          <div className="flex flex-wrap justify-center gap-4 mb-4">
+          */}
+          <div className="flex flex-wrap justify-center gap-4 mb-4 mt-2">
             <a href="/privacy-policy" className="text-muted-foreground hover:text-foreground text-xs transition-colors">Política de Privacidade</a>
             <a href="/terms-of-use" className="text-muted-foreground hover:text-foreground text-xs transition-colors">Termos de Uso</a>
           </div>
