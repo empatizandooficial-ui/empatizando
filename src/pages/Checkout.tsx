@@ -42,11 +42,6 @@ export default function Checkout() {
       cpfCnpj: "",
       postalCode: "",
       addressNumber: "",
-      phone: ""
-    }
-  });
-
-      phone: ""
     }
   });
 
