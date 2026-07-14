@@ -28,6 +28,7 @@ const AdminSettings = () => {
     tavily_api_key: "",
     asaas_api_key: "",
     asaas_webhook_token: "",
+    melhorenvio_api_token: "",
   });
   
   const [models, setModels] = useState({
@@ -54,6 +55,7 @@ const AdminSettings = () => {
     tavily_api_key: false,
     asaas_api_key: false,
     asaas_webhook_token: false,
+    melhorenvio_api_token: false,
   });
 
   const [systemPrompt, setSystemPrompt] = useState("");
@@ -248,6 +250,13 @@ const AdminSettings = () => {
         },
         {
           user_id: userData.user.id,
+          key_name: 'melhorenvio_api_token',
+          key_value: keys.melhorenvio_api_token,
+          is_secret: true,
+          description: "Token de API do MelhorEnvio"
+        },
+        {
+          user_id: userData.user.id,
           key_name: 'librarian_model',
           key_value: routing.librarian_model,
           is_secret: false,
@@ -282,6 +291,7 @@ const AdminSettings = () => {
         tavily_api_key: false,
         asaas_api_key: false,
         asaas_webhook_token: false,
+        melhorenvio_api_token: false,
       });
 
     } catch (error: unknown) {
@@ -743,6 +753,26 @@ const AdminSettings = () => {
                     maxLength={9}
                     className="bg-background/80 border-indigo-500/20 focus:border-indigo-500/50"
                   />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-foreground">Token API (MelhorEnvio)</Label>
+                  <div className="relative">
+                    <Input 
+                      type={showKeys.melhorenvio_api_token ? "text" : "password"}
+                      value={keys.melhorenvio_api_token}
+                      onChange={(e) => handleKeyChange('melhorenvio_api_token', e.target.value)}
+                      placeholder="eyJ0eXAiOiJKV1QiLC..."
+                      className="bg-background/80 border-indigo-500/20 focus:border-indigo-500/50 pr-10 font-mono text-sm"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => toggleKeyVisibility('melhorenvio_api_token')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showKeys.melhorenvio_api_token ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
