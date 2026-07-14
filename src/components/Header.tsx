@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ShoppingBag } from "lucide-react";
-import { useLocation, Link } from "react-router-dom";
+import { Menu, X, ShoppingBag, LogOut, User } from "lucide-react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import logo from "@/assets/logo.png";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const publicNavLinks = [
   { label: "Pilares", href: "/#pilares" },
@@ -19,31 +21,57 @@ const adminNavLinks = [
   { label: "Automação", href: "/admin/automation" },
 ];
 
-const storeNavLinks = [
-  { label: "Voltar ao Portal", href: "/" },
-  { label: "Minha Conta", href: "/login-cliente" },
-  { label: "Parceiro B2B", href: "/afiliados/cadastro" },
-];
-
 const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const { cartCount, setIsCartOpen } = useCart();
   
   const isPortalPage = location.pathname.includes("portal");
   const isAdminPage = location.pathname.startsWith("/admin");
-  const isStorePage = location.pathname.startsWith("/loja");
+  const isStorePage = location.pathname.startsWith("/loja") || location.pathname.startsWith("/produto") || location.pathname.startsWith("/checkout") || location.pathname.startsWith("/minha-conta");
+  const isAuthPage = location.pathname.includes("login") || location.pathname.includes("afiliados");
   const isHomePage = location.pathname === "/";
-  const useLightText = (isHomePage || isStorePage) && !scrolled && !darkTextOnTop;
   
-  const currentNavLinks = isAdminPage ? adminNavLinks : (isStorePage ? storeNavLinks : publicNavLinks);
-
+  const useLightText = (isHomePage || isStorePage || isAuthPage) && !scrolled && !darkTextOnTop;
+  
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({ title: "Você saiu da sua conta." });
+    navigate("/loja");
+  };
+  
+  const storeNavLinks = [
+    { label: "Voltar ao Portal", href: "/" },
+    user ? { label: "Minha Conta", href: "/minha-conta" } : { label: "Login Cliente", href: "/login-cliente" },
+    { label: "Parceiro B2B", href: "/afiliados/cadastro" },
+  ];
+
+  const currentNavLinks = isAdminPage ? adminNavLinks : ((isStorePage || isAuthPage) ? storeNavLinks : publicNavLinks);
 
   return (
     <header
@@ -61,7 +89,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
 
         {/* Desktop nav */}
         <nav className="hidden xl:flex items-center gap-4 xl:gap-6">
-          {currentNavLinks.map((link) => (
+          {!isAuthPage && currentNavLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -74,50 +102,70 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
               {link.label}
             </a>
           ))}
-          <a
-            href="/loja"
-            className="flex items-center gap-1 font-heading text-sm font-bold text-primary hover:text-primary/80 transition-colors"
-          >
-            <ShoppingBag size={16} /> Loja
-          </a>
           
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className={`relative p-2 rounded-full transition-colors ${
-              useLightText ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-            }`}
-          >
-            <ShoppingBag size={20} />
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-destructive rounded-full">
-                {cartCount}
-              </span>
-            )}
-          </button>
+          {!isAuthPage && (
+            <a
+              href="/loja"
+              className="flex items-center gap-1 font-heading text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+            >
+              <ShoppingBag size={16} /> Loja
+            </a>
+          )}
+          
+          {user && (isStorePage || isAuthPage) && !isAdminPage && (
+            <button 
+              onClick={handleLogout}
+              className={`flex items-center gap-1 font-heading text-sm font-bold transition-colors ${
+                useLightText ? "text-white hover:text-red-300" : "text-foreground hover:text-red-500"
+              }`}
+            >
+              <LogOut size={16} /> Sair
+            </button>
+          )}
 
-          <a
-            href="/#pilares"
-            className="bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
-          >
-            Começar
-          </a>
+          {!isAuthPage && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className={`relative p-2 rounded-full transition-colors ${
+                useLightText ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
+              }`}
+            >
+              <ShoppingBag size={20} />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-destructive rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          )}
+
+          {!isAuthPage && !isStorePage && (
+            <a
+              href="/#pilares"
+              className="bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
+            >
+              Começar
+            </a>
+          )}
         </nav>
 
         {/* Mobile toggle & Cart */}
         <div className="flex items-center gap-2 xl:hidden">
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className={`relative p-2 rounded-full transition-colors ${
-              useLightText ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
-            }`}
-          >
-            <ShoppingBag size={20} />
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-destructive rounded-full">
-                {cartCount}
-              </span>
-            )}
-          </button>
+          {!isAuthPage && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className={`relative p-2 rounded-full transition-colors ${
+                useLightText ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"
+              }`}
+            >
+              <ShoppingBag size={20} />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-destructive rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          )}
           
           <button
             className={`p-2 ${useLightText ? 'text-primary-foreground' : 'text-foreground'}`}
@@ -142,20 +190,37 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
               {link.label}
             </a>
           ))}
-          <a
-            href="/loja"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 py-3 font-heading text-sm font-bold text-primary hover:text-primary/80 transition-colors"
-          >
-            <ShoppingBag size={18} /> Acessar a Loja
-          </a>
-          <a
-            href="/#pilares"
-            onClick={() => setMobileOpen(false)}
-            className="block mt-2 text-center bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full"
-          >
-            Começar
-          </a>
+          {!isAuthPage && (
+            <a
+              href="/loja"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 py-3 font-heading text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+            >
+              <ShoppingBag size={18} /> Acessar a Loja
+            </a>
+          )}
+          
+          {user && (isStorePage || isAuthPage) && !isAdminPage && (
+            <button 
+              onClick={() => {
+                handleLogout();
+                setMobileOpen(false);
+              }}
+              className="flex w-full items-center gap-2 py-3 font-heading text-sm font-bold text-red-500 hover:text-red-600 transition-colors"
+            >
+              <LogOut size={18} /> Sair da Conta
+            </button>
+          )}
+
+          {!isAuthPage && !isStorePage && (
+            <a
+              href="/#pilares"
+              onClick={() => setMobileOpen(false)}
+              className="block mt-2 text-center bg-accent text-accent-foreground font-heading text-sm font-semibold px-5 py-2.5 rounded-full"
+            >
+              Começar
+            </a>
+          )}
         </nav>
       )}
     </header>
