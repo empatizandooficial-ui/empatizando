@@ -8,9 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ArrowLeft, QrCode, CreditCard, Banknote } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Loader2, ArrowLeft, QrCode, CreditCard, Banknote, ShieldCheck, Truck } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export default function Checkout() {
   const { cart, cartTotal, clearCart } = useCart();
@@ -19,6 +18,11 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("PIX");
   const [pixData, setPixData] = useState<{ qrCode: string, payload: string } | null>(null);
+
+  const [cep, setCep] = useState("");
+  const [shippingAddress, setShippingAddress] = useState<any>(null);
+  const [shippingCost, setShippingCost] = useState<number | null>(null);
+  const [calculatingShipping, setCalculatingShipping] = useState(false);
 
   const [customer, setCustomer] = useState({
     name: "",
@@ -42,7 +46,39 @@ export default function Checkout() {
     }
   });
 
-  const total = cartTotal;
+      phone: ""
+    }
+  });
+
+  const total = cartTotal + (shippingCost || 0);
+
+  const handleCalculateShipping = async () => {
+    if (cep.replace(/\D/g, '').length !== 8) {
+      toast({ title: "CEP inválido", variant: "destructive" });
+      return;
+    }
+    setCalculatingShipping(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep.replace(/\D/g, '')}/json/`);
+      const data = await res.json();
+      if (data.erro) throw new Error("CEP não encontrado");
+      
+      setShippingAddress(data);
+      
+      // Cálculo PAC Simulado (Seguro e Realista)
+      let cost = 38.90; // Default Alto (Norte e Nordeste)
+      if (data.uf === 'SP') cost = 16.90; // Sul/Sudeste base
+      else if (['RJ', 'MG', 'ES', 'PR', 'SC', 'RS'].includes(data.uf)) cost = 24.90;
+      else if (['GO', 'MT', 'MS', 'DF'].includes(data.uf)) cost = 29.90;
+      
+      setShippingCost(cost);
+      toast({ title: `Frete PAC calculado: ${data.localidade}/${data.uf}` });
+    } catch (err) {
+      toast({ title: "Erro ao buscar CEP", variant: "destructive" });
+    } finally {
+      setCalculatingShipping(false);
+    }
+  };
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,21 +120,32 @@ export default function Checkout() {
   if (cart.length === 0 && !pixData) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col">
-        <Header />
+        <header className="bg-white border-b py-4 px-6 flex justify-center items-center shadow-sm">
+          <img src={logo} alt="Empatizando" className="h-8 w-8 mr-2 rounded-full" />
+          <span className="font-heading font-bold text-xl text-primary">Empatizando Checkout</span>
+        </header>
         <div className="flex-1 flex flex-col items-center justify-center pt-24 pb-12">
           <h2 className="text-2xl font-semibold mb-4">Seu carrinho está vazio</h2>
           <Button onClick={() => navigate("/loja")}>Voltar para a Loja</Button>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Header />
+      <header className="bg-white border-b py-4 px-6 flex justify-between items-center shadow-sm sticky top-0 z-50">
+        <div className="flex items-center">
+          <img src={logo} alt="Empatizando" className="h-8 w-8 mr-2 rounded-full" />
+          <span className="font-heading font-bold text-xl text-primary hidden sm:inline-block">Empatizando Checkout</span>
+        </div>
+        <div className="flex items-center text-sm font-medium text-slate-500 gap-2">
+          <ShieldCheck className="w-4 h-4 text-green-500" />
+          Ambiente 100% Seguro
+        </div>
+      </header>
       
-      <main className="flex-1 container mx-auto px-4 py-24 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
         <Button variant="ghost" onClick={() => navigate("/loja")} className="mb-6 -ml-4">
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para a Loja
         </Button>
@@ -135,7 +182,36 @@ export default function Checkout() {
             ) : (
               <form id="checkout-form" onSubmit={handleCheckout} className="space-y-6">
                 <Card>
-                  <CardHeader><CardTitle>Seus Dados</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="flex items-center gap-2"><Truck className="w-5 h-5 text-indigo-500"/> 1. Entrega</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex gap-2 items-end">
+                      <div className="space-y-2 flex-1">
+                        <Label>CEP de Destino</Label>
+                        <Input placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} maxLength={9} />
+                      </div>
+                      <Button type="button" onClick={handleCalculateShipping} disabled={calculatingShipping} className="bg-indigo-600 hover:bg-indigo-700">
+                        {calculatingShipping ? <Loader2 className="h-4 w-4 animate-spin" /> : "Calcular Frete"}
+                      </Button>
+                    </div>
+                    {shippingCost !== null && shippingAddress && (
+                      <div className="p-4 bg-slate-100/80 rounded-lg text-sm flex justify-between items-center border border-slate-200">
+                        <div>
+                          <strong className="text-indigo-700">Correios PAC</strong> (7 a 12 dias úteis)<br/>
+                          <span className="text-slate-600">
+                            {shippingAddress.logradouro}, {shippingAddress.bairro} <br/> 
+                            {shippingAddress.localidade}/{shippingAddress.uf}
+                          </span>
+                        </div>
+                        <div className="font-bold text-lg text-slate-800">
+                          R$ {shippingCost.toFixed(2).replace('.', ',')}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className={shippingCost === null ? "opacity-50 pointer-events-none transition-opacity" : "transition-opacity"}>
+                  <CardHeader><CardTitle>2. Seus Dados</CardTitle></CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label>Nome Completo</Label>
@@ -158,8 +234,8 @@ export default function Checkout() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader><CardTitle>Forma de Pagamento</CardTitle></CardHeader>
+                <Card className={shippingCost === null ? "opacity-50 pointer-events-none transition-opacity" : "transition-opacity"}>
+                  <CardHeader><CardTitle>3. Forma de Pagamento</CardTitle></CardHeader>
                   <CardContent className="space-y-4">
                     <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                       <SelectTrigger>
@@ -206,7 +282,7 @@ export default function Checkout() {
 
           {/* Resumo do Pedido */}
           <div>
-            <Card className="sticky top-24">
+            <Card className="sticky top-24 shadow-lg border-primary/10">
               <CardHeader><CardTitle>Resumo do Pedido</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
@@ -217,7 +293,13 @@ export default function Checkout() {
                     </div>
                   ))}
                 </div>
-                <div className="border-t pt-4 flex justify-between font-bold text-lg">
+                {shippingCost !== null && (
+                  <div className="flex justify-between text-sm text-slate-600 py-2 border-b">
+                    <span>Frete (PAC)</span>
+                    <span>R$ {shippingCost.toFixed(2).replace('.', ',')}</span>
+                  </div>
+                )}
+                <div className="pt-2 flex justify-between font-bold text-xl text-primary">
                   <span>Total</span>
                   <span>R$ {total.toFixed(2)}</span>
                 </div>
@@ -226,12 +308,12 @@ export default function Checkout() {
                   <Button 
                     type="submit" 
                     form="checkout-form" 
-                    className="w-full mt-6" 
+                    className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold h-14 text-lg rounded-xl shadow-lg hover:shadow-green-500/20 transition-all" 
                     size="lg"
-                    disabled={loading}
+                    disabled={loading || shippingCost === null}
                   >
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Finalizar Compra
+                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+                    Confirmar e Pagar
                   </Button>
                 )}
                 <div className="text-center text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1">
@@ -243,8 +325,6 @@ export default function Checkout() {
 
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 }

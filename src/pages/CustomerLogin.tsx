@@ -12,6 +12,7 @@ import { Loader2, Mail, Lock, User } from "lucide-react";
 
 export default function CustomerLogin() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -39,6 +40,7 @@ export default function CustomerLogin() {
           title: "Cadastro realizado!",
           description: "Verifique seu email para confirmar o cadastro.",
         });
+        setIsEmailSent(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -51,7 +53,7 @@ export default function CustomerLogin() {
           title: "Login realizado com sucesso!",
           description: "Bem-vindo de volta.",
         });
-        navigate("/loja");
+        navigate("/minha-conta");
       }
     } catch (error: any) {
       toast({
@@ -74,7 +76,30 @@ export default function CustomerLogin() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px] pointer-events-none" />
 
         <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl z-10 text-white rounded-3xl overflow-hidden">
-          <CardHeader className="space-y-3 pb-6 text-center">
+          {isEmailSent ? (
+            <div className="flex flex-col items-center justify-center p-8 space-y-6 text-center">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-2">
+                <Mail className="w-10 h-10 text-green-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white">Verifique seu e-mail!</h2>
+              <p className="text-indigo-200">
+                Enviamos um link de confirmação para <br/>
+                <strong className="text-white">{email}</strong>
+              </p>
+              <p className="text-sm text-indigo-200/60 mt-4">
+                Clique no link do e-mail para ativar sua conta e depois retorne aqui para fazer o login.
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => { setIsEmailSent(false); setIsSignUp(false); }}
+                className="mt-6 border-indigo-500/50 text-indigo-300 hover:bg-indigo-500/20 hover:text-white"
+              >
+                Voltar para o Login
+              </Button>
+            </div>
+          ) : (
+            <>
+              <CardHeader className="space-y-3 pb-6 text-center">
             <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">
               {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
             </CardTitle>
@@ -163,6 +188,8 @@ export default function CustomerLogin() {
               </button>
             )}
           </CardFooter>
+            </>
+          )}
         </Card>
       </main>
       

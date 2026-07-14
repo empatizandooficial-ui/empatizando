@@ -36,6 +36,7 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AffiliateSignup = lazy(() => import("./pages/AffiliateSignup"));
 const AffiliatePortal = lazy(() => import("./pages/AffiliatePortal"));
 const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
+const CustomerDashboard = lazy(() => import("./pages/CustomerDashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const queryClient = new QueryClient();
 
@@ -57,6 +58,11 @@ const App = () => (
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/login" element={<Login />} />
             <Route path="/login-cliente" element={<CustomerLogin />} />
+            <Route path="/minha-conta" element={
+              <ProtectedRoute>
+                <CustomerDashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/loja" element={<Store />} />
             <Route path="/loja/produto/:slug" element={<ProductDetails />} />
             <Route path="/checkout" element={<Checkout />} />
