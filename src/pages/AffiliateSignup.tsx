@@ -119,10 +119,17 @@ export default function AffiliateSignup() {
       }
       
     } catch (error: any) {
+      let errorMessage = error.message || "Não foi possível concluir. Tente novamente.";
+      
+      // Tratamento elegante para o erro de Anti-Spam (Rate Limit) do Supabase
+      if (errorMessage.includes("security purposes") || errorMessage.includes("rate limit") || errorMessage.includes("seconds")) {
+        errorMessage = "O nosso escudo de segurança detectou múltiplas tentativas rápidas. Por favor, respire fundo e aguarde cerca de 1 minuto para tentar novamente.";
+      }
+
       console.error(error);
       toast({
         title: "Interferência no processo",
-        description: error.message || "Não foi possível concluir. Tente novamente.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
