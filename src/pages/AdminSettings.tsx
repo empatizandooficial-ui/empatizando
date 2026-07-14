@@ -273,7 +273,7 @@ const AdminSettings = () => {
 
       const { error } = await supabase
         .from('system_settings')
-        .upsert(updates, { onConflict: 'user_id, key_name' });
+        .upsert(updates, { onConflict: 'key_name' });
 
       if (error) throw error;
 
