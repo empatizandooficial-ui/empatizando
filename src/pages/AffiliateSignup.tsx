@@ -71,7 +71,6 @@ export default function AffiliateSignup() {
         description: "Não foi possível concluir o cadastro. Tente novamente.",
         variant: "destructive"
       });
-      }
     } finally {
       setIsSubmitting(false);
     }
