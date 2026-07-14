@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { Settings, Key, BrainCircuit, Eye, EyeOff, Save, ShieldAlert, Sparkles, Library } from "lucide-react";
+import { Settings, Key, BrainCircuit, Eye, EyeOff, Save, ShieldAlert, Sparkles, Library, Truck } from "lucide-react";
 
 interface SystemSetting {
   id?: string;
@@ -40,6 +40,10 @@ const AdminSettings = () => {
   const [routing, setRouting] = useState({
     thoth_model: "gpt-5.5",
     librarian_model: "gemini-3.5-flash",
+  });
+
+  const [logistics, setLogistics] = useState({
+    origin_cep: "",
   });
 
   const [showKeys, setShowKeys] = useState({
@@ -86,6 +90,8 @@ const AdminSettings = () => {
             newModels[setting.key_name as keyof typeof models] = setting.key_value || "";
           } else if (setting.key_name in newRouting) {
             newRouting[setting.key_name as keyof typeof routing] = setting.key_value || "";
+          } else if (setting.key_name === 'origin_cep') {
+            setLogistics(prev => ({ ...prev, origin_cep: setting.key_value || "" }));
           }
         });
         
@@ -132,6 +138,13 @@ const AdminSettings = () => {
     setRouting(prev => ({
       ...prev,
       [routeName]: value
+    }));
+  };
+
+  const handleLogisticsChange = (keyName: keyof typeof logistics, value: string) => {
+    setLogistics(prev => ({
+      ...prev,
+      [keyName]: value
     }));
   };
 
@@ -239,6 +252,13 @@ const AdminSettings = () => {
           key_value: routing.librarian_model,
           is_secret: false,
           description: "Modelo selecionado para o Agente Bibliotecário"
+        },
+        {
+          user_id: userData.user.id,
+          key_name: 'origin_cep',
+          key_value: logistics.origin_cep,
+          is_secret: false,
+          description: "CEP do Remetente (Origem) para cálculo de frete"
         }
       ];
 
@@ -698,6 +718,31 @@ const AdminSettings = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Logística & Envios */}
+            <div className="glass-card p-8 rounded-2xl border border-indigo-500/20 bg-indigo-500/5">
+              <div className="flex items-center gap-2 mb-4">
+                <Truck className="w-6 h-6 text-indigo-400" />
+                <h2 className="text-2xl font-heading font-bold text-foreground">Logística & Envios</h2>
+              </div>
+              <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+                Configure os dados do remetente (CD/Estoque) para que o sistema de fretes e a API do MelhorEnvio calculem os envios baseados na sua origem.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-foreground">CEP de Origem (Remetente)</Label>
+                  <Input 
+                    type="text"
+                    value={logistics.origin_cep}
+                    onChange={(e) => handleLogisticsChange('origin_cep', e.target.value)}
+                    placeholder="00000-000"
+                    maxLength={9}
+                    className="bg-background/80 border-indigo-500/20 focus:border-indigo-500/50"
+                  />
                 </div>
               </div>
             </div>
