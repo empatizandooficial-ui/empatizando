@@ -1,5 +1,7 @@
 import { Instagram, MessageCircle, Facebook, Youtube } from "lucide-react";
 
+import { TrustBadges } from "@/components/TrustBadges";
+
 const Footer = () => {
   return (
     <footer id="sobre" className="border-t border-border py-12 px-6">
@@ -27,7 +29,9 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border pt-6">
+        <TrustBadges />
+
+        <div className="border-t border-border pt-6 mt-6">
           <p className="text-muted-foreground text-xs text-center leading-relaxed max-w-2xl mx-auto mb-4">
             ⚠️ Aviso: O conteúdo apresentado neste site tem caráter educacional e
             informativo. Não substitui orientação médica, nutricional ou

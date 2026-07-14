@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus, Edit2, Trash2, Check, X, Sparkles, Box, Tag, Layers, RefreshCw, Star } from "lucide-react";
+import { Plus, Edit2, Trash2, Check, X, Sparkles, Box, Tag, Layers, RefreshCw, Star, Truck } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,11 @@ export default function AdminProducts() {
     seo_description: "",
     tags_json: "[]",
     is_ai_optimized: false,
+    weight_kg: "0.300",
+    width_cm: "15.00",
+    height_cm: "10.00",
+    length_cm: "20.00",
+    box_format: "caixa"
   });
 
   const handleAIEnhancement = async () => {
@@ -192,6 +197,11 @@ export default function AdminProducts() {
         seo_description: formData.seo_description,
         tags_json: JSON.parse(formData.tags_json || "[]"),
         is_ai_optimized: formData.is_ai_optimized,
+        weight_kg: parseFloat(formData.weight_kg) || 0.3,
+        width_cm: parseFloat(formData.width_cm) || 15,
+        height_cm: parseFloat(formData.height_cm) || 10,
+        length_cm: parseFloat(formData.length_cm) || 20,
+        box_format: formData.box_format || 'caixa'
       };
 
       if (formData.id) {
@@ -224,6 +234,11 @@ export default function AdminProducts() {
       seo_description: product.seo_description || "",
       tags_json: typeof product.tags_json === 'string' ? product.tags_json : JSON.stringify(product.tags_json || []),
       is_ai_optimized: product.is_ai_optimized || false,
+      weight_kg: product.weight_kg ? product.weight_kg.toString() : "0.300",
+      width_cm: product.width_cm ? product.width_cm.toString() : "15.00",
+      height_cm: product.height_cm ? product.height_cm.toString() : "10.00",
+      length_cm: product.length_cm ? product.length_cm.toString() : "20.00",
+      box_format: product.box_format || "caixa"
     });
     setVariants(product.product_variants || []);
     setActiveTab("geral");
@@ -233,7 +248,8 @@ export default function AdminProducts() {
   const openNew = () => {
     setFormData({ 
       id: "", title: "", description: "", base_price: "", cost_price: "", slug: "", images: [], is_active: true,
-      seo_title: "", seo_description: "", tags_json: "[]", is_ai_optimized: false
+      seo_title: "", seo_description: "", tags_json: "[]", is_ai_optimized: false,
+      weight_kg: "0.300", width_cm: "15.00", height_cm: "10.00", length_cm: "20.00", box_format: "caixa"
     });
     setVariants([]);
     setActiveTab("geral");
@@ -273,14 +289,57 @@ export default function AdminProducts() {
             </DialogHeader>
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="geral" className="gap-2"><Box size={16}/> Geral</TabsTrigger>
-                <TabsTrigger value="ai_seo" className="gap-2"><Sparkles size={16}/> SEO e IA</TabsTrigger>
-                <TabsTrigger value="variants" className="gap-2"><Layers size={16}/> Variantes</TabsTrigger>
-                <TabsTrigger value="categories" className="gap-2"><Tag size={16}/> Categorias</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-5 h-auto py-1">
+                <TabsTrigger value="geral" className="gap-2"><Box size={14}/> Geral</TabsTrigger>
+                <TabsTrigger value="ai_seo" className="gap-2"><Sparkles size={14}/> SEO e IA</TabsTrigger>
+                <TabsTrigger value="variants" className="gap-2"><Layers size={14}/> Variantes</TabsTrigger>
+                <TabsTrigger value="categories" className="gap-2"><Tag size={14}/> Categorias</TabsTrigger>
+                <TabsTrigger value="shipping" className="gap-2"><Truck size={14}/> Frete</TabsTrigger>
               </TabsList>
               
               <div className="py-6">
+                <TabsContent value="shipping" className="space-y-4 mt-0">
+                  <div className="bg-indigo-50/50 p-4 rounded-lg border border-indigo-100 flex gap-3 mb-4">
+                    <Truck className="text-indigo-500 mt-1" size={20} />
+                    <div>
+                      <h4 className="font-medium text-indigo-900">Configuração de Frete Logístico</h4>
+                      <p className="text-sm text-indigo-700">Dimensões reais para integração futura com MelhorEnvio, Kangu ou Correios.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Peso Final (kg) <span className="text-muted-foreground font-normal text-xs">- Ex: 0.300 para 300g</span></label>
+                      <Input type="number" step="0.001" value={formData.weight_kg} onChange={(e) => setFormData({...formData, weight_kg: e.target.value})} placeholder="0.300" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Formato da Embalagem</label>
+                      <select 
+                        value={formData.box_format}
+                        onChange={(e) => setFormData({...formData, box_format: e.target.value})}
+                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      >
+                        <option value="caixa">Caixa / Pacote</option>
+                        <option value="rolo">Rolo / Cilindro</option>
+                        <option value="envelope">Envelope</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Largura (cm)</label>
+                      <Input type="number" step="0.1" value={formData.width_cm} onChange={(e) => setFormData({...formData, width_cm: e.target.value})} placeholder="15.00" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Altura (cm)</label>
+                      <Input type="number" step="0.1" value={formData.height_cm} onChange={(e) => setFormData({...formData, height_cm: e.target.value})} placeholder="10.00" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Comprimento (cm)</label>
+                      <Input type="number" step="0.1" value={formData.length_cm} onChange={(e) => setFormData({...formData, length_cm: e.target.value})} placeholder="20.00" />
+                    </div>
+                  </div>
+                </TabsContent>
                 <TabsContent value="geral" className="space-y-4 mt-0">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">

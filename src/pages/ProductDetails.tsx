@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { 
   ShoppingCart, ShieldCheck, Heart, Loader2, ChevronRight, 
-  Star, Truck, RotateCcw, Lock, ThumbsUp, Check, ZoomIn 
+  Star, Truck, RotateCcw, Lock, ThumbsUp, Check, ZoomIn, MapPin 
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -34,6 +34,36 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
+
+  const [cep, setCep] = useState("");
+  const [shippingCalc, setShippingCalc] = useState<{ cost: number, days: number, location: string } | null>(null);
+  const [calculatingShipping, setCalculatingShipping] = useState(false);
+
+  const handleCalculateShipping = async () => {
+    if (cep.replace(/\D/g, '').length !== 8) {
+      toast({ title: "CEP inválido", variant: "destructive" });
+      return;
+    }
+    setCalculatingShipping(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep.replace(/\D/g, '')}/json/`);
+      const data = await res.json();
+      if (data.erro) throw new Error("CEP não encontrado");
+      
+      // Simulação de Cálculo (Preparado para API MelhorEnvio no backend)
+      let cost = 38.90;
+      let days = 12;
+      if (data.uf === 'SP') { cost = 16.90; days = 4; }
+      else if (['RJ', 'MG', 'ES', 'PR', 'SC', 'RS'].includes(data.uf)) { cost = 24.90; days = 7; }
+      else if (['GO', 'MT', 'MS', 'DF'].includes(data.uf)) { cost = 29.90; days = 9; }
+      
+      setShippingCalc({ cost, days, location: `${data.localidade}/${data.uf}` });
+    } catch (err) {
+      toast({ title: "Erro ao buscar CEP", variant: "destructive" });
+    } finally {
+      setCalculatingShipping(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -272,6 +302,49 @@ export default function ProductDetails() {
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Comprar Agora
                     </Button>
+                  </div>
+
+                  {/* Shipping Calculator */}
+                  <div className="pt-6 border-t border-slate-100">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Truck className="w-5 h-5 text-slate-400" />
+                      <span className="font-semibold text-slate-700">Simulador de Frete</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text"
+                        placeholder="00000-000"
+                        className="flex-1 h-12 px-4 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none"
+                        value={cep}
+                        onChange={(e) => setCep(e.target.value)}
+                        maxLength={9}
+                      />
+                      <Button 
+                        variant="secondary" 
+                        className="h-12 px-6 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200"
+                        onClick={handleCalculateShipping}
+                        disabled={calculatingShipping}
+                      >
+                        {calculatingShipping ? <Loader2 className="w-5 h-5 animate-spin" /> : "Calcular"}
+                      </Button>
+                    </div>
+                    {shippingCalc && (
+                      <div className="mt-4 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 flex items-start gap-3">
+                        <MapPin className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm text-indigo-900 mb-1">
+                            Frete para <strong>{shippingCalc.location}</strong>
+                          </p>
+                          <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-indigo-50 shadow-sm">
+                            <div>
+                              <p className="font-bold text-slate-800">Correios PAC</p>
+                              <p className="text-xs text-slate-500">Até {shippingCalc.days} dias úteis</p>
+                            </div>
+                            <span className="font-bold text-indigo-600">R$ {shippingCalc.cost.toFixed(2).replace('.', ',')}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Trust Badges */}

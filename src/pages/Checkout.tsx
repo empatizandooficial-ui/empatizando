@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowLeft, QrCode, CreditCard, Banknote, ShieldCheck, Truck } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { TrustBadges } from "@/components/TrustBadges";
 
 export default function Checkout() {
   const { cart, cartTotal, clearCart } = useCart();
@@ -60,14 +61,33 @@ export default function Checkout() {
       
       setShippingAddress(data);
       
-      // Cálculo PAC Simulado (Seguro e Realista)
-      let cost = 38.90; // Default Alto (Norte e Nordeste)
-      if (data.uf === 'SP') cost = 16.90; // Sul/Sudeste base
-      else if (['RJ', 'MG', 'ES', 'PR', 'SC', 'RS'].includes(data.uf)) cost = 24.90;
-      else if (['GO', 'MT', 'MS', 'DF'].includes(data.uf)) cost = 29.90;
+      // Busca o peso dos produtos no banco (preparação para MelhorEnvio)
+      const ids = cart.map(item => item.id);
+      const { data: productsData } = await supabase.from('products').select('id, weight_kg').in('id', ids);
       
-      setShippingCost(cost);
-      toast({ title: `Frete PAC calculado: ${data.localidade}/${data.uf}` });
+      let totalWeight = 0;
+      if (productsData) {
+        cart.forEach(item => {
+          const prod = productsData.find(p => p.id === item.id);
+          const w = prod?.weight_kg || 0.3;
+          totalWeight += w * item.quantity;
+        });
+      } else {
+        totalWeight = cart.reduce((acc, item) => acc + (0.3 * item.quantity), 0);
+      }
+      
+      // Cálculo PAC Simulado (Base UF + Peso Extra)
+      let baseCost = 38.90; // Norte/Nordeste
+      if (data.uf === 'SP') baseCost = 16.90;
+      else if (['RJ', 'MG', 'ES', 'PR', 'SC', 'RS'].includes(data.uf)) baseCost = 24.90;
+      else if (['GO', 'MT', 'MS', 'DF'].includes(data.uf)) baseCost = 29.90;
+      
+      // Acréscimo por peso (R$ 5,50 por Kg extra após 1Kg)
+      const weightCost = Math.max(0, Math.ceil(totalWeight - 1)) * 5.50;
+      const finalCost = baseCost + weightCost;
+      
+      setShippingCost(finalCost);
+      toast({ title: `Frete PAC calculado: ${data.localidade}/${data.uf}`, description: `Peso total estimado: ${totalWeight.toFixed(2)}kg` });
     } catch (err) {
       toast({ title: "Erro ao buscar CEP", variant: "destructive" });
     } finally {
@@ -273,6 +293,10 @@ export default function Checkout() {
                 </Card>
               </form>
             )}
+            
+            <div className="pt-8">
+              <TrustBadges />
+            </div>
           </div>
 
           {/* Resumo do Pedido */}

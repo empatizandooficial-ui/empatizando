@@ -27,6 +27,7 @@ export default function AffiliateSignup() {
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [emailVerificationSent, setEmailVerificationSent] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -56,50 +57,71 @@ export default function AffiliateSignup() {
     }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleCreateAccount = async () => {
+    setIsSubmitting(true);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          }
+        }
+      });
+
+      if (authError) {
+        if (authError.message.includes("User already registered") || authError.message.includes("already exists")) {
+          toast({
+            title: "E-mail já cadastrado",
+            description: "Você já possui uma conta. Faça login para vincular seu perfil de parceiro.",
+            variant: "destructive"
+          });
+          navigate("/login-cliente");
+          return;
+        }
+        throw authError;
+      }
+
+      // Se a sessão for nula, significa que a confirmação de e-mail está habilitada no Supabase
+      if (!authData.session) {
+        setEmailVerificationSent(true);
+      } else {
+        // Se já logou direto, avança para o passo do PIX
+        setIsAuthenticated(true);
+        setUser(authData.user);
+        setStep(3);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Interferência",
+        description: error.message || "Não foi possível criar a conta. Tente novamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSavePixKey = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthenticated || !user) {
+      toast({
+        title: "Sessão inválida",
+        description: "Você precisa estar logado para cadastrar o PIX.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      let currentUserId = user?.id;
-
-      if (!isAuthenticated) {
-        // Step 1: Try to create Auth Account
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-            }
-          }
-        });
-
-        if (authError) {
-          if (authError.message.includes("User already registered") || authError.message.includes("already exists")) {
-            toast({
-              title: "E-mail já cadastrado",
-              description: "Você já possui uma conta de cliente. Faça login para vincular seu perfil de parceiro.",
-              variant: "destructive"
-            });
-            navigate("/login-cliente");
-            return;
-          }
-          throw authError;
-        }
-        
-        currentUserId = authData.user?.id;
-        
-        if (!currentUserId) {
-          throw new Error("Falha ao criar usuário. Tente novamente.");
-        }
-      }
-
-      // Step 2: Create Affiliate Record
       const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
       const { error: affiliateError } = await supabase.from("affiliates").insert({
-        user_id: currentUserId,
+        user_id: user.id,
         referral_code: referralCode,
         pix_key: pixKey,
         status: "pending"
@@ -112,16 +134,11 @@ export default function AffiliateSignup() {
         description: "Seu canal está em análise. Em breve você terá acesso ao portal de recompensas.",
       });
       
-      if (!isAuthenticated) {
-        navigate("/login-cliente");
-      } else {
-        navigate("/minha-conta");
-      }
+      navigate("/minha-conta");
       
     } catch (error: any) {
       let errorMessage = error.message || "Não foi possível concluir. Tente novamente.";
       
-      // Tratamento elegante para o erro de Anti-Spam (Rate Limit) do Supabase
       if (errorMessage.includes("security purposes") || errorMessage.includes("rate limit") || errorMessage.includes("seconds")) {
         errorMessage = "O nosso escudo de segurança detectou múltiplas tentativas rápidas. Por favor, respire fundo e aguarde cerca de 1 minuto para tentar novamente.";
       }
@@ -180,10 +197,34 @@ export default function AffiliateSignup() {
           </CardHeader>
           
           <CardContent className="pt-8">
-            <form onSubmit={handleSignup} className="space-y-6">
+            <form onSubmit={step === 3 ? handleSavePixKey : (e) => e.preventDefault()} className="space-y-6">
               
+              {/* Email Verification Required Message */}
+              {emailVerificationSent && (
+                <div className="space-y-6 text-center animate-fade-in py-8">
+                  <div className="mx-auto w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-[#40E0D0]/30 shadow-[0_0_30px_rgba(64,224,208,0.2)]">
+                    <ShieldCheck className="w-10 h-10 text-[#40E0D0]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Quase lá, Guardião!</h3>
+                  <p className="text-slate-300 max-w-md mx-auto">
+                    Para protegermos a rede, precisamos que você confirme a sua identidade. 
+                    Enviamos um feixe de luz (e-mail) para <strong>{email}</strong>.
+                  </p>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-lg mt-6 text-sm text-slate-400 max-w-md mx-auto">
+                    Por favor, clique no link de verificação no seu e-mail. Após fazer isso, faça o login e volte a esta página para cadastrar sua chave PIX e concluir sua jornada.
+                  </div>
+                  <Button 
+                    type="button" 
+                    onClick={() => navigate("/login-cliente")}
+                    className="w-full max-w-sm h-14 mt-6 text-lg font-bold text-white bg-gradient-to-r from-[#40E0D0] to-[#8A2BE2] hover:opacity-90 border-0"
+                  >
+                    Ir para Login
+                  </Button>
+                </div>
+              )}
+
               {/* STEP 1: A Missão (Thoth's Copy) */}
-              {step === 1 && (
+              {step === 1 && !emailVerificationSent && (
                 <div className="space-y-6 text-slate-300 leading-relaxed animate-fade-in">
                   <h3 className="text-xl font-bold text-white mb-2">A Nossa Missão: Recalibrando as Vias da Cidade</h3>
                   <p>
@@ -222,7 +263,7 @@ export default function AffiliateSignup() {
               )}
 
               {/* STEP 2: Identificação (Nome, Email, Senha) */}
-              {step === 2 && !isAuthenticated && (
+              {step === 2 && !isAuthenticated && !emailVerificationSent && (
                 <div className="space-y-5 animate-fade-in">
                   <p className="text-slate-300 text-center mb-6">
                     Para que possamos emitir a sua credencial de parceiro, precisamos firmar sua identidade neste portal.
@@ -270,18 +311,19 @@ export default function AffiliateSignup() {
                     </Button>
                     <Button 
                       type="button" 
-                      onClick={nextStep}
-                      disabled={!fullName || !email || !password}
+                      onClick={handleCreateAccount}
+                      disabled={isSubmitting || !fullName || !email || !password}
                       className="w-2/3 h-12 font-bold text-white bg-gradient-to-r from-[#40E0D0] to-[#8A2BE2] hover:opacity-90 border-0"
                     >
-                      Avançar <ChevronRight className="ml-2 w-4 h-4" />
+                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Avançar "} 
+                      {!isSubmitting && <ChevronRight className="ml-2 w-4 h-4" />}
                     </Button>
                   </div>
                 </div>
               )}
 
               {/* STEP 3: Chave PIX */}
-              {step === 3 && (
+              {step === 3 && !emailVerificationSent && (
                 <div className="space-y-5 animate-fade-in">
                   <div className="bg-black/30 border border-[#FFD700]/30 p-5 rounded-lg text-slate-300 mb-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
