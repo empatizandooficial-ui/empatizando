@@ -86,12 +86,17 @@ export default function ProductDetails() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      // Fetch main product (por slug ou por ID, para suportar produtos sem slug)
-      const { data, error } = await (supabase as any)
-        .from('products_public')
-        .select('*')
-        .or(`slug.eq.${slug},id.eq.${slug}`)
-        .single();
+      // Check if slug is a valid UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug || '');
+      
+      let query = supabase.from('products_public').select('*');
+      if (isUUID) {
+        query = query.eq('id', slug);
+      } else {
+        query = query.eq('slug', slug);
+      }
+      
+      const { data, error } = await query.single();
         
       if (error) throw error;
       setProduct(data as Product);
