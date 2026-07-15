@@ -115,13 +115,15 @@ export default function ProductDetails() {
       }
       
       // Fetch variants
-      const { data: variantsData } = await supabase
-        .from('product_variants')
+      const { data: variantsData, error: variantsError } = await (supabase as any)
+        .from('product_variants_public')
         .select('*, inventory(*)')
         .eq('product_id', data.id)
         .eq('is_active', true);
         
-      if (variantsData && variantsData.length > 0) {
+      if (variantsError) {
+        console.error("Error fetching variants:", variantsError);
+      } else if (variantsData && variantsData.length > 0) {
         setVariants(variantsData);
       }
       
