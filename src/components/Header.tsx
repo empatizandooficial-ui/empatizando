@@ -37,7 +37,7 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
   const isAuthPage = location.pathname.includes("login") || location.pathname.includes("afiliados");
   const isHomePage = location.pathname === "/";
   
-  const useLightText = (isHomePage || isStorePage || isAuthPage) && !scrolled && !darkTextOnTop;
+  const useLightText = (isHomePage || isAuthPage) && !scrolled && !darkTextOnTop;
   
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);

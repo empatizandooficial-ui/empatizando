@@ -23,10 +23,9 @@ export function ProductQuestions({ productId }: { productId: string }) {
     const fetchQuestions = async () => {
       try {
         const { data, error } = await supabase
-          .from("product_questions")
-          .select("id, question, answer, created_at, answered_at, user_id, auth_users:user_id(email)")
+          .from("public_product_questions")
+          .select("*")
           .eq("product_id", productId)
-          .not("answer", "is", null) // Only show answered questions to public
           .order("answered_at", { ascending: false });
 
         if (error) throw error;
