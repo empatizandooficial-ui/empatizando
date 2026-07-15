@@ -61,35 +61,34 @@ export default function Checkout() {
       
       setShippingAddress(data);
       
-      // Busca o peso dos produtos no banco (preparação para MelhorEnvio)
       const ids = cart.map(item => item.id);
       const { data: productsData } = await supabase.from('products').select('id, weight_kg').in('id', ids);
       
-      let totalWeight = 0;
-      if (productsData) {
-        cart.forEach(item => {
-          const prod = productsData.find(p => p.id === item.id);
-          const w = prod?.weight_kg || 0.3;
-          totalWeight += w * item.quantity;
-        });
-      } else {
-        totalWeight = cart.reduce((acc, item) => acc + (0.3 * item.quantity), 0);
+      const payloadProducts = cart.map(item => {
+        const prod = productsData?.find(p => p.id === item.id);
+        return {
+          id: item.id,
+          price: item.price,
+          quantity: item.quantity,
+          weight_kg: prod?.weight_kg || 0.3
+        }
+      });
+
+      const { data: quoteData, error } = await supabase.functions.invoke('melhorenvio-quote', {
+        body: { to_cep: cep, products: payloadProducts }
+      });
+      
+      if (error) throw error;
+      if (!quoteData || quoteData.length === 0 || quoteData.error) {
+        throw new Error("Nenhuma transportadora disponível para este CEP.");
       }
+
+      const cheapest = quoteData.reduce((prev: any, curr: any) => parseFloat(prev.price) < parseFloat(curr.price) ? prev : curr);
       
-      // Cálculo PAC Simulado (Base UF + Peso Extra)
-      let baseCost = 38.90; // Norte/Nordeste
-      if (data.uf === 'SP') baseCost = 16.90;
-      else if (['RJ', 'MG', 'ES', 'PR', 'SC', 'RS'].includes(data.uf)) baseCost = 24.90;
-      else if (['GO', 'MT', 'MS', 'DF'].includes(data.uf)) baseCost = 29.90;
-      
-      // Acréscimo por peso (R$ 5,50 por Kg extra após 1Kg)
-      const weightCost = Math.max(0, Math.ceil(totalWeight - 1)) * 5.50;
-      const finalCost = baseCost + weightCost;
-      
-      setShippingCost(finalCost);
-      toast({ title: `Frete PAC calculado: ${data.localidade}/${data.uf}`, description: `Peso total estimado: ${totalWeight.toFixed(2)}kg` });
-    } catch (err) {
-      toast({ title: "Erro ao buscar CEP", variant: "destructive" });
+      setShippingCost(parseFloat(cheapest.price));
+      toast({ title: `Frete calculado: ${data.localidade}/${data.uf}`, description: `Via MelhorEnvio (${cheapest.name})` });
+    } catch (err: any) {
+      toast({ title: "Erro ao buscar CEP ou calcular frete", description: err.message, variant: "destructive" });
     } finally {
       setCalculatingShipping(false);
     }

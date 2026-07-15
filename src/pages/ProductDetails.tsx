@@ -46,20 +46,25 @@ export default function ProductDetails() {
     }
     setCalculatingShipping(true);
     try {
-      const res = await fetch(`https://viacep.com.br/ws/${cep.replace(/\D/g, '')}/json/`);
-      const data = await res.json();
-      if (data.erro) throw new Error("CEP não encontrado");
+      const { data, error } = await supabase.functions.invoke('melhorenvio-quote', {
+        body: { to_cep: cep, products: [product] }
+      });
       
-      // Simulação de Cálculo (Preparado para API MelhorEnvio no backend)
-      let cost = 38.90;
-      let days = 12;
-      if (data.uf === 'SP') { cost = 16.90; days = 4; }
-      else if (['RJ', 'MG', 'ES', 'PR', 'SC', 'RS'].includes(data.uf)) { cost = 24.90; days = 7; }
-      else if (['GO', 'MT', 'MS', 'DF'].includes(data.uf)) { cost = 29.90; days = 9; }
-      
-      setShippingCalc({ cost, days, location: `${data.localidade}/${data.uf}` });
-    } catch (err) {
-      toast({ title: "Erro ao buscar CEP", variant: "destructive" });
+      if (error) throw error;
+      if (!data || data.length === 0 || data.error) {
+        throw new Error("Nenhuma transportadora disponível para este CEP.");
+      }
+
+      // O MelhorEnvio retorna uma lista. Vamos pegar a mais barata.
+      const cheapest = data.reduce((prev: any, curr: any) => parseFloat(prev.price) < parseFloat(curr.price) ? prev : curr);
+
+      setShippingCalc({ 
+        cost: parseFloat(cheapest.price), 
+        days: parseInt(cheapest.delivery_time, 10), 
+        location: cep 
+      });
+    } catch (err: any) {
+      toast({ title: "Erro ao calcular frete", description: err.message, variant: "destructive" });
     } finally {
       setCalculatingShipping(false);
     }
