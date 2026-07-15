@@ -152,6 +152,26 @@ export default function AdminProducts() {
 
   const [variants, setVariants] = useState<any[]>([]);
 
+  const handleVariantChange = (index: number, field: string, value: any) => {
+    setVariants(prev => {
+      const newVariants = [...prev];
+      if (field === 'quantity_available') {
+        newVariants[index].inventory = [{ quantity_available: value }];
+      } else {
+        newVariants[index][field] = value;
+      }
+      return newVariants;
+    });
+  };
+
+  const addVariant = () => {
+    setVariants([...variants, { id: 'temp-' + Date.now(), sku: '', price_override: '', inventory: [{ quantity_available: 0 }] }]);
+  };
+  
+  const removeVariant = (index: number) => {
+    setVariants(prev => prev.filter((_, i) => i !== index));
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -204,15 +224,45 @@ export default function AdminProducts() {
         box_format: formData.box_format || 'caixa'
       };
 
+      let productId = formData.id;
       if (formData.id) {
         const { error } = await supabase.from("products").update(payload).eq("id", formData.id);
         if (error) throw error;
         toast({ title: "Produto atualizado com sucesso!" });
       } else {
-        const { error } = await supabase.from("products").insert([payload]);
+        const { data, error } = await supabase.from("products").insert([payload]).select().single();
         if (error) throw error;
+        productId = data.id;
         toast({ title: "Produto criado com sucesso!" });
       }
+
+      if (productId) {
+        for (const variant of variants) {
+          const variantPayload = {
+            product_id: productId,
+            sku: variant.sku,
+            price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+          };
+          let variantId = variant.id;
+          
+          if (variant.id && variant.id.toString().startsWith('temp-')) {
+            const { data, error } = await supabase.from("product_variants").insert([variantPayload]).select().single();
+            if (!error && data) variantId = data.id;
+          } else {
+            await supabase.from("product_variants").update(variantPayload).eq("id", variant.id);
+          }
+          
+          if (variantId && variant.inventory?.[0]?.quantity_available !== undefined) {
+             const { data: invData } = await supabase.from("inventory").select("id").eq("variant_id", variantId).maybeSingle();
+             if (invData) {
+               await supabase.from("inventory").update({ quantity_available: parseInt(variant.inventory[0].quantity_available) || 0 }).eq("id", invData.id);
+             } else {
+               await supabase.from("inventory").insert([{ variant_id: variantId, quantity_available: parseInt(variant.inventory[0].quantity_available) || 0 }]);
+             }
+          }
+        }
+      }
+
       setIsDialogOpen(false);
       fetchProducts();
     } catch (error: any) {
@@ -478,7 +528,7 @@ export default function AdminProducts() {
                       <h3 className="font-medium">SKUs & Variantes</h3>
                       <p className="text-sm text-muted-foreground">Gerencie tamanhos, cores e controle de estoque individual.</p>
                     </div>
-                    <Button size="sm" variant="outline" className="gap-2"><Plus size={14}/> Adicionar Variante</Button>
+                    <Button type="button" onClick={addVariant} size="sm" variant="outline" className="gap-2"><Plus size={14}/> Adicionar Variante</Button>
                   </div>
                   
                   {variants.length === 0 ? (
@@ -494,14 +544,24 @@ export default function AdminProducts() {
                             <th className="px-4 py-2 text-left font-medium">SKU</th>
                             <th className="px-4 py-2 text-left font-medium">Preço Ajuste</th>
                             <th className="px-4 py-2 text-left font-medium">Estoque (Disp.)</th>
+                            <th className="px-4 py-2 text-right font-medium">Ações</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y">
-                          {variants.map(v => (
+                          {variants.map((v, index) => (
                             <tr key={v.id}>
-                              <td className="px-4 py-2 font-mono text-xs">{v.sku}</td>
-                              <td className="px-4 py-2">{v.price_override ? `R$ ${v.price_override}` : '-'}</td>
-                              <td className="px-4 py-2">{v.inventory?.[0]?.quantity_available || 0} un.</td>
+                              <td className="px-4 py-2">
+                                <Input value={v.sku} onChange={(e) => handleVariantChange(index, 'sku', e.target.value)} placeholder="SKU-123" className="h-8 text-xs font-mono" />
+                              </td>
+                              <td className="px-4 py-2">
+                                <Input type="number" step="0.01" value={v.price_override || ''} onChange={(e) => handleVariantChange(index, 'price_override', e.target.value)} placeholder="Opcional" className="h-8" />
+                              </td>
+                              <td className="px-4 py-2">
+                                <Input type="number" value={v.inventory?.[0]?.quantity_available || 0} onChange={(e) => handleVariantChange(index, 'quantity_available', e.target.value)} className="h-8 w-24" />
+                              </td>
+                              <td className="px-4 py-2 text-right">
+                                <Button type="button" variant="ghost" size="sm" onClick={() => removeVariant(index)} className="h-8 w-8 p-0 text-red-500"><Trash2 size={14}/></Button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
