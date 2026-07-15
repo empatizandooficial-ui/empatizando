@@ -36,6 +36,8 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
+  const [variants, setVariants] = useState<any[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
   
   // Reviews stats
   const [reviewCount, setReviewCount] = useState(0);
@@ -112,6 +114,17 @@ export default function ProductDetails() {
         setRelatedProducts(related);
       }
       
+      // Fetch variants
+      const { data: variantsData } = await supabase
+        .from('product_variants')
+        .select('*, inventory(*)')
+        .eq('product_id', data.id)
+        .eq('is_active', true);
+        
+      if (variantsData && variantsData.length > 0) {
+        setVariants(variantsData);
+      }
+      
       // Fetch reviews stats
       const { data: reviewsData } = await supabase
         .from('product_reviews')
@@ -166,7 +179,7 @@ export default function ProductDetails() {
     );
   }
 
-  const currentPrice = product.price || product.base_price || 0;
+  const currentPrice = selectedVariant?.price_override ? parseFloat(selectedVariant.price_override) : (product.price || product.base_price || 0);
   const productImages = product.images || (product.image_url ? [product.image_url] : []);
 
   return (
@@ -292,6 +305,35 @@ export default function ProductDetails() {
                   )}
                 </div>
 
+                {/* Variantes */}
+                {variants.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-bold text-slate-900 mb-3">Selecione uma Opção:</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {variants.map(v => {
+                        const stock = v.inventory?.[0]?.quantity_available || 0;
+                        const isOutOfStock = stock <= 0;
+                        return (
+                          <button
+                            key={v.id}
+                            disabled={isOutOfStock}
+                            onClick={() => setSelectedVariant(v)}
+                            className={`px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+                              selectedVariant?.id === v.id
+                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-600/20'
+                                : isOutOfStock
+                                ? 'border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed'
+                                : 'border-slate-200 hover:border-indigo-300 text-slate-700'
+                            }`}
+                          >
+                            {v.sku} {isOutOfStock && <span className="ml-1 text-xs font-normal">(Esgotado)</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Buy Action */}
                 <div className="space-y-4 pt-6 border-t border-slate-100">
                   <div className="flex gap-4">
@@ -315,12 +357,25 @@ export default function ProductDetails() {
                       size="lg" 
                       className="flex-1 h-14 text-lg font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-[0_8px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_8px_25px_rgba(79,70,229,0.4)] rounded-xl border-0"
                       onClick={() => {
+                        if (variants.length > 0 && !selectedVariant) {
+                          toast({ title: "Selecione uma opção", description: "Por favor, escolha uma variante antes de comprar.", variant: "destructive" });
+                          return;
+                        }
+                        const stockAvailable = selectedVariant ? (selectedVariant.inventory?.[0]?.quantity_available || 0) : 999;
+                        if (quantity > stockAvailable) {
+                          toast({ title: "Estoque insuficiente", description: `Temos apenas ${stockAvailable} unidades disponíveis no momento.`, variant: "destructive" });
+                          return;
+                        }
+
                         for(let i=0; i<quantity; i++) {
                           addToCart({
-                            id: product.id,
+                            id: selectedVariant ? `${product.id}-${selectedVariant.id}` : product.id,
+                            product_id: product.id,
                             title: product.title,
                             price: currentPrice,
-                            image_url: productImages[0] || ""
+                            image_url: productImages[0] || "",
+                            variant_id: selectedVariant?.id,
+                            variant_sku: selectedVariant?.sku
                           });
                         }
                       }}

@@ -61,13 +61,14 @@ export default function Checkout() {
       
       setShippingAddress(data);
       
-      const ids = cart.map(item => item.id);
+      const ids = cart.map(item => item.product_id || item.id);
       const { data: productsData } = await supabase.from('products').select('id, weight_kg').in('id', ids);
       
       const payloadProducts = cart.map(item => {
-        const prod = productsData?.find(p => p.id === item.id);
+        const actualProductId = item.product_id || item.id;
+        const prod = productsData?.find(p => p.id === actualProductId);
         return {
-          id: item.id,
+          id: actualProductId,
           price: item.price,
           quantity: item.quantity,
           weight_kg: prod?.weight_kg || 0.3
@@ -306,7 +307,7 @@ export default function Checkout() {
                 <div className="space-y-3">
                   {cart.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{item.quantity}x {item.title}</span>
+                      <span className="text-muted-foreground">{item.quantity}x {item.title} {item.variant_sku && <span className="text-xs text-slate-500 font-normal">({item.variant_sku})</span>}</span>
                       <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}

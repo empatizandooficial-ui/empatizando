@@ -46,7 +46,7 @@ export function CartDrawer() {
                     )}
                     
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm line-clamp-2">{item.title}</h4>
+                      <h4 className="font-semibold text-sm line-clamp-2">{item.title} {item.variant_sku && <span className="text-xs text-muted-foreground font-normal ml-1">({item.variant_sku})</span>}</h4>
                       <p className="font-bold text-primary mt-1">
                         R$ {item.price.toFixed(2).replace('.', ',')}
                       </p>

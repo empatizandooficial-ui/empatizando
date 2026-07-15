@@ -3,11 +3,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface CartItem {
-  id: string;
+  id: string; // Used as unique key in the cart (can be product_id or product_id-variant_id)
+  product_id?: string; // The actual product UUID
   title: string;
   price: number;
   image_url: string;
   quantity: number;
+  variant_id?: string;
+  variant_sku?: string;
 }
 
 interface CartContextType {
