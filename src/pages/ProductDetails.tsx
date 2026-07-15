@@ -12,6 +12,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ProductQuestions } from "@/components/ProductQuestions";
+import { ProductReviews } from "@/components/ProductReviews";
 
 interface Product {
   id: string;
@@ -35,6 +36,10 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
+  
+  // Reviews stats
+  const [reviewCount, setReviewCount] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
 
   const [cep, setCep] = useState("");
   const [shippingCalc, setShippingCalc] = useState<{ cost: number, days: number, location: string } | null>(null);
@@ -105,6 +110,21 @@ export default function ProductDetails() {
         
       if (related) {
         setRelatedProducts(related);
+      }
+      
+      // Fetch reviews stats
+      const { data: reviewsData } = await supabase
+        .from('product_reviews')
+        .select('rating')
+        .eq('product_id', data.id);
+        
+      if (reviewsData && reviewsData.length > 0) {
+        setReviewCount(reviewsData.length);
+        const avg = reviewsData.reduce((acc, curr) => acc + curr.rating, 0) / reviewsData.length;
+        setAverageRating(avg);
+      } else {
+        setReviewCount(0);
+        setAverageRating(0);
       }
       
     } catch (error) {
@@ -217,19 +237,19 @@ export default function ProductDetails() {
 
               {/* Product Info & Buy Box */}
               <div className="p-8 lg:p-12 flex flex-col">
-                {/* Ratings (Static Mock) */}
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex text-amber-400">
-                    <Star className="w-5 h-5 fill-current" />
-                    <Star className="w-5 h-5 fill-current" />
-                    <Star className="w-5 h-5 fill-current" />
-                    <Star className="w-5 h-5 fill-current" />
-                    <Star className="w-5 h-5 fill-current" />
+                {/* Ratings */}
+                {reviewCount > 0 && (
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex text-amber-400">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className={`w-5 h-5 ${star <= averageRating ? "fill-current" : "text-slate-200"}`} />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-slate-600 underline cursor-pointer hover:text-indigo-600 transition-colors">
+                      ({reviewCount} avaliações)
+                    </span>
                   </div>
-                  <span className="text-sm font-medium text-slate-600 underline cursor-pointer hover:text-indigo-600 transition-colors">
-                    (128 avaliações)
-                  </span>
-                </div>
+                )}
 
                 <h1 className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-4">
                   {product.title}
@@ -374,80 +394,8 @@ export default function ProductDetails() {
             </div>
           </div>
           
-          {/* Reviews Section (Static) */}
-          <div className="mt-16 bg-white rounded-3xl p-8 lg:p-12 shadow-sm border border-slate-100">
-            <h2 className="text-2xl font-bold text-slate-900 mb-8">Avaliações de Clientes</h2>
-            <div className="grid lg:grid-cols-3 gap-12">
-              <div className="lg:col-span-1">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="text-5xl font-black text-slate-900">4.9</span>
-                  <div className="flex flex-col">
-                    <div className="flex text-amber-400">
-                      <Star className="w-5 h-5 fill-current" />
-                      <Star className="w-5 h-5 fill-current" />
-                      <Star className="w-5 h-5 fill-current" />
-                      <Star className="w-5 h-5 fill-current" />
-                      <Star className="w-5 h-5 fill-current" />
-                    </div>
-                    <span className="text-sm text-slate-500 font-medium mt-1">Baseado em 128 avaliações</span>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full mt-4 border-slate-200">Escrever Avaliação</Button>
-              </div>
-              <div className="lg:col-span-2 space-y-6">
-                {/* Mock Review 1 */}
-                <div className="pb-6 border-b border-slate-100">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-slate-900">Mariana S.</span>
-                        <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                          <Check className="w-3 h-3" /> Comprador Verificado
-                        </span>
-                      </div>
-                      <div className="flex text-amber-400">
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                      </div>
-                    </div>
-                    <span className="text-sm text-slate-400">Há 2 dias</span>
-                  </div>
-                  <p className="text-slate-600 leading-relaxed mb-3">Produto de excelente qualidade! Chegou super rápido e exatamente como na foto. Faz toda a diferença no dia a dia.</p>
-                  <button className="text-xs font-medium text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors">
-                    <ThumbsUp className="w-3 h-3" /> Útil (12)
-                  </button>
-                </div>
-                {/* Mock Review 2 */}
-                <div className="pb-6 border-b border-slate-100">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-slate-900">Carlos E.</span>
-                        <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                          <Check className="w-3 h-3" /> Comprador Verificado
-                        </span>
-                      </div>
-                      <div className="flex text-amber-400">
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                        <Star className="w-4 h-4 fill-current" />
-                      </div>
-                    </div>
-                    <span className="text-sm text-slate-400">Há 1 semana</span>
-                  </div>
-                  <p className="text-slate-600 leading-relaxed mb-3">Muito bom, material resistente. Comprei por indicação e não me arrependi. Recomendo para todos!</p>
-                  <button className="text-xs font-medium text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors">
-                    <ThumbsUp className="w-3 h-3" /> Útil (5)
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Product Reviews */}
+          <ProductReviews productId={product.id} />
 
           {/* Product Questions */}
           <ProductQuestions productId={product.id} />

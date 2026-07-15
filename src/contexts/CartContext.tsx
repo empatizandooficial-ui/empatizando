@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface CartItem {
   id: string;
@@ -26,24 +27,47 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authLoaded, setAuthLoaded] = useState(false);
   const { toast } = useToast();
 
-  // Load from local storage
   useEffect(() => {
-    const savedCart = localStorage.getItem("empatizando_cart");
+    // Initial fetch
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id || null);
+      setAuthLoaded(true);
+    });
+
+    // Listen to changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load from local storage when auth is loaded or user changes
+  useEffect(() => {
+    if (!authLoaded) return;
+    const storageKey = userId ? `empatizando_cart_${userId}` : "empatizando_cart_guest";
+    const savedCart = localStorage.getItem(storageKey);
     if (savedCart) {
       try {
         setCart(JSON.parse(savedCart));
       } catch (e) {
         console.error("Error parsing cart data", e);
       }
+    } else {
+      setCart([]); // clear cart if changing user and they have no cart
     }
-  }, []);
+  }, [userId, authLoaded]);
 
   // Save to local storage whenever cart changes
   useEffect(() => {
-    localStorage.setItem("empatizando_cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!authLoaded) return;
+    const storageKey = userId ? `empatizando_cart_${userId}` : "empatizando_cart_guest";
+    localStorage.setItem(storageKey, JSON.stringify(cart));
+  }, [cart, userId, authLoaded]);
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
