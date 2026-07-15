@@ -145,9 +145,12 @@ serve(async (req) => {
 
     const itemsPayload = cart.map((item: any) => ({
       order_id: orderData.id,
-      product_id: item.id,
+      product_id: item.product_id || item.id,
+      variant_name: item.custom_text || null,
+      sku: item.variant_sku || null,
       quantity: item.quantity,
-      unit_price: item.price
+      unit_price: item.price,
+      total_price: item.price * item.quantity
     }))
 
     const { error: itemsError } = await supabaseClient

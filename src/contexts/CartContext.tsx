@@ -11,6 +11,7 @@ export interface CartItem {
   quantity: number;
   variant_id?: string;
   variant_sku?: string;
+  custom_text?: string;
 }
 
 interface CartContextType {

@@ -69,8 +69,10 @@ export default function Checkout() {
         const prod = productsData?.find(p => p.id === actualProductId);
         return {
           id: actualProductId,
-          price: item.price,
+          product_id: item.product_id || item.id,
           quantity: item.quantity,
+          price_at_time: item.price,
+          product_name: item.variant_sku ? `${item.title} (${item.variant_sku})${item.custom_text ? ' - Detalhes: ' + item.custom_text : ''}` : item.title + (item.custom_text ? ' - Detalhes: ' + item.custom_text : ''),
           weight_kg: prod?.weight_kg || 0.3
         }
       });
@@ -307,7 +309,10 @@ export default function Checkout() {
                 <div className="space-y-3">
                   {cart.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{item.quantity}x {item.title} {item.variant_sku && <span className="text-xs text-slate-500 font-normal">({item.variant_sku})</span>}</span>
+                      <div className="flex flex-col">
+                        <span className="text-muted-foreground">{item.quantity}x {item.title} {item.variant_sku && <span className="text-xs text-slate-500 font-normal">({item.variant_sku})</span>}</span>
+                        {item.custom_text && <span className="text-xs text-indigo-600 italic">Detalhes: {item.custom_text}</span>}
+                      </div>
                       <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}

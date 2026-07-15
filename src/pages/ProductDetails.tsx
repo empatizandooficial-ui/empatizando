@@ -38,6 +38,7 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [variants, setVariants] = useState<any[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
+  const [customText, setCustomText] = useState("");
   
   // Reviews stats
   const [reviewCount, setReviewCount] = useState(0);
@@ -341,6 +342,22 @@ export default function ProductDetails() {
                   </div>
                 )}
 
+                {/* Custom Text Area */}
+                {selectedVariant?.sku?.toLowerCase().includes('personalizado') && (
+                  <div className="mb-6 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                    <label className="block text-sm font-bold text-indigo-900 mb-2">
+                      Detalhes da Personalização (Ex: Cor desejada, Nome):
+                    </label>
+                    <textarea 
+                      className="w-full p-3 rounded-lg border border-indigo-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm resize-none"
+                      rows={3}
+                      placeholder="Digite aqui as cores e detalhes do seu adesivo..."
+                      value={customText}
+                      onChange={(e) => setCustomText(e.target.value)}
+                    ></textarea>
+                  </div>
+                )}
+
                 {/* Buy Action */}
                 <div className="space-y-4 pt-6 border-t border-slate-100">
                   <div className="flex gap-4">
@@ -368,6 +385,13 @@ export default function ProductDetails() {
                           toast({ title: "Selecione uma opção", description: "Por favor, escolha uma variante antes de comprar.", variant: "destructive" });
                           return;
                         }
+                        
+                        const isCustom = selectedVariant?.sku?.toLowerCase().includes('personalizado');
+                        if (isCustom && !customText.trim()) {
+                          toast({ title: "Detalhes Necessários", description: "Por favor, preencha os detalhes da personalização.", variant: "destructive" });
+                          return;
+                        }
+
                         const stockAvailable = selectedVariant ? (selectedVariant.inventory?.[0]?.quantity_available || 0) : 999;
                         if (quantity > stockAvailable) {
                           toast({ title: "Estoque insuficiente", description: `Temos apenas ${stockAvailable} unidades disponíveis no momento.`, variant: "destructive" });
@@ -382,7 +406,8 @@ export default function ProductDetails() {
                             price: currentPrice,
                             image_url: productImages[0] || "",
                             variant_id: selectedVariant?.id,
-                            variant_sku: selectedVariant?.sku
+                            variant_sku: selectedVariant?.sku,
+                            custom_text: isCustom ? customText.trim() : undefined
                           });
                         }
                       }}
