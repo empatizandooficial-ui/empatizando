@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 export default function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("geral");
@@ -207,9 +208,9 @@ export default function AdminProducts() {
       const payload = {
         title: formData.title,
         description: formData.description,
-        base_price: formData.base_price ? parseFloat(formData.base_price) : 0,
-        price: formData.base_price ? parseFloat(formData.base_price) : 0, // Fallback for old queries
-        cost_price: formData.cost_price ? parseFloat(formData.cost_price) : 0,
+        base_price: formData.base_price ? parseFloat(String(formData.base_price).replace(',', '.')) || 0 : 0,
+        price: formData.base_price ? parseFloat(String(formData.base_price).replace(',', '.')) || 0 : 0, // Fallback for old queries
+        cost_price: formData.cost_price ? parseFloat(String(formData.cost_price).replace(',', '.')) || 0 : 0,
         slug: formData.slug,
         images: formData.images,
         is_active: formData.is_active,
@@ -217,10 +218,10 @@ export default function AdminProducts() {
         seo_description: formData.seo_description,
         tags_json: JSON.parse(formData.tags_json || "[]"),
         is_ai_optimized: formData.is_ai_optimized,
-        weight_kg: parseFloat(formData.weight_kg) || 0.3,
-        width_cm: parseFloat(formData.width_cm) || 15,
-        height_cm: parseFloat(formData.height_cm) || 10,
-        length_cm: parseFloat(formData.length_cm) || 20,
+        weight_kg: parseFloat(String(formData.weight_kg).replace(',', '.')) || 0.3,
+        width_cm: parseFloat(String(formData.width_cm).replace(',', '.')) || 15,
+        height_cm: parseFloat(String(formData.height_cm).replace(',', '.')) || 10,
+        length_cm: parseFloat(String(formData.length_cm).replace(',', '.')) || 20,
         box_format: formData.box_format || 'caixa'
       };
 
@@ -241,7 +242,7 @@ export default function AdminProducts() {
           const variantPayload = {
             product_id: productId,
             sku: variant.sku,
-            price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+            price_override: variant.price_override ? parseFloat(String(variant.price_override).replace(',', '.')) || null : null,
           };
           let variantId = variant.id;
           
@@ -260,6 +261,13 @@ export default function AdminProducts() {
                await supabase.from("inventory").insert([{ variant_id: variantId, quantity_available: parseInt(variant.inventory[0].quantity_available) || 0 }]);
              }
           }
+        }
+        
+        // Save categories
+        await supabase.from("product_categories").delete().eq("product_id", productId);
+        if (selectedCategories.length > 0) {
+          const catPayload = selectedCategories.map(catId => ({ product_id: productId, category_id: catId }));
+          await supabase.from("product_categories").insert(catPayload);
         }
       }
 
@@ -290,6 +298,8 @@ export default function AdminProducts() {
       length_cm: product.length_cm ? product.length_cm.toString() : "20.00",
       box_format: product.box_format || "caixa"
     });
+    const cats = product.product_categories?.map((pc: any) => pc.categories?.id).filter(Boolean) || [];
+    setSelectedCategories(cats);
     setVariants(product.product_variants || []);
     setActiveTab("geral");
     setIsDialogOpen(true);
@@ -301,6 +311,7 @@ export default function AdminProducts() {
       seo_title: "", seo_description: "", tags_json: "[]", is_ai_optimized: false,
       weight_kg: "0.300", width_cm: "15.00", height_cm: "10.00", length_cm: "20.00", box_format: "caixa"
     });
+    setSelectedCategories([]);
     setVariants([]);
     setActiveTab("geral");
     setIsDialogOpen(true);
@@ -581,7 +592,17 @@ export default function AdminProducts() {
                     <div className="grid grid-cols-2 gap-3">
                       {categories.map(cat => (
                         <div key={cat.id} className="flex items-center space-x-2 border p-3 rounded-lg hover:bg-muted/30 transition-colors">
-                          <Switch id={`cat-${cat.id}`} />
+                          <Switch 
+                            id={`cat-${cat.id}`} 
+                            checked={selectedCategories.includes(cat.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedCategories([...selectedCategories, cat.id]);
+                              } else {
+                                setSelectedCategories(selectedCategories.filter(id => id !== cat.id));
+                              }
+                            }}
+                          />
                           <label htmlFor={`cat-${cat.id}`} className="text-sm font-medium cursor-pointer flex-1">{cat.name}</label>
                         </div>
                       ))}
