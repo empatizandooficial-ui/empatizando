@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ProductQuestions } from "@/components/ProductQuestions";
 
 interface Product {
   id: string;
@@ -447,6 +448,9 @@ export default function ProductDetails() {
               </div>
             </div>
           </div>
+
+          {/* Product Questions */}
+          <ProductQuestions productId={product.id} />
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (

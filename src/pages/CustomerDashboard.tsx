@@ -8,7 +8,8 @@ import { Loader2, User, Package, LogOut, ArrowLeft, Settings } from "lucide-reac
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/ui/use-toast";
-
+import { CustomerTickets } from "@/components/CustomerTickets";
+import { HeadphonesIcon } from "lucide-react";
 export default function CustomerDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -70,8 +71,9 @@ export default function CustomerDashboard() {
         </div>
 
         <Tabs defaultValue="pedidos" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
+          <TabsList className="grid w-full grid-cols-3 max-w-2xl mb-8">
             <TabsTrigger value="pedidos"><Package className="w-4 h-4 mr-2" /> Meus Pedidos</TabsTrigger>
+            <TabsTrigger value="suporte"><HeadphonesIcon className="w-4 h-4 mr-2" /> Suporte</TabsTrigger>
             <TabsTrigger value="configuracoes"><Settings className="w-4 h-4 mr-2" /> Configurações</TabsTrigger>
           </TabsList>
           
@@ -88,6 +90,14 @@ export default function CustomerDashboard() {
                 <Button className="mt-6" onClick={() => navigate("/loja")}>
                   Explorar Produtos
                 </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="suporte">
+            <Card>
+              <CardContent className="p-6">
+                <CustomerTickets userId={user.id} />
               </CardContent>
             </Card>
           </TabsContent>
