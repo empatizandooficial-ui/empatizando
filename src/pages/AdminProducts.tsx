@@ -325,15 +325,24 @@ export default function AdminProducts() {
                       </select>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Largura (cm)</label>
-                      <Input type="number" step="0.1" value={formData.width_cm} onChange={(e) => setFormData({...formData, width_cm: e.target.value})} placeholder="15.00" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Altura (cm)</label>
-                      <Input type="number" step="0.1" value={formData.height_cm} onChange={(e) => setFormData({...formData, height_cm: e.target.value})} placeholder="10.00" />
-                    </div>
+                  <div className={`grid ${formData.box_format === 'rolo' ? 'grid-cols-2' : 'grid-cols-3'} gap-4`}>
+                    {formData.box_format === 'rolo' ? (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Diâmetro (cm)</label>
+                        <Input type="number" step="0.1" value={formData.width_cm} onChange={(e) => setFormData({...formData, width_cm: e.target.value})} placeholder="15.00" />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Largura (cm)</label>
+                          <Input type="number" step="0.1" value={formData.width_cm} onChange={(e) => setFormData({...formData, width_cm: e.target.value})} placeholder="15.00" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Altura (cm)</label>
+                          <Input type="number" step="0.1" value={formData.height_cm} onChange={(e) => setFormData({...formData, height_cm: e.target.value})} placeholder="10.00" />
+                        </div>
+                      </>
+                    )}
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Comprimento (cm)</label>
                       <Input type="number" step="0.1" value={formData.length_cm} onChange={(e) => setFormData({...formData, length_cm: e.target.value})} placeholder="20.00" />
