@@ -210,7 +210,7 @@ export default function ProductDetails() {
             <div className="grid md:grid-cols-2 gap-0">
               
               {/* Product Gallery */}
-              <div className="p-8 bg-slate-50/50 flex flex-col justify-center">
+              <div className="p-8 lg:p-12 bg-slate-50/50 flex flex-col">
                 <Dialog>
                   <DialogTrigger asChild>
                     <div className="aspect-square rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm mb-4 relative cursor-zoom-in group flex items-center justify-center">
