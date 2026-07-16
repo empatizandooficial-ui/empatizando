@@ -319,7 +319,7 @@ export default function ProductDetails() {
                     <h3 className="font-bold text-slate-900 mb-3">Selecione uma Opção:</h3>
                     <div className="flex flex-wrap gap-2">
                       {variants.map(v => {
-                        const stock = v.inventory?.[0]?.quantity_available || 0;
+                        const stock = (Array.isArray(v.inventory) ? v.inventory[0]?.quantity_available : v.inventory?.quantity_available) || 0;
                         const isOutOfStock = stock <= 0;
                         return (
                           <button
@@ -392,7 +392,7 @@ export default function ProductDetails() {
                           return;
                         }
 
-                        const stockAvailable = selectedVariant ? (selectedVariant.inventory?.[0]?.quantity_available || 0) : 999;
+                        const stockAvailable = selectedVariant ? ((Array.isArray(selectedVariant.inventory) ? selectedVariant.inventory[0]?.quantity_available : selectedVariant.inventory?.quantity_available) || 0) : 999;
                         if (quantity > stockAvailable) {
                           toast({ title: "Estoque insuficiente", description: `Temos apenas ${stockAvailable} unidades disponíveis no momento.`, variant: "destructive" });
                           return;

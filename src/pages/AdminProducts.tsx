@@ -248,17 +248,24 @@ export default function AdminProducts() {
           
           if (variant.id && variant.id.toString().startsWith('temp-')) {
             const { data, error } = await supabase.from("product_variants").insert([variantPayload]).select().single();
-            if (!error && data) variantId = data.id;
+            if (error) throw error;
+            if (data) variantId = data.id;
           } else {
-            await supabase.from("product_variants").update(variantPayload).eq("id", variant.id);
+            const { error } = await supabase.from("product_variants").update(variantPayload).eq("id", variant.id);
+            if (error) throw error;
           }
           
-          if (variantId && variant.inventory?.[0]?.quantity_available !== undefined) {
-             const { data: invData } = await supabase.from("inventory").select("id").eq("variant_id", variantId).maybeSingle();
+          const rawQty = Array.isArray(variant.inventory) ? variant.inventory[0]?.quantity_available : variant.inventory?.quantity_available;
+          if (variantId && rawQty !== undefined) {
+             const { data: invData, error: findInvError } = await supabase.from("inventory").select("id").eq("variant_id", variantId).maybeSingle();
+             if (findInvError) throw findInvError;
+
              if (invData) {
-               await supabase.from("inventory").update({ quantity_available: parseInt(variant.inventory[0].quantity_available) || 0 }).eq("id", invData.id);
+               const { error } = await supabase.from("inventory").update({ quantity_available: parseInt(rawQty) || 0 }).eq("id", invData.id);
+               if (error) throw error;
              } else {
-               await supabase.from("inventory").insert([{ variant_id: variantId, quantity_available: parseInt(variant.inventory[0].quantity_available) || 0 }]);
+               const { error } = await supabase.from("inventory").insert([{ variant_id: variantId, quantity_available: parseInt(rawQty) || 0 }]);
+               if (error) throw error;
              }
           }
         }
@@ -568,7 +575,7 @@ export default function AdminProducts() {
                                 <Input type="number" step="0.01" value={v.price_override || ''} onChange={(e) => handleVariantChange(index, 'price_override', e.target.value)} placeholder="Opcional" className="h-8" />
                               </td>
                               <td className="px-4 py-2">
-                                <Input type="number" value={v.inventory?.[0]?.quantity_available || 0} onChange={(e) => handleVariantChange(index, 'quantity_available', e.target.value)} className="h-8 w-24" />
+                                <Input type="number" value={(Array.isArray(v.inventory) ? v.inventory[0]?.quantity_available : v.inventory?.quantity_available) || 0} onChange={(e) => handleVariantChange(index, 'quantity_available', e.target.value)} className="h-8 w-24" />
                               </td>
                               <td className="px-4 py-2 text-right">
                                 <Button type="button" variant="ghost" size="sm" onClick={() => removeVariant(index)} className="h-8 w-8 p-0 text-red-500"><Trash2 size={14}/></Button>
