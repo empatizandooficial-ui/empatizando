@@ -274,15 +274,15 @@ export default function AffiliateSignup() {
                     <ul className="space-y-3">
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">1.</span>
-                        <span><strong>Indicação:</strong> Você apresenta a solução do Empatizando para seus alunos e clientes.</span>
+                        <span><strong>Indicação:</strong> Você apresenta a solução do Empatizando para os recém habilitados e clientes.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">2.</span>
-                        <span><strong>Impacto:</strong> Seus alunos passam a dirigir com mais tranquilidade e segurança nas ruas.</span>
+                        <span><strong>Impacto:</strong> Os recém habilitados passam a dirigir com mais tranquilidade e segurança nas ruas.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">3.</span>
-                        <span><strong>Recompensa:</strong> Por cada aluno que aderir através de você, sua autoescola ou você recebe uma comissão financeira.</span>
+                        <span><strong>Recompensa:</strong> Por cada recém habilitado que aderir através de você, sua autoescola ou você recebe uma comissão financeira.</span>
                       </li>
                     </ul>
                   </div>
@@ -408,7 +408,7 @@ export default function AffiliateSignup() {
                       Valorizamos cada indicação que você faz e queremos que suas comissões cheguem até você da forma mais rápida possível.
                     </p>
                     <p className="relative z-10 mt-2">
-                      Para garantirmos o repasse correto das suas comissões por cada novo aluno, informe sua chave PIX.
+                      Para garantirmos o repasse correto das suas comissões por cada novo recém habilitado, informe sua chave PIX.
                     </p>
                   </div>
 

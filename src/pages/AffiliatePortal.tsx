@@ -34,7 +34,7 @@ export default function AffiliatePortal() {
     navigator.clipboard.writeText(link);
     toast({
       title: "Link copiado!",
-      description: "Envie este link para seus alunos e clientes.",
+      description: "Envie este link para os recém habilitados e clientes.",
     });
   };
 
