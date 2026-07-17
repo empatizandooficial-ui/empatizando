@@ -36,6 +36,7 @@ const SpecialistPortal = lazy(() => import("./pages/SpecialistPortal"));
 const Store = lazy(() => import("./pages/Store"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AffiliateSignup = lazy(() => import("./pages/AffiliateSignup"));
+const AffiliateLogin = lazy(() => import("./pages/AffiliateLogin"));
 const AffiliatePortal = lazy(() => import("./pages/AffiliatePortal"));
 const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
 const CustomerDashboard = lazy(() => import("./pages/CustomerDashboard"));
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/loja/produto/:slug" element={<ProductDetails />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/afiliados/cadastro" element={<AffiliateSignup />} />
+            <Route path="/afiliados/login" element={<AffiliateLogin />} />
             <Route path="/afiliados/portal" element={
               <ProtectedRoute>
                 <AffiliatePortal />

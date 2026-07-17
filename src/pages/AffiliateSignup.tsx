@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Loader2, DollarSign, Briefcase, ChevronRight, ChevronLeft, ShieldCheck, HeartPulse } from "lucide-react";
@@ -28,6 +28,7 @@ export default function AffiliateSignup() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
+  const [showLinkAccount, setShowLinkAccount] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -75,10 +76,9 @@ export default function AffiliateSignup() {
         if (authError.message.includes("User already registered") || authError.message.includes("already exists")) {
           toast({
             title: "E-mail já cadastrado",
-            description: "Você já possui uma conta. Faça login para vincular seu perfil de parceiro.",
-            variant: "destructive"
+            description: "Você já possui uma conta. Confirme sua senha para vincular seu perfil de parceiro.",
           });
-          navigate("/login-cliente");
+          setShowLinkAccount(true);
           return;
         }
         throw authError;
@@ -98,6 +98,40 @@ export default function AffiliateSignup() {
       toast({
         title: "Interferência",
         description: error.message || "Não foi possível criar a conta. Tente novamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLinkAccount = async () => {
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      await supabase.auth.updateUser({
+        data: { is_affiliate: true }
+      });
+
+      setIsAuthenticated(true);
+      setUser(data.user);
+      setShowLinkAccount(false);
+      setStep(3);
+      
+      toast({
+        title: "Contas Vinculadas!",
+        description: "Seu perfil de parceiro foi ativado com sucesso.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao vincular",
+        description: error.message || "Senha incorreta ou erro no servidor.",
         variant: "destructive"
       });
     } finally {
@@ -135,7 +169,7 @@ export default function AffiliateSignup() {
         description: "Seu canal está em análise. Em breve você terá acesso ao portal de recompensas.",
       });
       
-      navigate("/minha-conta");
+      navigate("/afiliados/portal");
       
     } catch (error: any) {
       let errorMessage = error.message || "Não foi possível concluir. Tente novamente.";
@@ -266,9 +300,46 @@ export default function AffiliateSignup() {
               {/* STEP 2: Identificação (Nome, Email, Senha) */}
               {step === 2 && !isAuthenticated && !emailVerificationSent && (
                 <div className="space-y-5 animate-fade-in">
-                  <p className="text-slate-300 text-center mb-6">
-                    Para que possamos emitir a sua credencial de parceiro, precisamos firmar sua identidade neste portal.
-                  </p>
+                  
+                  {showLinkAccount ? (
+                    <div className="space-y-5 text-center">
+                      <div className="mx-auto w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-[#FFD700]/30 shadow-[0_0_20px_rgba(255,215,0,0.1)]">
+                        <HeartPulse className="w-8 h-8 text-[#FFD700]" />
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-2">Conta Localizada!</h3>
+                      <p className="text-slate-300">
+                        Sua antena (<strong>{email}</strong>) já está sintonizada no nosso banco de dados. Insira sua senha para vincular o portal de Parceiro à sua conta existente.
+                      </p>
+                      <div className="space-y-2 mt-6 text-left">
+                        <Label htmlFor="link_password" className="text-slate-200">Senha de Acesso</Label>
+                        <Input 
+                          id="link_password" 
+                          type="password"
+                          placeholder="Sua senha de login" 
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="h-12 bg-black/20 border-white/10 text-white placeholder:text-slate-500 focus:border-[#40E0D0]"
+                        />
+                      </div>
+                      <div className="flex gap-3 pt-4">
+                        <Button type="button" variant="outline" onClick={() => setShowLinkAccount(false)} className="w-1/3 h-12 border-white/10 bg-transparent text-white hover:bg-white/5">
+                          <ChevronLeft className="mr-2 w-4 h-4" /> Voltar
+                        </Button>
+                        <Button 
+                          type="button" 
+                          onClick={handleLinkAccount}
+                          disabled={isSubmitting || !password}
+                          className="w-2/3 h-12 font-bold text-white bg-gradient-to-r from-[#FFD700] to-[#FFC000] hover:opacity-90 border-0 text-black"
+                        >
+                          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Vincular e Avançar"} 
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-slate-300 text-center mb-6">
+                        Para que possamos emitir a sua credencial de parceiro, precisamos firmar sua identidade neste portal.
+                      </p>
                   
                   <div className="space-y-2">
                     <Label htmlFor="fullName" className="text-slate-200">Nome Completo</Label>
@@ -320,6 +391,8 @@ export default function AffiliateSignup() {
                       {!isSubmitting && <ChevronRight className="ml-2 w-4 h-4" />}
                     </Button>
                   </div>
+                  </>
+                  )}
                 </div>
               )}
 
@@ -374,10 +447,13 @@ export default function AffiliateSignup() {
             </form>
           </CardContent>
           
-          <CardFooter className="flex justify-center py-5 border-t border-white/5 bg-black/10 rounded-b-xl">
+          <CardFooter className="flex flex-col justify-center items-center gap-3 py-5 border-t border-white/5 bg-black/10 rounded-b-xl">
             <p className="text-sm font-bold text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]">
               ✨ Comissão inicial de R$ 10,00 por conexão gerada.
             </p>
+            <div className="text-sm text-slate-400">
+              Já é um guardião? <Link to="/afiliados/login" className="text-[#40E0D0] hover:text-[#8A2BE2] transition-colors font-bold">Sintonizar Acesso</Link>
+            </div>
           </CardFooter>
         </Card>
       </main>

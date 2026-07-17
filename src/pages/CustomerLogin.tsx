@@ -13,6 +13,7 @@ import { Loader2, Mail, Lock, User } from "lucide-react";
 export default function CustomerLogin() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [showLinkAccount, setShowLinkAccount] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -34,8 +35,17 @@ export default function CustomerLogin() {
             data: { full_name: name, role: 'customer' }
           }
         });
-        
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("User already registered") || error.message.includes("already exists")) {
+            toast({
+              title: "E-mail já cadastrado",
+              description: "Você já possui uma conta (possivelmente como parceiro). Confirme sua senha para habilitar o painel de cliente.",
+            });
+            setShowLinkAccount(true);
+            return;
+          }
+          throw error;
+        }
         
         toast({
           title: "Cadastro realizado!",
@@ -60,6 +70,36 @@ export default function CustomerLogin() {
       toast({
         title: "Erro na autenticação",
         description: error.message || "Ocorreu um erro inesperado.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLinkAccount = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      await supabase.auth.updateUser({
+        data: { is_customer: true, role: 'customer' }
+      });
+      
+      toast({
+        title: "Contas Vinculadas!",
+        description: "Seu perfil de cliente foi ativado com sucesso.",
+      });
+      navigate("/minha-conta");
+    } catch (error: any) {
+      toast({
+        title: "Erro ao vincular",
+        description: error.message || "Senha incorreta ou erro no servidor.",
         variant: "destructive",
       });
     } finally {
@@ -100,10 +140,54 @@ export default function CustomerLogin() {
             </div>
           ) : (
             <>
-              <CardHeader className="space-y-3 pb-6 text-center">
-            <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">
-              {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
-            </CardTitle>
+              {showLinkAccount ? (
+                <>
+                  <CardHeader className="space-y-3 pb-6 text-center">
+                    <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">
+                      Conta Localizada!
+                    </CardTitle>
+                    <CardDescription className="text-indigo-200/80 text-base">
+                      O e-mail <strong>{email}</strong> já existe no sistema. Insira sua senha para vincular o painel de Cliente à sua conta.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="space-y-2 relative">
+                        <Label htmlFor="link_password" className="text-indigo-200">Senha de Acesso</Label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 h-5 w-5 text-indigo-400" />
+                          <Input 
+                            id="link_password" 
+                            type="password"
+                            placeholder="Sua senha de login" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="pl-10 bg-slate-900/50 border-white/10 text-white placeholder:text-slate-500 focus:border-indigo-500 rounded-xl h-12"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-3 mt-6">
+                        <Button type="button" variant="outline" onClick={() => setShowLinkAccount(false)} className="w-1/3 h-12 border-white/10 bg-transparent text-white hover:bg-white/5">
+                          Voltar
+                        </Button>
+                        <Button 
+                          type="button" 
+                          onClick={handleLinkAccount}
+                          disabled={loading || !password}
+                          className="w-2/3 h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl"
+                        >
+                          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Vincular e Entrar"}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </>
+              ) : (
+                <>
+                  <CardHeader className="space-y-3 pb-6 text-center">
+                <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">
+                  {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
+                </CardTitle>
             <CardDescription className="text-indigo-200/80 text-base">
               {isSignUp 
                 ? "Junte-se à nossa comunidade por um trânsito mais empático." 
@@ -189,6 +273,8 @@ export default function CustomerLogin() {
               </button>
             )}
           </CardFooter>
+                </>
+              )}
             </>
           )}
         </Card>
