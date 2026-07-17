@@ -30,6 +30,7 @@ export default function CustomerLogin() {
           email,
           password,
           options: {
+            emailRedirectTo: `${window.location.origin}/login-cliente`,
             data: { full_name: name, role: 'customer' }
           }
         });
