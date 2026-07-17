@@ -165,8 +165,8 @@ export default function AffiliateSignup() {
       if (affiliateError) throw affiliateError;
 
       toast({
-        title: "Sincronização Concluída!",
-        description: "Seu canal está em análise. Em breve você terá acesso ao portal de recompensas.",
+        title: "Cadastro Concluído!",
+        description: "Seu canal está em análise. Em breve você terá acesso ao painel de recompensas.",
       });
       
       navigate("/afiliados/portal");
@@ -218,9 +218,9 @@ export default function AffiliateSignup() {
                <ShieldCheck className="w-8 h-8 text-[#FFD700]" />}
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
-              {step === 1 ? "Portal de Sincronia" : 
-               step === 2 ? "A Sua Identidade" : 
-               "Canal de Recompensas"}
+              {step === 1 ? "Portal do Parceiro" : 
+               step === 2 ? "Seus Dados" : 
+               "Recebimento"}
             </CardTitle>
             
             {/* Stepper Dots */}
@@ -240,10 +240,10 @@ export default function AffiliateSignup() {
                   <div className="mx-auto w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-[#40E0D0]/30 shadow-[0_0_30px_rgba(64,224,208,0.2)]">
                     <ShieldCheck className="w-10 h-10 text-[#40E0D0]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Quase lá, Guardião!</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">Quase lá, Parceiro!</h3>
                   <p className="text-slate-300 max-w-md mx-auto">
-                    Para protegermos a rede, precisamos que você confirme a sua identidade. 
-                    Enviamos um feixe de luz (e-mail) para <strong>{email}</strong>.
+                    Para segurança da sua conta, precisamos que confirme seu cadastro. 
+                    Enviamos um link de acesso para <strong>{email}</strong>.
                   </p>
                   <div className="bg-white/5 border border-white/10 p-4 rounded-lg mt-6 text-sm text-slate-400 max-w-md mx-auto">
                     Por favor, clique no link de verificação no seu e-mail. Após fazer isso, faça o login e volte a esta página para cadastrar sua chave PIX e concluir sua jornada.
@@ -261,28 +261,28 @@ export default function AffiliateSignup() {
               {/* STEP 1: A Missão (Thoth's Copy) */}
               {step === 1 && !emailVerificationSent && (
                 <div className="space-y-6 text-slate-300 leading-relaxed animate-fade-in">
-                  <h3 className="text-xl font-bold text-white mb-2">A Nossa Missão: Recalibrando as Vias da Cidade</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">Nossa Missão: Transformando o Trânsito</h3>
                   <p>
-                    O trânsito moderno deixou de ser um mero desafio logístico e se tornou um verdadeiro campo de exaustão para a nossa <strong>Antena Biológica</strong>. O estresse constante ao volante, a urgência e a poluição sonora induzem uma espessa <strong>Névoa Química (Brain Fog)</strong> no organismo dos motoristas.
+                    O trânsito atual deixou de ser apenas um desafio logístico e virou um ambiente de alto estresse. A pressa, a buzina e a agressividade esgotam a saúde mental dos motoristas todos os dias.
                   </p>
                   <p>
-                    Nossa missão é transformar as ruas em redes de <strong>Bio-Empatia</strong>, limpando os <strong>Filtros de Percepção</strong> de quem dirige para que tomem decisões mais conscientes, seguras e humanas.
+                    Nossa missão é levar mais empatia e conscientização para as ruas. Queremos ajudar quem dirige a lidar melhor com o estresse, tomando decisões mais seguras, calmas e humanas.
                   </p>
                   
                   <div className="bg-white/5 border border-[#8A2BE2]/30 p-5 rounded-lg mt-6">
-                    <h4 className="text-lg font-bold text-[#8A2BE2] mb-2">O Fluxo de Expansão</h4>
+                    <h4 className="text-lg font-bold text-[#8A2BE2] mb-2">Como funciona a Parceria</h4>
                     <ul className="space-y-3">
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">1.</span>
-                        <span><strong>Sinalização:</strong> Você compartilha nossa solução com sua rede.</span>
+                        <span><strong>Indicação:</strong> Você apresenta a solução do Empatizando para seus alunos e clientes.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">2.</span>
-                        <span><strong>Impacto:</strong> Cada pessoa conectada inicia seu próprio processo de cura do estresse.</span>
+                        <span><strong>Impacto:</strong> Seus alunos passam a dirigir com mais tranquilidade e segurança nas ruas.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">3.</span>
-                        <span><strong>Ressonância:</strong> A energia emitida retorna. Por cada conexão, você recebe uma fração da abundância.</span>
+                        <span><strong>Recompensa:</strong> Por cada aluno que aderir através de você, sua autoescola ou você recebe uma comissão financeira.</span>
                       </li>
                     </ul>
                   </div>
@@ -292,7 +292,7 @@ export default function AffiliateSignup() {
                     onClick={nextStep}
                     className="w-full h-14 text-lg font-bold text-white bg-gradient-to-r from-[#8A2BE2] to-[#40E0D0] hover:opacity-90 border-0 shadow-[0_0_20px_rgba(138,43,226,0.3)] mt-4"
                   >
-                    Quero me tornar um Guardião <ChevronRight className="ml-2 w-5 h-5" />
+                    Quero me tornar um Parceiro <ChevronRight className="ml-2 w-5 h-5" />
                   </Button>
                 </div>
               )}
@@ -308,7 +308,7 @@ export default function AffiliateSignup() {
                       </div>
                       <h3 className="text-xl font-bold text-white mb-2">Conta Localizada!</h3>
                       <p className="text-slate-300">
-                        Sua antena (<strong>{email}</strong>) já está sintonizada no nosso banco de dados. Insira sua senha para vincular o portal de Parceiro à sua conta existente.
+                        O e-mail (<strong>{email}</strong>) já está cadastrado no nosso sistema. Insira sua senha para ativar o acesso de Parceiro B2B na sua conta.
                       </p>
                       <div className="space-y-2 mt-6 text-left">
                         <Label htmlFor="link_password" className="text-slate-200">Senha de Acesso</Label>
@@ -403,12 +403,12 @@ export default function AffiliateSignup() {
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                       <ShieldCheck className="w-24 h-24 text-[#FFD700]" />
                     </div>
-                    {isAuthenticated && <p className="text-[#40E0D0] font-bold mb-2 text-lg">Olá, {user?.user_metadata?.full_name || 'Guardião'}!</p>}
+                    {isAuthenticated && <p className="text-[#40E0D0] font-bold mb-2 text-lg">Olá, {user?.user_metadata?.full_name || 'Parceiro'}!</p>}
                     <p className="relative z-10">
-                      Na ciência e no cosmos, toda troca de energia exige um canal desobstruído para fluir de forma eficiente.
+                      Valorizamos cada indicação que você faz e queremos que suas comissões cheguem até você da forma mais rápida possível.
                     </p>
                     <p className="relative z-10 mt-2">
-                      Para que possamos honrar sua contribuição e enviar os frutos financeiros dessa expansão, precisamos estabelecer nossa <strong>ponte material</strong>.
+                      Para garantirmos o repasse correto das suas comissões por cada novo aluno, informe sua chave PIX.
                     </p>
                   </div>
 
@@ -452,7 +452,7 @@ export default function AffiliateSignup() {
               ✨ Comissão inicial de R$ 10,00 por conexão gerada.
             </p>
             <div className="text-sm text-slate-400">
-              Já é um guardião? <Link to="/afiliados/login" className="text-[#40E0D0] hover:text-[#8A2BE2] transition-colors font-bold">Sintonizar Acesso</Link>
+              Já é um parceiro? <Link to="/afiliados/login" className="text-[#40E0D0] hover:text-[#8A2BE2] transition-colors font-bold">Acessar Painel</Link>
             </div>
           </CardFooter>
         </Card>

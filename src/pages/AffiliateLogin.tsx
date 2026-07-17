@@ -41,7 +41,7 @@ export default function AffiliateLogin() {
 
       toast({
         title: "Acesso Liberado",
-        description: "Bem-vindo de volta ao portal de Guardiões.",
+        description: "Bem-vindo de volta ao portal de Parceiros.",
       });
       navigate("/afiliados/portal");
       
@@ -74,10 +74,10 @@ export default function AffiliateLogin() {
               <ShieldCheck className="w-8 h-8 text-[#40E0D0]" />
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
-              Portal do Guardião
+              Portal do Parceiro B2B
             </CardTitle>
             <CardDescription className="text-slate-300">
-              Acesse seu painel B2B para gerenciar sua rede e ganhos.
+              Acesse seu painel para acompanhar suas indicações e comissões.
             </CardDescription>
           </CardHeader>
           
@@ -119,17 +119,17 @@ export default function AffiliateLogin() {
                 disabled={loading || !email || !password}
                 className="w-full h-12 mt-6 font-bold text-white bg-gradient-to-r from-[#40E0D0] to-[#8A2BE2] hover:opacity-90 border-0 shadow-[0_0_20px_rgba(64,224,208,0.2)]"
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Sintonizar Acesso"} 
+                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Acessar Painel"} 
               </Button>
             </form>
           </CardContent>
           
           <CardFooter className="flex flex-col items-center py-5 border-t border-white/5 bg-black/10 rounded-b-xl gap-2">
             <p className="text-sm text-slate-400">
-              Ainda não é um guardião parceiro?
+              Ainda não é um parceiro?
             </p>
             <Link to="/afiliados/cadastro" className="text-sm font-bold text-[#40E0D0] hover:text-[#8A2BE2] transition-colors">
-              Iniciar jornada de Sincronia
+              Criar minha conta de parceiro
             </Link>
           </CardFooter>
         </Card>
