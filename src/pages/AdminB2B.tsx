@@ -36,11 +36,11 @@ export default function AdminB2B() {
     }
   };
 
-  const filteredAffiliates = affiliates.filter(a => 
+  const filteredAffiliates = searchTerm ? affiliates.filter(a => 
     (a.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
      a.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
      a.pix_key?.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  ) : affiliates;
 
   const pending = filteredAffiliates.filter(a => a.status === 'pending');
   const approved = filteredAffiliates.filter(a => a.status === 'approved');
