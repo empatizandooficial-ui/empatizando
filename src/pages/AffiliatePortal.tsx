@@ -195,17 +195,30 @@ export default function AffiliatePortal() {
             </CardContent>
           </Card>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500">Saldo Disponível</CardTitle>
-                <Wallet className="w-4 h-4 text-slate-400" />
+                <CardTitle className="text-sm font-medium text-slate-500">Saldo Liberado</CardTitle>
+                <Wallet className="w-4 h-4 text-green-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-slate-900">
                   R$ {Number(affiliate.balance || 0).toFixed(2).replace('.', ',')}
                 </div>
-                <p className="text-xs text-slate-500 mt-1">Via PIX cadastrado</p>
+                <p className="text-xs text-slate-500 mt-1">Pronto para saque via PIX</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-slate-500">Saldo Pendente</CardTitle>
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-slate-900">
+                  R$ {Number(affiliate.pending_balance || 0).toFixed(2).replace('.', ',')}
+                </div>
+                <p className="text-xs text-amber-600 mt-1">Libera 8 dias pós-entrega</p>
               </CardContent>
             </Card>
 
