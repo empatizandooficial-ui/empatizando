@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Copy, Wallet, TrendingUp, Users } from "lucide-react";
+import { Copy, Wallet, TrendingUp, Users, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export default function AffiliatePortal() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [affiliate, setAffiliate] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +40,12 @@ export default function AffiliatePortal() {
     });
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({ title: "Você saiu da sua conta." });
+    navigate("/loja");
+  };
+
   if (loading) {
     return <div className="p-8 text-center">Carregando...</div>;
   }
@@ -55,11 +63,17 @@ export default function AffiliatePortal() {
 
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold text-slate-900">Portal do Embaixador</h1>
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${affiliate.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-          {affiliate.status === 'approved' ? 'Ativo' : 'Em Análise'}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${affiliate.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+            {affiliate.status === 'approved' ? 'Ativo' : 'Em Análise'}
+          </span>
+          <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-500 hover:text-red-600 hover:bg-red-50">
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </Button>
+        </div>
       </div>
 
       <Card className="bg-primary text-primary-foreground">
