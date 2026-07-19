@@ -39,7 +39,15 @@ serve(async (req) => {
     const originCep = cepData?.key_value
 
     if (!apiToken || !originCep) {
-      throw new Error("Token do MelhorEnvio ou CEP de Origem não configurados no Laboratório Neural.")
+      // Mock Data para testes e fluxo sem token
+      const mockServices = [
+        { id: 1, name: "Correios PAC", price: "18.50", delivery_time: 7 },
+        { id: 2, name: "Correios Sedex", price: "35.90", delivery_time: 3 }
+      ]
+      return new Response(
+        JSON.stringify(mockServices),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     const payload = {
