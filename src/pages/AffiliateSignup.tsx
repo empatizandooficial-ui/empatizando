@@ -285,7 +285,7 @@ export default function AffiliateSignup() {
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-[#40E0D0] font-bold">3.</span>
-                        <span><strong>Recompensa:</strong> Por cada recém habilitado que aderir através de você, sua autoescola ou você recebe uma comissão financeira.</span>
+                        <span><strong>Recompensa:</strong> Por cada compra de adesivo realizada através do seu link exclusivo, você ou sua autoescola recebe uma comissão financeira.</span>
                       </li>
                     </ul>
                   </div>
