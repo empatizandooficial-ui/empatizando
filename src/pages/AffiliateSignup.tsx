@@ -68,6 +68,7 @@ export default function AffiliateSignup() {
           emailRedirectTo: `${window.location.origin}/afiliados/cadastro`,
           data: {
             full_name: fullName,
+            is_affiliate: true
           }
         }
       });

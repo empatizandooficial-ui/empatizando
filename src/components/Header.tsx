@@ -65,11 +65,18 @@ const Header = ({ darkTextOnTop = false }: { darkTextOnTop?: boolean }) => {
     navigate("/loja");
   };
   
+  const isCustomer = user?.user_metadata?.role === 'customer' || user?.user_metadata?.is_customer;
+  const isAffiliate = user?.user_metadata?.is_affiliate;
+
   const storeNavLinks = [
     { label: "Voltar ao Portal", href: "/" },
-    user ? { label: "Minha Conta", href: "/minha-conta" } : { label: "Login Cliente", href: "/login-cliente" },
-    { label: "Parceiro B2B", href: "/afiliados/cadastro" },
-  ];
+    ((user && !isAffiliate) || isCustomer) 
+      ? { label: "Minha Conta", href: "/minha-conta" } 
+      : (!user ? { label: "Login Cliente", href: "/login-cliente" } : null),
+    isAffiliate 
+      ? { label: "Painel B2B", href: "/afiliados/portal" } 
+      : { label: "Parceiro B2B", href: "/afiliados/cadastro" },
+  ].filter(Boolean) as { label: string, href: string }[];
 
   const currentNavLinks = isAdminPage ? adminNavLinks : ((isStorePage || isAuthPage) ? storeNavLinks : publicNavLinks);
 
