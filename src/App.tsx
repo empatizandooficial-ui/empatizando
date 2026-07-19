@@ -31,6 +31,7 @@ const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Anamnese = lazy(() => import("./pages/Anamnese"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const ExchangePolicy = lazy(() => import("./pages/ExchangePolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 const ForSpecialists = lazy(() => import("./pages/ForSpecialists"));
 const SpecialistPortal = lazy(() => import("./pages/SpecialistPortal"));
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/portal" element={<Portal />} />
             <Route path="/anamnese" element={<Anamnese />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/exchange-policy" element={<ExchangePolicy />} />
             <Route path="/terms-of-use" element={<TermsOfUse />} />
             <Route path="/login" element={<Login />} />
             <Route path="/login-cliente" element={<CustomerLogin />} />

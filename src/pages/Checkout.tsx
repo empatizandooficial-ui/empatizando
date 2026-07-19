@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, ArrowLeft, QrCode, CreditCard, Banknote, ShieldCheck, Truck } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { TrustBadges } from "@/components/TrustBadges";
@@ -19,6 +20,7 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("PIX");
   const [pixData, setPixData] = useState<{ qrCode: string, payload: string } | null>(null);
+  const [acceptedPolicy, setAcceptedPolicy] = useState(false);
 
   const [cep, setCep] = useState("");
   const [shippingAddress, setShippingAddress] = useState<any>(null);
@@ -329,16 +331,31 @@ export default function Checkout() {
                 </div>
                 
                 {!pixData && (
-                  <Button 
-                    type="submit" 
-                    form="checkout-form" 
-                    className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold h-14 text-lg rounded-xl shadow-lg hover:shadow-green-500/20 transition-all" 
-                    size="lg"
-                    disabled={loading || shippingCost === null}
-                  >
-                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
-                    Confirmar e Pagar
-                  </Button>
+                  <>
+                    <div className="flex items-center space-x-2 mt-6 mb-2 bg-slate-100 p-3 rounded-md border border-slate-200">
+                      <Checkbox 
+                        id="terms" 
+                        checked={acceptedPolicy} 
+                        onCheckedChange={(checked) => setAcceptedPolicy(checked as boolean)} 
+                      />
+                      <label
+                        htmlFor="terms"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700"
+                      >
+                        Declaro que li e concordo com a <a href="/exchange-policy" target="_blank" className="text-indigo-600 hover:underline font-semibold">Política de Trocas e Devoluções</a>
+                      </label>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      form="checkout-form" 
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-bold h-14 text-lg rounded-xl shadow-lg hover:shadow-green-500/20 transition-all" 
+                      size="lg"
+                      disabled={loading || shippingCost === null || !acceptedPolicy}
+                    >
+                      {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+                      Confirmar e Pagar
+                    </Button>
+                  </>
                 )}
                 <div className="text-center text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1">
                   <CreditCard className="w-3 h-3" /> Pagamento Seguro via Asaas
