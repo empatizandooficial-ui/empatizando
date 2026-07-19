@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Activity, PhoneForwarded, BrainCircuit } from "lucide-react";
+import { Users, Activity, PhoneForwarded, BrainCircuit, Handshake } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -8,7 +8,10 @@ export default function AdminDashboard() {
     totalLeads: 0,
     activeConversations: 0,
     criticalCases: 0,
-    forwarded: 0
+    forwarded: 0,
+    totalAffiliates: 0,
+    pendingAffiliates: 0,
+    activeAffiliates: 0
   });
 
   useEffect(() => {
@@ -24,12 +27,26 @@ export default function AdminDashboard() {
         const active = data.filter(d => d.status === 'Em Acompanhamento').length;
         const critical = data.filter(d => d.status === 'Crítico').length;
         const forwarded = data.filter(d => d.status === 'Encaminhado').length;
+
+        const { data: affiliateData, error: affiliateError } = await supabase
+          .from("affiliates")
+          .select("status");
+
+        let tAffiliates = 0, pAffiliates = 0, aAffiliates = 0;
+        if (affiliateData && !affiliateError) {
+          tAffiliates = affiliateData.length;
+          pAffiliates = affiliateData.filter(d => d.status === 'pending').length;
+          aAffiliates = affiliateData.filter(d => d.status === 'approved' || d.status === 'active_seller').length;
+        }
         
         setStats({
           totalLeads: total,
           activeConversations: active,
           criticalCases: critical,
-          forwarded: forwarded
+          forwarded: forwarded,
+          totalAffiliates: tAffiliates,
+          pendingAffiliates: pAffiliates,
+          activeAffiliates: aAffiliates
         });
       }
     }
@@ -45,7 +62,7 @@ export default function AdminDashboard() {
         </h1>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         <Card className="bg-white/50 backdrop-blur-sm border-stone-200">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-stone-600">
@@ -95,6 +112,21 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold text-stone-800">{stats.forwarded}</div>
             <p className="text-xs text-stone-500 mt-1">Prontos para especialistas</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-indigo-50 to-white backdrop-blur-sm border-indigo-100">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-indigo-700">
+              Parceiros B2B
+            </CardTitle>
+            <Handshake className="w-4 h-4 text-indigo-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-indigo-900">{stats.totalAffiliates}</div>
+            <p className="text-xs text-indigo-600/80 mt-1">
+              {stats.activeAffiliates} ativos | {stats.pendingAffiliates} análise
+            </p>
           </CardContent>
         </Card>
       </div>

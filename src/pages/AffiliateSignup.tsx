@@ -160,6 +160,8 @@ export default function AffiliateSignup() {
         user_id: user.id,
         referral_code: referralCode,
         pix_key: pixKey,
+        full_name: user.user_metadata?.full_name || fullName || 'Desconhecido',
+        email: user.email || email,
         status: "pending"
       });
 

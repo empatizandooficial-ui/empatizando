@@ -15,7 +15,8 @@ import {
   ShoppingBag,
   Tag,
   MessageCircleQuestion,
-  HeadphonesIcon
+  HeadphonesIcon,
+  Handshake
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -31,6 +32,7 @@ const DEFAULT_MENU = [
   { id: "products", name: "Produtos (Loja)", path: "/admin/products", icon: ShoppingBag },
   { id: "categories", name: "Categorias", path: "/admin/categories", icon: Tag },
   { id: "questions", name: "Perguntas de Produtos", path: "/admin/questions", icon: MessageCircleQuestion },
+  { id: "b2b", name: "Parceiros B2B", path: "/admin/b2b", icon: Handshake },
   { id: "tickets", name: "Chamados (Suporte)", path: "/admin/tickets", icon: HeadphonesIcon },
   { id: "automation", name: "Automação", path: "/admin/automation", icon: Zap },
 ];

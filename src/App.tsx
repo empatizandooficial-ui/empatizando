@@ -25,6 +25,7 @@ const AdminProfessionals = lazy(() => import("./pages/AdminProfessionals"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminCategories = lazy(() => import("./pages/AdminCategories"));
 const AdminQuestions = lazy(() => import("./pages/AdminQuestions"));
+const AdminB2B = lazy(() => import("./pages/AdminB2B"));
 const AdminSupportTickets = lazy(() => import("./pages/AdminSupportTickets"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -170,6 +171,13 @@ const App = () => (
               <ProtectedRoute requireAdmin={true}>
                 <AdminLayout>
                   <AdminQuestions />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/b2b" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminLayout>
+                  <AdminB2B />
                 </AdminLayout>
               </ProtectedRoute>
             } />
