@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
-import { ShoppingCart, Car, Loader2, Star, Search, SlidersHorizontal } from "lucide-react";
+import { ShoppingCart, Car, Loader2, Star, Search, SlidersHorizontal, Handshake, DollarSign, TrendingUp, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -306,6 +306,54 @@ export default function Store() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* B2B Partner Callout Banner */}
+          <div className="mt-20 relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-950/80 via-indigo-950/80 to-slate-900/90 border border-purple-500/30 p-8 md:p-12 shadow-2xl backdrop-blur-xl">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="max-w-2xl space-y-4 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold uppercase tracking-wider">
+                  <Handshake className="w-4 h-4 text-purple-400" />
+                  Programa Oficial de Parceiros B2B
+                </div>
+                <h2 className="text-2xl md:text-4xl font-extrabold text-white leading-tight">
+                  Autoescolas, Despachantes & Criadores: <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-indigo-200 to-pink-300">Lucram enquanto transformam o trânsito</span>.
+                </h2>
+                <p className="text-indigo-200/80 text-sm md:text-base leading-relaxed">
+                  Indique a linha de adesivos e produtos Empatizando para seus alunos, clientes e seguidores. Receba comissões automáticas via PIX, acompanhe métricas em tempo real no seu painel e tenha um link e cupom exclusivos.
+                </p>
+                
+                <div className="grid sm:grid-cols-3 gap-3 pt-2">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-white/90 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                    <DollarSign className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Comissões no PIX</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-white/90 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                    <TrendingUp className="w-4 h-4 text-indigo-400 shrink-0" />
+                    <span>Painel de Vendas em Tempo Real</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-white/90 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Link e Cupom Próprios</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
+                <Link to="/afiliados/cadastro" className="w-full">
+                  <Button size="lg" className="w-full h-14 px-8 text-base font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl shadow-xl shadow-purple-600/30 border-0">
+                    Quero ser um Parceiro B2B
+                  </Button>
+                </Link>
+                <Link to="/afiliados/login" className="w-full">
+                  <Button variant="outline" size="lg" className="w-full h-12 text-sm font-semibold border-white/20 text-indigo-200 hover:text-white hover:bg-white/10 rounded-2xl">
+                    Já sou Parceiro (Acessar Painel)
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

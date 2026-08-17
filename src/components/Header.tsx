@@ -11,8 +11,8 @@ const publicNavLinks = [
   { label: "Portal", href: "/portal" },
   { label: "Vídeos", href: "/#videos" },
   { label: "Comunidade", href: "/#comunidade" },
-  { label: "Sobre", href: "/#sobre" },
   { label: "Para Especialistas", href: "/especialista" },
+  { label: "Parceiros B2B", href: "/afiliados/cadastro" },
 ];
 
 const adminNavLinks = [
