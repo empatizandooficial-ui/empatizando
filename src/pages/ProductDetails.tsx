@@ -13,6 +13,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ProductQuestions } from "@/components/ProductQuestions";
 import { ProductReviews } from "@/components/ProductReviews";
+import { DEFAULT_PRODUCTS } from "@/data/defaultProducts";
 
 interface Product {
   id: string;
@@ -150,12 +151,24 @@ export default function ProductDetails() {
       }
       
     } catch (error) {
-      console.error("Error fetching product:", error);
-      toast({
-        title: "Produto não encontrado",
-        description: "Não conseguimos carregar este produto.",
-        variant: "destructive",
-      });
+      console.warn("Error fetching product from database, checking default catalog:", error);
+      
+      const fallback = DEFAULT_PRODUCTS.find(p => p.slug === slug || p.id === slug);
+      if (fallback) {
+        setProduct(fallback);
+        if (fallback.images && fallback.images.length > 0) {
+          setActiveImage(fallback.images[0]);
+        } else if (fallback.image_url) {
+          setActiveImage(fallback.image_url);
+        }
+        setRelatedProducts(DEFAULT_PRODUCTS.filter(p => p.slug !== slug && p.id !== slug).slice(0, 3));
+      } else {
+        toast({
+          title: "Produto não encontrado",
+          description: "Não conseguimos carregar este produto.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }

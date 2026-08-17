@@ -11,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+import { DEFAULT_PRODUCTS } from "@/data/defaultProducts";
+
 interface Product {
   id: string;
   title: string;
@@ -26,7 +28,7 @@ interface Product {
 export default function Store() {
   const { toast } = useToast();
   const [affiliateCode, setAffiliateCode] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
 
@@ -51,43 +53,21 @@ export default function Store() {
         const { data, error } = await (supabase as any).from('products_public').select('*');
         if (error) throw error;
         
-        if (!data || data.length === 0) {
-           setProducts([]);
+        if (data && data.length > 0) {
+          setProducts(data as Product[]);
         } else {
-           setProducts(data as Product[]);
+          setProducts(DEFAULT_PRODUCTS);
         }
       } catch (error) {
-        console.error("Error fetching products:", error);
-        toast({
-          title: "Erro ao carregar produtos",
-          description: "Exibindo versão de demonstração.",
-          variant: "destructive",
-        });
-        setProducts([
-          {
-            id: '1',
-            title: 'Adesivo Recém Habilitada(o)',
-            description: 'Aviso visual para o vidro vigia. Impressão de alta qualidade e durabilidade.',
-            price: 89.90,
-            category: 'Adesivos Veiculares',
-            slug: 'adesivo-recem-habilitada',
-          },
-          {
-            id: '2',
-            title: 'Adesivo Autismo - Tenha Paciência',
-            description: 'Adesivo informativo.',
-            price: 79.90,
-            category: 'Adesivos de Conscientização',
-            slug: 'adesivo-autismo',
-          }
-        ]);
+        console.warn("Supabase fetch notice: using default catalog.", error);
+        setProducts(DEFAULT_PRODUCTS);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [toast]);
+  }, []);
 
   // Extract unique categories
   const categories = useMemo(() => {
