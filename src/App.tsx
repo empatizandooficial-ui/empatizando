@@ -48,14 +48,14 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <CartProvider>
-      <TooltipProvider>
-        <Toaster />
-      <Sonner />
-      <CookieConsent />
-      <CartDrawer />
       <BrowserRouter>
-        <Suspense fallback={<div className="min-h-screen bg-background" />}>
-          <Routes>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <CookieConsent />
+          <CartDrawer />
+          <Suspense fallback={<div className="min-h-screen bg-background" />}>
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/portal" element={<Portal />} />
             <Route path="/anamnese" element={<Anamnese />} />
@@ -193,8 +193,8 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </TooltipProvider>
       </BrowserRouter>
-      </TooltipProvider>
     </CartProvider>
   </QueryClientProvider>
 );
