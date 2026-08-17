@@ -4,14 +4,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCart } from "@/contexts/CartContext";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 export function CartDrawer() {
   const { cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, cartTotal } = useCart();
+  const navigate = useNavigate();
 
   const handleCheckout = () => {
-    // Navigate to checkout or open Asaas payment directly
-    // This will be implemented in the checkout flow
-    window.location.href = "/checkout"; // Placeholder for now, later we integrate with Asaas
+    setIsCartOpen(false);
+    navigate("/checkout");
   };
 
   return (

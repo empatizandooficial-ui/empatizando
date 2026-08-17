@@ -13,6 +13,34 @@ import { Loader2, ArrowLeft, QrCode, CreditCard, Banknote, ShieldCheck, Truck } 
 import logo from "@/assets/logo.png";
 import { TrustBadges } from "@/components/TrustBadges";
 
+// Mask & Format Helpers
+const formatCEP = (val: string) => {
+  const digits = val.replace(/\D/g, '').slice(0, 8);
+  if (digits.length > 5) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+  return digits;
+};
+
+const formatCPF = (val: string) => {
+  const digits = val.replace(/\D/g, '').slice(0, 11);
+  if (digits.length > 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  if (digits.length > 6) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  if (digits.length > 3) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  return digits;
+};
+
+const formatPhone = (val: string) => {
+  const digits = val.replace(/\D/g, '').slice(0, 11);
+  if (digits.length > 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  if (digits.length > 6) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  if (digits.length > 2) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return digits;
+};
+
+const formatCardNumber = (val: string) => {
+  const digits = val.replace(/\D/g, '').slice(0, 16);
+  return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+};
+
 export default function Checkout() {
   const { cart, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
@@ -206,13 +234,18 @@ export default function Checkout() {
                     <div className="flex gap-2 items-end">
                       <div className="space-y-2 flex-1">
                         <Label>CEP de Destino</Label>
-                        <Input placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} maxLength={9} />
+                        <Input 
+                          placeholder="00000-000" 
+                          value={cep} 
+                          onChange={(e) => setCep(formatCEP(e.target.value))} 
+                          maxLength={9} 
+                        />
                       </div>
                       <Button type="button" onClick={handleCalculateShipping} disabled={calculatingShipping} className="bg-indigo-600 hover:bg-indigo-700">
                         {calculatingShipping ? <Loader2 className="h-4 w-4 animate-spin" /> : "Calcular Frete"}
                       </Button>
                     </div>
-                    {shippingCost !== null && shippingAddress && (
+                    {shippingCost !== null && shippingAddress ? (
                       <div className="p-4 bg-slate-100/80 rounded-lg text-sm flex justify-between items-center border border-slate-200">
                         <div>
                           <strong className="text-indigo-700">Correios PAC</strong> (7 a 12 dias úteis)<br/>
@@ -225,6 +258,10 @@ export default function Checkout() {
                           R$ {shippingCost.toFixed(2).replace('.', ',')}
                         </div>
                       </div>
+                    ) : (
+                      <p className="text-xs text-amber-600 bg-amber-50 p-2.5 rounded-md border border-amber-200">
+                        💡 Digite seu CEP acima e clique em <strong>Calcular Frete</strong> para liberar os próximos passos.
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -234,21 +271,33 @@ export default function Checkout() {
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label>Nome Completo</Label>
-                      <Input required value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
+                      <Input required value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} placeholder="Seu nome completo" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>CPF</Label>
-                        <Input required value={customer.cpf} onChange={e => setCustomer({...customer, cpf: e.target.value})} placeholder="000.000.000-00" />
+                        <Input 
+                          required 
+                          value={customer.cpf} 
+                          onChange={e => setCustomer({...customer, cpf: formatCPF(e.target.value)})} 
+                          placeholder="000.000.000-00" 
+                          maxLength={14}
+                        />
                       </div>
                       <div className="space-y-2">
-                        <Label>Telefone</Label>
-                        <Input required value={customer.phone} onChange={e => setCustomer({...customer, phone: e.target.value})} placeholder="(00) 00000-0000" />
+                        <Label>Telefone / WhatsApp</Label>
+                        <Input 
+                          required 
+                          value={customer.phone} 
+                          onChange={e => setCustomer({...customer, phone: formatPhone(e.target.value)})} 
+                          placeholder="(00) 00000-0000" 
+                          maxLength={15}
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label>Email</Label>
-                      <Input type="email" required value={customer.email} onChange={e => setCustomer({...customer, email: e.target.value})} />
+                      <Input type="email" required value={customer.email} onChange={e => setCustomer({...customer, email: e.target.value})} placeholder="seuemail@exemplo.com" />
                     </div>
                   </CardContent>
                 </Card>
@@ -271,11 +320,17 @@ export default function Checkout() {
                       <div className="pt-4 border-t space-y-4">
                         <div className="space-y-2">
                           <Label>Número do Cartão</Label>
-                          <Input required value={customer.creditCard.number} onChange={e => setCustomer({...customer, creditCard: {...customer.creditCard, number: e.target.value}})} />
+                          <Input 
+                            required 
+                            value={customer.creditCard.number} 
+                            onChange={e => setCustomer({...customer, creditCard: {...customer.creditCard, number: formatCardNumber(e.target.value)}})} 
+                            placeholder="0000 0000 0000 0000"
+                            maxLength={19}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label>Nome Impresso no Cartão</Label>
-                          <Input required value={customer.creditCard.holderName} onChange={e => setCustomer({...customer, creditCard: {...customer.creditCard, holderName: e.target.value}})} />
+                          <Input required value={customer.creditCard.holderName} onChange={e => setCustomer({...customer, creditCard: {...customer.creditCard, holderName: e.target.value.toUpperCase()}})} placeholder="NOME COMO NO CARTAO" />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div className="space-y-2">

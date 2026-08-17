@@ -131,12 +131,28 @@ export default function Store() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto relative z-10">
+          {/* Promotional Top Alert */}
+          <div className="mb-8 p-4 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-indigo-500/20 border border-indigo-500/30 rounded-2xl backdrop-blur-md flex items-center justify-between flex-wrap gap-4 text-white shadow-xl">
+            <div className="flex items-center gap-3">
+              <span className="flex h-3 w-3 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+              </span>
+              <p className="text-sm md:text-base font-medium">
+                🎁 <strong>Oferta Especial:</strong> Garanta empatia e segurança com envio rápido para todo o Brasil.
+              </p>
+            </div>
+            <span className="text-xs uppercase tracking-wider font-bold bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
+              Pronta Entrega
+            </span>
+          </div>
+
           <div className="text-center mb-12 space-y-4">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white tracking-tight drop-shadow-lg">
               Loja Oficial Empatizando
             </h1>
             <p className="text-lg text-indigo-200/80 max-w-2xl mx-auto leading-relaxed font-light">
-              Descubra nossa linha de produtos focada em promover a empatia e o respeito no trânsito.
+              Descubra nossa linha de produtos focada em promover a empatia, segurança e o respeito no trânsito.
             </p>
           </div>
 
@@ -210,25 +226,33 @@ export default function Store() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredProducts.map((product) => (
-                    <Card key={product.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/10 transition-all duration-500 group overflow-hidden flex flex-col rounded-3xl w-full">
-                      <Link to={`/loja/produto/${product.slug || product.id}`} className="block relative aspect-[4/3] overflow-hidden bg-slate-900/50 flex items-center justify-center">
-                        {product.images && product.images.length > 0 ? (
-                          <img 
-                            src={product.images[0]} 
-                            alt={product.title}
-                            className="object-contain w-full h-full p-4 absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 bg-white" 
-                          />
-                        ) : product.image_url ? (
-                          <img 
-                            src={product.image_url} 
-                            alt={product.title}
-                            className="object-contain w-full h-full p-4 absolute inset-0 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 bg-white" 
-                          />
-                        ) : (
-                          <Car className="w-24 h-24 text-white/10 group-hover:text-white/20 transition-colors duration-500 absolute" />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent pointer-events-none" />
+                  {filteredProducts.map((product, idx) => (
+                    <Card key={product.id} className="border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl hover:bg-white/10 hover:border-indigo-500/30 transition-all duration-500 group overflow-hidden flex flex-col rounded-3xl w-full">
+                      <Link to={`/loja/produto/${product.slug || product.id}`} className="block relative aspect-[4/3] overflow-hidden bg-slate-950/60 p-3 flex items-center justify-center">
+                        {/* Floating Badge */}
+                        <div className="absolute top-3 left-3 z-20">
+                          <span className="bg-indigo-600/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-indigo-400/30">
+                            {idx === 0 ? "🔥 Mais Vendido" : idx === 1 ? "⭐ Destaque" : "✨ Original"}
+                          </span>
+                        </div>
+
+                        <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center overflow-hidden p-2 relative shadow-inner">
+                          {product.images && product.images.length > 0 ? (
+                            <img 
+                              src={product.images[0]} 
+                              alt={product.title}
+                              className="object-contain w-full h-full transition-all duration-700 group-hover:scale-105" 
+                            />
+                          ) : product.image_url ? (
+                            <img 
+                              src={product.image_url} 
+                              alt={product.title}
+                              className="object-contain w-full h-full transition-all duration-700 group-hover:scale-105" 
+                            />
+                          ) : (
+                            <Car className="w-16 h-16 text-slate-300" />
+                          )}
+                        </div>
                       </Link>
 
                       <CardContent className="p-5 flex-grow flex flex-col">
@@ -238,6 +262,7 @@ export default function Store() {
                           <Star className="w-3.5 h-3.5 fill-current" />
                           <Star className="w-3.5 h-3.5 fill-current" />
                           <Star className="w-3.5 h-3.5 fill-current" />
+                          <span className="text-xs text-slate-400 ml-1 font-medium">(4.9)</span>
                         </div>
                         
                         <Link to={`/loja/produto/${product.slug || product.id}`} className="block mb-2 group-hover:text-indigo-300 transition-colors">
@@ -250,22 +275,31 @@ export default function Store() {
                           <div className="text-2xl font-black text-white drop-shadow-md">
                             R$ {(product.price || product.base_price || 0).toFixed(2).replace('.', ',')}
                           </div>
+                          <p className="text-xs text-indigo-200/60 mt-0.5">
+                            em até 12x de R$ {((product.price || product.base_price || 0) / 12).toFixed(2).replace('.', ',')}
+                          </p>
                         </div>
                       </CardContent>
                       
                       <CardFooter className="pt-2 pb-5 px-5">
                         <Button 
                           size="lg" 
-                          className="w-full h-12 text-sm font-bold bg-indigo-500 hover:bg-indigo-400 text-white transition-all duration-300 shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] rounded-xl flex items-center justify-center gap-2 border-0"
-                          onClick={() => addToCart({
-                            id: product.id,
-                            title: product.title,
-                            price: product.price || product.base_price || 0,
-                            image_url: (product.images && product.images.length > 0) ? product.images[0] : (product.image_url || "")
-                          })}
+                          className="w-full h-12 text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-300 shadow-[0_0_20px_rgba(99,102,241,0.25)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] rounded-xl flex items-center justify-center gap-2 border-0"
+                          onClick={() => {
+                            addToCart({
+                              id: product.id,
+                              title: product.title,
+                              price: product.price || product.base_price || 0,
+                              image_url: (product.images && product.images.length > 0) ? product.images[0] : (product.image_url || "")
+                            });
+                            toast({
+                              title: "Adicionado ao Carrinho!",
+                              description: `${product.title} foi adicionado.`,
+                            });
+                          }}
                         >
                           <ShoppingCart className="w-4 h-4" />
-                          Comprar
+                          Adicionar ao Carrinho
                         </Button>
                       </CardFooter>
                     </Card>

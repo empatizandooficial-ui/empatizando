@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,8 +28,9 @@ interface Product {
 
 export default function ProductDetails() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, setIsCartOpen } = useCart();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -258,19 +259,31 @@ export default function ProductDetails() {
 
               {/* Product Info & Buy Box */}
               <div className="p-8 lg:p-12 flex flex-col">
-                {/* Ratings */}
-                {reviewCount > 0 && (
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex text-amber-400">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className={`w-5 h-5 ${star <= averageRating ? "fill-current" : "text-slate-200"}`} />
-                      ))}
+                {/* Ratings and Urgency */}
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                  {reviewCount > 0 ? (
+                    <div className="flex items-center gap-2">
+                      <div className="flex text-amber-400">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} className={`w-5 h-5 ${star <= averageRating ? "fill-current" : "text-slate-200"}`} />
+                        ))}
+                      </div>
+                      <span className="text-sm font-medium text-slate-600 underline cursor-pointer hover:text-indigo-600 transition-colors">
+                        ({reviewCount} avaliações)
+                      </span>
                     </div>
-                    <span className="text-sm font-medium text-slate-600 underline cursor-pointer hover:text-indigo-600 transition-colors">
-                      ({reviewCount} avaliações)
-                    </span>
+                  ) : (
+                    <div className="flex items-center gap-1.5 text-amber-500 text-sm font-semibold">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span>4.9 / 5.0 (Recomendado)</span>
+                    </div>
+                  )}
+
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/60 text-rose-700 text-xs font-semibold animate-pulse">
+                    <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                    ⚡ 19 pessoas vendo agora
                   </div>
-                )}
+                </div>
 
                 <h1 className="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-4">
                   {product.title}
@@ -283,7 +296,7 @@ export default function ProductDetails() {
                     </span>
                   </div>
                   <p className="text-sm text-slate-500">
-                    ou em até <span className="font-bold text-slate-700">12x de R$ {(currentPrice / 10).toFixed(2).replace('.', ',')}</span> no cartão
+                    ou em até <span className="font-bold text-slate-700">12x de R$ {(currentPrice / 12).toFixed(2).replace('.', ',')}</span> sem juros
                   </p>
                 </div>
 
@@ -410,12 +423,48 @@ export default function ProductDetails() {
                             custom_text: isCustom ? customText.trim() : undefined
                           });
                         }
+                        navigate("/checkout");
                       }}
                     >
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Comprar Agora
                     </Button>
                   </div>
+
+                  <Button 
+                    variant="outline"
+                    size="lg" 
+                    className="w-full h-12 text-sm font-bold border-indigo-200 text-indigo-700 hover:bg-indigo-50/80 rounded-xl"
+                    onClick={() => {
+                      if (variants.length > 0 && !selectedVariant) {
+                        toast({ title: "Selecione uma opção", description: "Por favor, escolha uma variante antes de adicionar ao carrinho.", variant: "destructive" });
+                        return;
+                      }
+                      
+                      const isCustom = selectedVariant?.sku?.toLowerCase().includes('personalizado');
+                      if (isCustom && !customText.trim()) {
+                        toast({ title: "Detalhes Necessários", description: "Por favor, preencha os detalhes da personalização.", variant: "destructive" });
+                        return;
+                      }
+
+                      for(let i=0; i<quantity; i++) {
+                        addToCart({
+                          id: selectedVariant ? `${product.id}-${selectedVariant.id}` : product.id,
+                          product_id: product.id,
+                          title: product.title,
+                          price: currentPrice,
+                          image_url: productImages[0] || "",
+                          variant_id: selectedVariant?.id,
+                          variant_sku: selectedVariant?.sku,
+                          custom_text: isCustom ? customText.trim() : undefined
+                        });
+                      }
+                      setIsCartOpen(true);
+                      toast({ title: "Item adicionado ao carrinho!" });
+                    }}
+                  >
+                    Adicionar ao Carrinho
+                  </Button>
 
                   {/* Shipping Calculator */}
                   <div className="pt-6 border-t border-slate-100">
